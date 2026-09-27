@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback } from 'react'
 import { Upload, Camera, X, Eye, RefreshCw } from 'lucide-react'
 import { compressImage, createPreviewUrl, revokePreviewUrl } from '@/utils/imageCompression'
-import { Spinner } from './index'
+import { Spinner } from '@/components/ui'
 
 const ReceiptUploader = ({ value, onChange, required = false, error }) => {
   const [preview, setPreview] = useState(null)
