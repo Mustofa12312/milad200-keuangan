@@ -83,3 +83,28 @@ export const getInitials = (name) => {
   if (!name) return '?'
   return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
 }
+
+export const formatMonth = (dateStr) => {
+  return formatDate(dateStr, 'MMMM yyyy')
+}
+
+export const formatYear = (dateStr) => {
+  return formatDate(dateStr, 'yyyy')
+}
+
+export const formatNumber = (num) => {
+  return Number(num || 0).toLocaleString('id-ID')
+}
+
+export const formatFileSize = (bytes) => {
+  if (!bytes) return '-'
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
+
+export const formatPercent = (value, total) => {
+  if (!total || total === 0) return '0%'
+  return `${Math.round((value / total) * 100)}%`
+}
+

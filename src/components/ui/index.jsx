@@ -137,19 +137,8 @@ export const Pagination = ({ page, totalPages, onPageChange }) => {
   )
 }
 
-// Badge
-export const Badge = ({ label, type }) => {
-  const cls = {
-    INCOME: 'badge-income',
-    EXPENSE: 'badge-expense',
-    LUNAS: 'badge-paid',
-    SEBAGIAN: 'badge-partial',
-    'BELUM LUNAS': 'badge-unpaid',
-  }
-  return <span className={`badge ${cls[type] || 'badge-debt'}`}>{label}</span>
-}
-
 // Confirm Dialog
+
 export const ConfirmDialog = ({ open, title, message, onConfirm, onCancel, loading, danger = false }) => {
   if (!open) return null
 
@@ -172,3 +161,61 @@ export const ConfirmDialog = ({ open, title, message, onConfirm, onCancel, loadi
     </div>
   )
 }
+
+/**
+ * Badge component for transaction types, status labels, etc.
+ */
+export const Badge = ({ type, label, size = 'sm' }) => {
+  const styles = {
+    INCOME: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    EXPENSE: 'bg-red-500/15 text-red-400 border-red-500/20',
+    LUNAS: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20',
+    SEBAGIAN: 'bg-amber-500/15 text-amber-400 border-amber-500/20',
+    'BELUM LUNAS': 'bg-red-500/15 text-red-400 border-red-500/20',
+    ADMIN: 'bg-violet-500/15 text-violet-400 border-violet-500/20',
+    USER: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
+  }
+
+  const style = styles[type] || 'bg-slate-700 text-slate-400 border-slate-600'
+
+  return (
+    <span className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${style}`}>
+      {label || type}
+    </span>
+  )
+}
+
+/**
+ * Status dot for active/inactive indicators
+ */
+export const StatusDot = ({ active }) => (
+  <span className={`inline-block w-2 h-2 rounded-full flex-shrink-0 ${active ? 'bg-emerald-400' : 'bg-slate-600'}`} />
+)
+
+/**
+ * Section header with optional action
+ */
+export const SectionHeader = ({ title, subtitle, action }) => (
+  <div className="flex items-start justify-between gap-4 mb-4">
+    <div>
+      <h2 className="text-base font-semibold font-display text-slate-100">{title}</h2>
+      {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
+    </div>
+    {action}
+  </div>
+)
+
+/**
+ * Divider
+ */
+export const Divider = ({ label }) =>
+  label ? (
+    <div className="flex items-center gap-3 my-4">
+      <div className="flex-1 h-px bg-white/5" />
+      <span className="text-xs text-slate-600">{label}</span>
+      <div className="flex-1 h-px bg-white/5" />
+    </div>
+  ) : (
+    <div className="h-px bg-white/5 my-4" />
+  )
+
