@@ -41,8 +41,10 @@ const Reports = () => {
 
       if (reportType === 'income') {
         result = await reportService.getIncomeReport(params)
-      } else {
+      } else if (reportType === 'expense') {
         result = await reportService.getExpenseReport(params)
+      } else {
+        result = await reportService.getDebtReport({ status: filters.status || undefined })
       }
       setReportData(result)
     } catch (err) {
@@ -55,11 +57,11 @@ const Reports = () => {
   const handleExportCSV = () => {
     if (!reportData?.data?.length) return
     const rows = reportData.data.map(t => ({
-      Tanggal: formatDate(t.transaction_date),
-      Jenis: t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran',
-      Sumber_Kategori: t.source || t.categories?.name || '-',
+      Tanggal: t.transaction_date ? formatDate(t.transaction_date) : formatDate(t.due_date),
+      Jenis: reportType === 'debt' ? 'Hutang' : (t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran'),
+      'Sumber/Kategori/Pihak': t.party_name || t.source || t.categories?.name || '-',
       Keterangan: t.description || '-',
-      Nominal: t.amount,
+      Nominal: reportType === 'debt' ? t.original_amount : t.amount,
       Petugas: t.creator?.full_name || '-',
     }))
     reportService.exportCSV(rows, `laporan-${reportType}`)
@@ -68,14 +70,14 @@ const Reports = () => {
   const handleExportExcel = () => {
     if (!reportData?.data?.length) return
     const rows = reportData.data.map(t => ({
-      Tanggal: formatDate(t.transaction_date),
-      Jenis: t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran',
-      'Sumber/Kategori': t.source || t.categories?.name || '-',
+      Tanggal: t.transaction_date ? formatDate(t.transaction_date) : formatDate(t.due_date),
+      Jenis: reportType === 'debt' ? 'Hutang' : (t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran'),
+      'Sumber/Kategori/Pihak': t.party_name || t.source || t.categories?.name || '-',
       Keterangan: t.description || '-',
-      Nominal: Number(t.amount),
+      Nominal: Number(reportType === 'debt' ? t.original_amount : t.amount),
       Petugas: t.creator?.full_name || '-',
     }))
-    reportService.exportExcel(rows, `laporan-${reportType}`, reportType === 'income' ? 'Pemasukan' : 'Pengeluaran')
+    reportService.exportExcel(rows, `laporan-${reportType}`, reportType === 'income' ? 'Pemasukan' : (reportType === 'expense' ? 'Pengeluaran' : 'Hutang'))
   }
 
   const handleExportPDF = () => {

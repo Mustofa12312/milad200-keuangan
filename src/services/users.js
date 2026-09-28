@@ -32,21 +32,10 @@ export const userService = {
   },
 
   async createUser(email, password, profileData) {
-    // Admin creates user via Supabase admin API (would need service role key - for now use invite)
-    // This is handled server-side ideally; for frontend we use signUp
-    const { data, error } = await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-    })
-    if (error) throw error
-
-    // Create profile
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({ user_id: data.user.id, ...profileData, is_active: true })
-    if (profileError) throw profileError
-
-    return data.user
+    throw new Error(
+      'Pembuatan pengguna baru dari aplikasi dinonaktifkan untuk keamanan. ' +
+      'Silakan gunakan menu Authentication di Supabase Dashboard untuk mengundang atau membuat pengguna baru, ' +
+      'kemudian atur Role-nya di halaman Pengguna ini.'
+    )
   },
 }

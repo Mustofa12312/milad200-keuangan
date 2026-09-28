@@ -51,6 +51,24 @@ export const reportService = {
     return { data, total, byCategory }
   },
 
+  async getDebtReport({ status } = {}) {
+    let query = supabase
+      .from('debts')
+      .select(`*`)
+      .order('due_date', { ascending: true })
+
+    if (status) query = query.eq('status', status)
+
+    const { data, error } = await query
+    if (error) throw error
+
+    const totalDebt = data.reduce((sum, d) => sum + Number(d.original_amount), 0)
+    const totalRemaining = data.reduce((sum, d) => sum + Number(d.remaining_amount), 0)
+    const totalPaid = totalDebt - totalRemaining
+
+    return { data, totalDebt, totalRemaining, totalPaid }
+  },
+
   // Export to CSV
   exportCSV(data, filename = 'laporan') {
     const headers = Object.keys(data[0] || {})

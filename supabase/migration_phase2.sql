@@ -4,10 +4,17 @@
 -- ============================================================
 
 -- ============================================================
--- 1. Tambah field is_deleted_permanent untuk future cleanup
+-- 1. Tambah field is_deleted_permanent untuk future cleanup & perbaikan FK audit_logs
 -- ============================================================
 ALTER TABLE transactions
   ADD COLUMN IF NOT EXISTS restore_count INTEGER NOT NULL DEFAULT 0;
+
+ALTER TABLE audit_logs
+  DROP CONSTRAINT IF EXISTS audit_logs_user_id_fkey;
+
+ALTER TABLE audit_logs
+  ADD CONSTRAINT audit_logs_user_id_fkey FOREIGN KEY (user_id) REFERENCES profiles(user_id) ON DELETE SET NULL;
+
 
 -- ============================================================
 -- 2. View: Ringkasan saldo (computed)

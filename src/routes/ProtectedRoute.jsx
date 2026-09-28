@@ -6,7 +6,7 @@ const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, profile, loading, isAdmin } = useAuth()
   const location = useLocation()
 
-  if (loading) return <LoadingScreen />
+  if (loading || (user && !profile)) return <LoadingScreen />
 
   if (!user) {
     return <Navigate to="/login" state={{ from: location }} replace />
