@@ -103,10 +103,10 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link to="/income/create" className="btn btn-success btn-sm hidden sm:flex">
+          <Link to="/income/create" className="btn btn-success btn-sm hidden md:flex">
             <Plus size={13} /> Pemasukan
           </Link>
-          <Link to="/expense/create" className="btn btn-danger btn-sm hidden sm:flex">
+          <Link to="/expense/create" className="btn btn-danger btn-sm hidden md:flex">
             <Plus size={13} /> Pengeluaran
           </Link>
         </div>
@@ -167,11 +167,11 @@ const Dashboard = () => {
       </div>
 
       {/* Quick actions — mobile */}
-      <div className="grid grid-cols-2 gap-2 sm:hidden">
-        <Link to="/income/create" className="btn btn-success btn-sm w-full py-3">
+      <div className="grid grid-cols-2 gap-3 md:hidden">
+        <Link to="/income/create" className="btn btn-success btn-sm w-full py-3 shadow-lg shadow-emerald-500/20">
           <Plus size={14} /> Catat Pemasukan
         </Link>
-        <Link to="/expense/create" className="btn btn-danger btn-sm w-full py-3">
+        <Link to="/expense/create" className="btn btn-danger btn-sm w-full py-3 shadow-lg shadow-red-500/20">
           <Plus size={14} /> Catat Pengeluaran
         </Link>
       </div>
@@ -179,18 +179,18 @@ const Dashboard = () => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Area chart */}
-        <div className="lg:col-span-2 glass rounded-xl border border-white/5 p-5">
-          <div className="flex items-center justify-between mb-4">
+        <div className="lg:col-span-2 glass rounded-xl border border-white/5 p-4 sm:p-5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div>
               <h3 className="text-sm font-semibold text-slate-200">Pemasukan vs Pengeluaran</h3>
               <p className="text-xs text-slate-500 mt-0.5">Perbandingan arus kas</p>
             </div>
-            <div className="flex gap-1">
+            <div className="flex gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-hide">
               {CHART_PERIODS.map(p => (
                 <button
                   key={p.key}
                   onClick={() => setChartPeriod(p.key)}
-                  className={`btn btn-xs ${chartPeriod === p.key ? 'btn-primary' : 'btn-ghost'}`}
+                  className={`btn btn-xs whitespace-nowrap flex-shrink-0 ${chartPeriod === p.key ? 'btn-primary' : 'btn-ghost'}`}
                 >
                   {p.label}
                 </button>
