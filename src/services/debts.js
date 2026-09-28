@@ -115,4 +115,30 @@ export const debtService = {
 
     return { totalDebt, totalRemaining, totalPaid, unpaidCount, partialCount, paidCount }
   },
+
+  async getOverdueDebts() {
+    const today = new Date().toISOString().split('T')[0]
+    const { data, error } = await supabase
+      .from('debts')
+      .select('id, party_name, remaining_amount, due_date, status')
+      .neq('status', 'LUNAS')
+      .not('due_date', 'is', null)
+      .lte('due_date', today)
+      .order('due_date', { ascending: true })
+    if (error) throw error
+    return data
+  },
+
+  async updateDebt(id, updates, userId) {
+    const { data, error } = await supabase
+      .from('debts')
+      .update({ ...updates, updated_by: userId, updated_at: new Date().toISOString() })
+      .eq('id', id)
+      .select()
+      .single()
+    if (error) throw error
+    await logAudit(userId, 'UPDATE', 'debt', id, null, updates)
+    return data
+  },
 }
+
