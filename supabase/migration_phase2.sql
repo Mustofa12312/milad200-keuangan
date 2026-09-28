@@ -168,15 +168,25 @@ RETURNS TABLE (
 $$;
 
 -- ============================================================
--- SELESAI FASE 2
+-- 9. Function: Agregasi transaksi harian untuk chart
 -- ============================================================
--- Fitur yang ditambahkan:
--- ✅ View saldo keuangan terintegrasi
--- ✅ View ringkasan hutang
--- ✅ Function restore transaksi yang dibatalkan
--- ✅ Function hutang jatuh tempo
--- ✅ Trigger auto-update updated_at
--- ✅ Index tambahan untuk performa
--- ✅ RLS untuk transaksi dibatalkan
--- ✅ Laporan bulanan per tahun
+CREATE OR REPLACE FUNCTION public.get_daily_chart_data(p_start_date DATE)
+RETURNS TABLE (
+  date DATE,
+  income NUMERIC,
+  expense NUMERIC
+) LANGUAGE SQL STABLE AS $$
+  SELECT
+    transaction_date AS date,
+    COALESCE(SUM(CASE WHEN type = 'INCOME' THEN amount ELSE 0 END), 0) AS income,
+    COALESCE(SUM(CASE WHEN type = 'EXPENSE' THEN amount ELSE 0 END), 0) AS expense
+  FROM transactions
+  WHERE transaction_date >= p_start_date
+    AND is_deleted = FALSE
+  GROUP BY transaction_date
+  ORDER BY transaction_date;
+$$;
+
+-- ============================================================
+-- SELESAI FASE 2
 -- ============================================================

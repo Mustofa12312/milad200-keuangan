@@ -127,14 +127,15 @@ export const transactionService = {
   // Summary stats for dashboard
   async getSummary() {
     const { data, error } = await supabase
-      .from('transactions')
-      .select('type, amount')
-      .eq('is_deleted', false)
+      .from('financial_summary')
+      .select('*')
+      .single()
     if (error) throw error
-
-    const income = data.filter(t => t.type === 'INCOME').reduce((sum, t) => sum + Number(t.amount), 0)
-    const expense = data.filter(t => t.type === 'EXPENSE').reduce((sum, t) => sum + Number(t.amount), 0)
-    return { income, expense, balance: income - expense }
+    return {
+      income: data.total_income,
+      expense: data.total_expense,
+      balance: data.balance,
+    }
   },
 
   // Chart data: pemasukan vs pengeluaran per period
