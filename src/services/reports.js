@@ -95,7 +95,7 @@ export const reportService = {
   },
 
   // Export to PDF
-  exportPDF({ title, period, transactions, income, expense, balance }) {
+  exportPDF({ title, period, transactions, income, expense, balance, totalDebt, totalRemaining, totalPaid, reportType = 'income' }) {
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
 
     // Header
@@ -104,7 +104,7 @@ export const reportService = {
     doc.setTextColor(248, 250, 252)
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
-    doc.text('LAPORAN KEUANGAN', 105, 15, { align: 'center' })
+    doc.text(title.toUpperCase(), 105, 15, { align: 'center' })
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
     doc.text('200 Tahun Panyeppen', 105, 23, { align: 'center' })
@@ -115,13 +115,22 @@ export const reportService = {
     doc.setTextColor(15, 23, 42)
     doc.setFontSize(11)
     doc.setFont('helvetica', 'bold')
-    doc.text('Ringkasan Keuangan', 14, 52)
+    doc.text('Ringkasan', 14, 52)
 
-    const summaryData = [
-      ['Total Pemasukan', formatCurrency(income)],
-      ['Total Pengeluaran', formatCurrency(expense)],
-      ['Saldo', formatCurrency(balance)],
-    ]
+    let summaryData = []
+    if (reportType === 'debt') {
+      summaryData = [
+        ['Total Hutang', formatCurrency(totalDebt)],
+        ['Total Terbayar', formatCurrency(totalPaid)],
+        ['Sisa Hutang', formatCurrency(totalRemaining)],
+      ]
+    } else {
+      summaryData = [
+        ['Total Pemasukan', formatCurrency(income)],
+        ['Total Pengeluaran', formatCurrency(expense)],
+        ['Saldo', formatCurrency(balance)],
+      ]
+    }
 
     autoTable(doc, {
       startY: 56,
@@ -134,17 +143,33 @@ export const reportService = {
     // Transaction table
     if (transactions?.length) {
       doc.setFont('helvetica', 'bold')
-      doc.text('Detail Transaksi', 14, doc.lastAutoTable.finalY + 12)
+      doc.text('Detail', 14, doc.lastAutoTable.finalY + 12)
+
+      let head = []
+      let body = []
+
+      if (reportType === 'debt') {
+        head = [['Jatuh Tempo', 'Pihak Terkait', 'Status', 'Sisa Hutang']]
+        body = transactions.map(t => [
+          t.due_date ? formatDate(t.due_date) : '-',
+          t.party_name,
+          t.status,
+          formatCurrency(t.remaining_amount),
+        ])
+      } else {
+        head = [['Tanggal', 'Jenis', 'Keterangan', 'Nominal']]
+        body = transactions.map(t => [
+          formatDate(t.transaction_date),
+          t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran',
+          t.source || t.categories?.name || t.description || '-',
+          formatCurrency(t.amount),
+        ])
+      }
 
       autoTable(doc, {
         startY: doc.lastAutoTable.finalY + 16,
-        head: [['Tanggal', 'Jenis', 'Keterangan', 'Nominal']],
-        body: transactions.map(t => [
-          formatDate(t.transaction_date),
-          t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran',
-          t.source || t.description || '-',
-          formatCurrency(t.amount),
-        ]),
+        head,
+        body,
         theme: 'striped',
         styles: { fontSize: 9 },
         headStyles: { fillColor: [30, 64, 175] },

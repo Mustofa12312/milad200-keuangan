@@ -91,12 +91,16 @@ const Reports = () => {
     const expense = reportType === 'expense' ? (reportData.total || 0) : 0
 
     reportService.exportPDF({
-      title: `Laporan ${reportType === 'income' ? 'Pemasukan' : 'Pengeluaran'}`,
+      title: `Laporan ${reportType === 'income' ? 'Pemasukan' : reportType === 'expense' ? 'Pengeluaran' : 'Hutang'}`,
       period,
       transactions: reportData.data,
       income,
       expense,
       balance: income - expense,
+      totalDebt: reportData.totalDebt || 0,
+      totalRemaining: reportData.totalRemaining || 0,
+      totalPaid: reportData.totalPaid || 0,
+      reportType,
     })
   }
 
@@ -221,7 +225,7 @@ const Reports = () => {
               <div className="flex gap-2 flex-wrap no-print">
                 <button onClick={handleExportCSV} className="btn btn-ghost btn-sm"><Download size={13} /> CSV</button>
                 <button onClick={handleExportExcel} className="btn btn-ghost btn-sm"><Download size={13} /> Excel</button>
-                {reportType !== 'debt' && <button onClick={handleExportPDF} className="btn btn-ghost btn-sm"><Download size={13} /> PDF</button>}
+                <button onClick={handleExportPDF} className="btn btn-ghost btn-sm"><Download size={13} /> PDF</button>
                 <button onClick={handlePrint} className="btn btn-ghost btn-sm"><Printer size={13} /> Print</button>
               </div>
             </div>
