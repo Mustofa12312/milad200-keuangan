@@ -34,6 +34,30 @@ const Login = () => {
     }
   }
 
+  // Temporary function to help user register the first admin account
+  const handleRegister = async (e) => {
+    e.preventDefault()
+    setError(null)
+    setLoading(true)
+    try {
+      const { data, error } = await import('@/services/supabase').then(m => m.default.auth.signUp({
+        email,
+        password,
+      }))
+      if (error) throw error
+      
+      if (data?.user?.identities?.length === 0) {
+        setError('Akun ini sudah terdaftar. Silakan login.')
+      } else {
+        setError('Berhasil mendaftar! Jika Supabase meminta konfirmasi email, cek email Anda atau matikan "Confirm email" di Supabase Dashboard.')
+      }
+    } catch (err) {
+      setError(err.message || 'Gagal mendaftar')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const handleReset = async (e) => {
     e.preventDefault()
     setError(null)
@@ -138,15 +162,36 @@ const Login = () => {
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="btn btn-primary w-full btn-lg"
-                disabled={loading}
-              >
-                {loading ? <Spinner size={16} /> : null}
-                {loading ? 'Memproses...' : resetMode ? 'Kirim Link Reset' : 'Masuk'}
-              </button>
-
+              {!resetMode ? (
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    className="btn btn-primary flex-1 btn-lg"
+                    disabled={loading}
+                  >
+                    {loading ? <Spinner size={16} /> : null}
+                    {loading ? 'Memproses...' : 'Masuk'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleRegister}
+                    className="btn btn-ghost flex-1 btn-lg border border-white/10"
+                    disabled={loading}
+                  >
+                    {loading ? <Spinner size={16} /> : null}
+                    {loading ? 'Memproses...' : 'Daftar (Setup)'}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  className="btn btn-primary w-full btn-lg"
+                  disabled={loading}
+                >
+                  {loading ? <Spinner size={16} /> : null}
+                  {loading ? 'Memproses...' : 'Kirim Link Reset'}
+                </button>
+              )}
               <button
                 type="button"
                 className="w-full text-xs text-slate-500 hover:text-slate-300 transition-colors mt-2"
