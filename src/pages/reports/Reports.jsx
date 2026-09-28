@@ -123,11 +123,12 @@ const Reports = () => {
             {[
               { key: 'income', label: 'Pemasukan', color: 'emerald' },
               { key: 'expense', label: 'Pengeluaran', color: 'red' },
+              { key: 'debt', label: 'Hutang', color: 'amber' },
             ].map(({ key, label, color }) => (
               <button
                 key={key}
-                onClick={() => { setReportType(key); setReportData(null) }}
-                className={`btn btn-sm ${reportType === key ? (color === 'emerald' ? 'btn-success' : 'btn-danger') : 'btn-ghost'}`}
+                onClick={() => { setReportType(key); setReportData(null); setFilters({ startDate: '', endDate: '', category_id: '', created_by: '', status: '' }) }}
+                className={`btn btn-sm ${reportType === key ? (color === 'emerald' ? 'btn-success' : color === 'red' ? 'btn-danger' : 'btn-primary') : 'btn-ghost'}`}
               >
                 {label}
               </button>
@@ -159,6 +160,19 @@ const Reports = () => {
                 onChange={e => setFilters(p => ({ ...p, category_id: e.target.value }))}>
                 <option value="">Semua Kategori</option>
                 {categories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+          )}
+          {reportType === 'debt' && (
+            <div>
+              <label className="block text-xs text-slate-400 mb-1.5">Status Hutang</label>
+              <select className="input-field"
+                value={filters.status || ''}
+                onChange={e => setFilters(p => ({ ...p, status: e.target.value }))}>
+                <option value="">Semua Status</option>
+                <option value="BELUM LUNAS">Belum Lunas</option>
+                <option value="SEBAGIAN">Sebagian</option>
+                <option value="LUNAS">Lunas</option>
               </select>
             </div>
           )}
@@ -200,26 +214,43 @@ const Reports = () => {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
               <div>
                 <h3 className="text-base font-semibold text-slate-100">
-                  Laporan {reportType === 'income' ? 'Pemasukan' : 'Pengeluaran'}
+                  Laporan {reportType === 'income' ? 'Pemasukan' : reportType === 'expense' ? 'Pengeluaran' : 'Hutang'}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">{periodLabel}</p>
               </div>
               <div className="flex gap-2 flex-wrap no-print">
                 <button onClick={handleExportCSV} className="btn btn-ghost btn-sm"><Download size={13} /> CSV</button>
                 <button onClick={handleExportExcel} className="btn btn-ghost btn-sm"><Download size={13} /> Excel</button>
-                <button onClick={handleExportPDF} className="btn btn-ghost btn-sm"><Download size={13} /> PDF</button>
+                {reportType !== 'debt' && <button onClick={handleExportPDF} className="btn btn-ghost btn-sm"><Download size={13} /> PDF</button>}
                 <button onClick={handlePrint} className="btn btn-ghost btn-sm"><Printer size={13} /> Print</button>
               </div>
             </div>
 
             {/* Total */}
-            <div className={`p-4 rounded-xl ${reportType === 'income' ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
-              <p className="text-xs text-slate-400 mb-1">Total {reportType === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
-              <p className={`text-2xl font-bold currency ${reportType === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
-                {formatCurrency(reportData.total)}
-              </p>
-              <p className="text-xs text-slate-500 mt-1">{reportData.data?.length || 0} transaksi</p>
-            </div>
+            {reportType === 'debt' ? (
+              <div className="grid grid-cols-3 gap-3">
+                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                  <p className="text-xs text-slate-400 mb-1">Total Hutang</p>
+                  <p className="text-lg font-bold currency text-amber-400">{formatCurrency(reportData.totalDebt)}</p>
+                </div>
+                <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                  <p className="text-xs text-slate-400 mb-1">Total Terbayar</p>
+                  <p className="text-lg font-bold currency text-emerald-400">{formatCurrency(reportData.totalPaid)}</p>
+                </div>
+                <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
+                  <p className="text-xs text-slate-400 mb-1">Sisa Hutang</p>
+                  <p className="text-lg font-bold currency text-red-400">{formatCurrency(reportData.totalRemaining)}</p>
+                </div>
+              </div>
+            ) : (
+              <div className={`p-4 rounded-xl ${reportType === 'income' ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
+                <p className="text-xs text-slate-400 mb-1">Total {reportType === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
+                <p className={`text-2xl font-bold currency ${reportType === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {formatCurrency(reportData.total)}
+                </p>
+                <p className="text-xs text-slate-500 mt-1">{reportData.data?.length || 0} transaksi</p>
+              </div>
+            )}
 
             {/* Category breakdown for expense */}
             {reportType === 'expense' && reportData.byCategory && (
@@ -263,31 +294,41 @@ const Reports = () => {
                     <tr className="border-b border-white/5">
                       <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">Tanggal</th>
                       <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">
-                        {reportType === 'income' ? 'Sumber' : 'Kategori'}
+                        {reportType === 'income' ? 'Sumber' : reportType === 'expense' ? 'Kategori' : 'Pihak Terkait'}
                       </th>
                       <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden md:table-cell">Keterangan</th>
-                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden lg:table-cell">Petugas</th>
-                      <th className="text-right px-5 py-3 text-xs font-medium text-slate-400">Nominal</th>
+                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden lg:table-cell">
+                        {reportType === 'debt' ? 'Status' : 'Petugas'}
+                      </th>
+                      <th className="text-right px-5 py-3 text-xs font-medium text-slate-400">
+                        {reportType === 'debt' ? 'Sisa Hutang' : 'Nominal'}
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
                     {reportData.data.map(tx => (
                       <tr key={tx.id} className="table-row-hover">
-                        <td className="px-5 py-3.5 text-sm text-slate-300">{formatDate(tx.transaction_date)}</td>
-                        <td className="px-5 py-3.5 text-sm text-slate-200">{tx.source || tx.categories?.name || '-'}</td>
+                        <td className="px-5 py-3.5 text-sm text-slate-300">
+                          {formatDate(reportType === 'debt' ? tx.due_date : tx.transaction_date)}
+                        </td>
+                        <td className="px-5 py-3.5 text-sm text-slate-200">
+                          {reportType === 'debt' ? tx.party_name : (tx.source || tx.categories?.name || '-')}
+                        </td>
                         <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">{tx.description || '-'}</td>
-                        <td className="px-5 py-3.5 text-xs text-slate-400 hidden lg:table-cell">{tx.creator?.full_name || '-'}</td>
-                        <td className={`px-5 py-3.5 text-sm font-semibold text-right currency ${reportType === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
-                          {formatCurrency(tx.amount)}
+                        <td className="px-5 py-3.5 text-xs text-slate-400 hidden lg:table-cell">
+                          {reportType === 'debt' ? tx.status : (tx.creator?.full_name || '-')}
+                        </td>
+                        <td className={`px-5 py-3.5 text-sm font-semibold text-right currency ${reportType === 'income' ? 'text-emerald-400' : reportType === 'expense' ? 'text-red-400' : 'text-amber-400'}`}>
+                          {formatCurrency(reportType === 'debt' ? tx.remaining_amount : tx.amount)}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                   <tfoot>
                     <tr className="border-t border-white/10">
-                      <td colSpan={4} className="px-5 py-3 text-sm font-semibold text-slate-300">Total</td>
-                      <td className={`px-5 py-3 text-base font-bold text-right currency ${reportType === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
-                        {formatCurrency(reportData.total)}
+                      <td colSpan={4} className="px-5 py-3 text-sm font-semibold text-slate-300">Total {reportType === 'debt' ? 'Sisa' : ''}</td>
+                      <td className={`px-5 py-3 text-base font-bold text-right currency ${reportType === 'income' ? 'text-emerald-400' : reportType === 'expense' ? 'text-red-400' : 'text-amber-400'}`}>
+                        {formatCurrency(reportType === 'debt' ? reportData.totalRemaining : reportData.total)}
                       </td>
                     </tr>
                   </tfoot>

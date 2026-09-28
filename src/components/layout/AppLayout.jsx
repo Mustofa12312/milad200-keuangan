@@ -22,6 +22,7 @@ const NAV_ITEMS = [
   { to: '/users', icon: Users, label: 'Pengguna', roles: ['ADMIN'] },
   { to: '/audit', icon: ClipboardList, label: 'Audit Log', roles: ['ADMIN'] },
   { to: '/cancelled', icon: Trash2, label: 'Dibatalkan', roles: ['ADMIN'] },
+  { to: '/settings', icon: Settings, label: 'Pengaturan', roles: ['ADMIN', 'USER'] },
 ]
 
 
