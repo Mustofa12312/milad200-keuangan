@@ -3,8 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   User, Lock, LogOut, Shield, Save, Eye, EyeOff,
   Camera, CheckCircle, AlertCircle, Smartphone, Monitor,
+  Moon, Sun
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import { authService } from '@/services/auth'
 import supabase from '@/services/supabase'
 import { getInitials, formatDateTime } from '@/utils/format'
@@ -14,6 +16,7 @@ import { useNavigate } from 'react-router-dom'
 
 const Settings = () => {
   const { user, profile, isAdmin, signOut, refreshProfile } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('profile')
 
@@ -94,9 +97,21 @@ const Settings = () => {
   return (
     <div className="max-w-2xl mx-auto space-y-5">
       {/* Header */}
-      <div>
-        <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Pengaturan</h1>
-        <p className="text-xs text-slate-500">Kelola profil dan keamanan akun Anda</p>
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Pengaturan</h1>
+          <p className="text-xs text-slate-500">Kelola profil dan keamanan akun Anda</p>
+        </div>
+        <button 
+          onClick={toggleTheme}
+          className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm flex items-center gap-2"
+        >
+          {theme === 'dark' ? (
+            <><Sun size={14} /> <span className="text-xs font-medium hidden sm:inline">Mode Terang</span></>
+          ) : (
+            <><Moon size={14} /> <span className="text-xs font-medium hidden sm:inline">Mode Gelap</span></>
+          )}
+        </button>
       </div>
 
       {/* Profile banner */}
