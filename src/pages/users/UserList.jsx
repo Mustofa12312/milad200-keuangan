@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Users, Power, Edit2, Shield, User as UserIcon, Plus } from 'lucide-react'
+import { Users, Power, Edit2, Shield, User as UserIcon, Plus, Eye, EyeOff, Mail, Lock } from 'lucide-react'
 import { userService } from '@/services/users'
 import { useAuth } from '@/contexts/AuthContext'
 import { formatDate, formatRelative, getInitials } from '@/utils/format'
@@ -16,6 +16,7 @@ const UserList = () => {
   const [editForm, setEditForm] = useState({ full_name: '', role_id: '' })
   const [showAddModal, setShowAddModal] = useState(false)
   const [addForm, setAddForm] = useState({ email: '', password: '', full_name: '', role_id: '' })
+  const [showAddPassword, setShowAddPassword] = useState(false)
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['users'],
@@ -171,30 +172,36 @@ const UserList = () => {
       )}
 
       {/* Edit modal */}
-      {/* Edit modal */}
       {editUser && (
         <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-          <div className="glass border border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
-            <h3 className="text-base font-semibold text-slate-100 mb-4">Edit Pengguna</h3>
+          <div className="glass bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-[1.5rem] w-full max-w-sm p-6 shadow-2xl animate-fade-in">
+            <h3 className="text-xl font-bold font-display text-slate-100 mb-6">Edit Pengguna</h3>
             <form onSubmit={handleUpdate} className="space-y-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Nama Lengkap</label>
-                <input type="text" className="input-field" required
-                  value={editForm.full_name}
-                  onChange={e => setEditForm(p => ({ ...p, full_name: e.target.value }))} />
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-300 ml-1">Nama Lengkap</label>
+                <div className="relative group">
+                  <UserIcon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
+                  <input type="text" required className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
+                    placeholder="Nama Pengguna"
+                    value={editForm.full_name}
+                    onChange={e => setEditForm(p => ({ ...p, full_name: e.target.value }))} />
+                </div>
               </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Role</label>
-                <select className="input-field" required
-                  value={editForm.role_id}
-                  onChange={e => setEditForm(p => ({ ...p, role_id: e.target.value }))}>
-                  <option value="">-- Pilih Role --</option>
-                  {roles?.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-                </select>
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-300 ml-1">Role</label>
+                <div className="relative group">
+                  <Shield size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors z-10" />
+                  <select required className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none relative"
+                    value={editForm.role_id}
+                    onChange={e => setEditForm(p => ({ ...p, role_id: e.target.value }))}>
+                    <option value="" className="bg-slate-900 text-slate-500">-- Pilih Role --</option>
+                    {roles?.map(r => <option key={r.id} value={r.id} className="bg-slate-900 text-slate-200">{r.name}</option>)}
+                  </select>
+                </div>
               </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" className="btn btn-ghost flex-1" onClick={() => setEditUser(null)}>Batal</button>
-                <button type="submit" className="btn btn-primary flex-1" disabled={updateMutation.isPending}>
+              <div className="flex gap-3 pt-4">
+                <button type="button" className="w-full bg-transparent hover:bg-white/5 text-slate-300 font-medium py-2.5 px-4 rounded-xl border border-white/10 transition-all duration-200 active:scale-[0.98] flex-1" onClick={() => setEditUser(null)}>Batal</button>
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex-1" disabled={updateMutation.isPending}>
                   {updateMutation.isPending ? 'Menyimpan...' : 'Simpan'}
                 </button>
               </div>
@@ -206,39 +213,66 @@ const UserList = () => {
       {/* Add modal */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-          <div className="glass border border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
-            <h3 className="text-base font-semibold text-slate-100 mb-4">Tambah Pengguna</h3>
+          <div className="glass bg-slate-900/80 backdrop-blur-xl border border-white/10 rounded-[1.5rem] w-full max-w-sm p-6 shadow-2xl animate-fade-in">
+            <h3 className="text-xl font-bold font-display text-slate-100 mb-6">Tambah Pengguna</h3>
             <form onSubmit={handleAdd} className="space-y-4">
-              <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Email</label>
-                <input type="email" required className="input-field"
-                  value={addForm.email}
-                  onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))} />
+              
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-300 ml-1">Email</label>
+                <div className="relative group">
+                  <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
+                  <input type="email" required className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
+                    placeholder="email@panyeppen.com"
+                    value={addForm.email}
+                    onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))} />
+                </div>
               </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Password</label>
-                <input type="password" required minLength={6} className="input-field"
-                  value={addForm.password}
-                  onChange={e => setAddForm(p => ({ ...p, password: e.target.value }))} />
+
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-300 ml-1">Password</label>
+                <div className="relative group">
+                  <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
+                  <input type={showAddPassword ? 'text' : 'password'} required minLength={6} className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-10 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
+                    placeholder="••••••••"
+                    value={addForm.password}
+                    onChange={e => setAddForm(p => ({ ...p, password: e.target.value }))} />
+                  <button
+                    type="button"
+                    onClick={() => setShowAddPassword(!showAddPassword)}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+                  >
+                    {showAddPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
               </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Nama Lengkap</label>
-                <input type="text" required className="input-field"
-                  value={addForm.full_name}
-                  onChange={e => setAddForm(p => ({ ...p, full_name: e.target.value }))} />
+
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-300 ml-1">Nama Lengkap</label>
+                <div className="relative group">
+                  <UserIcon size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
+                  <input type="text" required className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
+                    placeholder="Nama Pengguna"
+                    value={addForm.full_name}
+                    onChange={e => setAddForm(p => ({ ...p, full_name: e.target.value }))} />
+                </div>
               </div>
-              <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Role</label>
-                <select className="input-field" required
-                  value={addForm.role_id}
-                  onChange={e => setAddForm(p => ({ ...p, role_id: e.target.value }))}>
-                  <option value="">-- Pilih Role --</option>
-                  {roles?.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
-                </select>
+
+              <div className="space-y-1.5">
+                <label className="block text-sm font-medium text-slate-300 ml-1">Role</label>
+                <div className="relative group">
+                  <Shield size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors z-10" />
+                  <select required className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-2.5 pl-10 pr-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none relative"
+                    value={addForm.role_id}
+                    onChange={e => setAddForm(p => ({ ...p, role_id: e.target.value }))}>
+                    <option value="" className="bg-slate-900 text-slate-500">-- Pilih Role --</option>
+                    {roles?.map(r => <option key={r.id} value={r.id} className="bg-slate-900 text-slate-200">{r.name}</option>)}
+                  </select>
+                </div>
               </div>
-              <div className="flex gap-3 pt-2">
-                <button type="button" className="btn btn-ghost flex-1" onClick={() => setShowAddModal(false)}>Batal</button>
-                <button type="submit" className="btn btn-primary flex-1" disabled={addMutation.isPending}>
+
+              <div className="flex gap-3 pt-4">
+                <button type="button" className="w-full bg-transparent hover:bg-white/5 text-slate-300 font-medium py-2.5 px-4 rounded-xl border border-white/10 transition-all duration-200 active:scale-[0.98] flex-1" onClick={() => setShowAddModal(false)}>Batal</button>
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex-1" disabled={addMutation.isPending}>
                   {addMutation.isPending ? 'Menyimpan...' : 'Simpan'}
                 </button>
               </div>
