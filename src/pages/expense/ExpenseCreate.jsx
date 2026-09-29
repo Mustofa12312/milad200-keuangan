@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
@@ -19,9 +19,22 @@ const ExpenseCreate = () => {
     category_id: '',
     amount: '',
     description: '',
+    volume: '',
+    unit: '',
+    unitPrice: '',
   })
+  const [useDetails, setUseDetails] = useState(false)
   const [receiptFile, setReceiptFile] = useState(null)
   const [errors, setErrors] = useState({})
+
+  // Auto-calculate amount if useDetails is true
+  useEffect(() => {
+    if (useDetails) {
+      const vol = Number(form.volume) || 0
+      const price = Number(form.unitPrice) || 0
+      setForm(prev => ({ ...prev, amount: (vol * price).toString() }))
+    }
+  }, [form.volume, form.unitPrice, useDetails])
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
@@ -43,8 +56,13 @@ const ExpenseCreate = () => {
     const e = {}
     if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
     if (!form.category_id) e.category_id = 'Kategori wajib dipilih'
-    if (!form.amount || Number(form.amount) <= 0) e.amount = 'Nominal harus lebih dari 0'
-    if (!receiptFile) e.receipt = 'Foto nota wajib dilampirkan'
+    if (useDetails) {
+      if (!form.volume || Number(form.volume) <= 0) e.volume = 'Volume wajib diisi'
+      if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Harga satuan wajib diisi'
+    } else {
+      if (!form.amount || Number(form.amount) <= 0) e.amount = 'Nominal harus lebih dari 0'
+    }
+    
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -52,6 +70,12 @@ const ExpenseCreate = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validate()) return
+    let finalDescription = form.description.trim() || null
+    if (useDetails && form.volume && form.unitPrice) {
+      const detailStr = `[${form.volume} ${form.unit || 'Item'} x Rp ${Number(form.unitPrice).toLocaleString('id-ID')}]`
+      finalDescription = finalDescription ? `${detailStr} ${finalDescription}` : detailStr
+    }
+
     mutation.mutate({
       tx: {
         type: 'EXPENSE',
@@ -59,7 +83,7 @@ const ExpenseCreate = () => {
         category_id: form.category_id,
         source: null,
         amount: Number(form.amount),
-        description: form.description.trim() || null,
+        description: finalDescription,
       },
       file: receiptFile,
     })
@@ -106,20 +130,66 @@ const ExpenseCreate = () => {
             {errors.category_id && <p className="text-xs text-red-400 mt-1">{errors.category_id}</p>}
           </div>
 
+          {/* Rincian Biaya Toggle */}
+          <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5">
+            <div>
+              <p className="text-xs font-medium text-slate-800 dark:text-slate-200">Gunakan Rincian Biaya</p>
+              <p className="text-[10px] text-slate-500">Hitung nominal otomatis (Volume × Harga)</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input type="checkbox" className="sr-only peer" checked={useDetails} onChange={() => setUseDetails(!useDetails)} />
+              <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-blue-500"></div>
+            </label>
+          </div>
+
+          {useDetails && (
+            <div className="grid grid-cols-3 gap-3 p-3 rounded-lg bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30">
+              <div>
+                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Volume *</label>
+                <input type="number" min="1" step="any"
+                  className={`input-field !py-1.5 !text-xs ${errors.volume ? 'border-red-500/50' : ''}`}
+                  placeholder="0"
+                  value={form.volume}
+                  onChange={e => handleChange('volume', e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Satuan</label>
+                <input type="text"
+                  className="input-field !py-1.5 !text-xs"
+                  placeholder="Pcs/Org/Set"
+                  value={form.unit}
+                  onChange={e => handleChange('unit', e.target.value)} />
+              </div>
+              <div>
+                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Harga Satuan *</label>
+                <input type="text" inputMode="numeric"
+                  className={`input-field !py-1.5 !text-xs currency ${errors.unitPrice ? 'border-red-500/50' : ''}`}
+                  placeholder="0"
+                  value={form.unitPrice ? Number(form.unitPrice).toLocaleString('id-ID') : ''}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '')
+                    handleChange('unitPrice', raw)
+                  }} />
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Nominal (Rp) *</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
               <input type="text" inputMode="numeric"
-                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''}`}
+                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''} ${useDetails ? 'bg-slate-100 dark:bg-slate-900 opacity-70' : ''}`}
                 placeholder="0"
                 value={form.amount ? Number(form.amount).toLocaleString('id-ID') : ''}
+                disabled={useDetails}
                 onChange={e => {
                   const raw = e.target.value.replace(/\D/g, '')
                   handleChange('amount', raw)
                 }} />
             </div>
-            {errors.amount && <p className="text-xs text-red-400 mt-1">{errors.amount}</p>}
+            {errors.amount && !useDetails && <p className="text-xs text-red-400 mt-1">{errors.amount}</p>}
+            {useDetails && <p className="text-[10px] text-blue-500 mt-1">Nominal dihitung otomatis dari rincian biaya.</p>}
           </div>
 
           <div>
@@ -138,9 +208,9 @@ const ExpenseCreate = () => {
 
         <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
           <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">
-            Foto Nota <span className="text-red-400">*</span>
+            Foto Nota (Opsional)
           </label>
-          <ReceiptUploader value={receiptFile} onChange={setReceiptFile} required error={errors.receipt} />
+          <ReceiptUploader value={receiptFile} onChange={setReceiptFile} error={errors.receipt} />
         </div>
 
         <button type="submit" className="btn btn-danger w-full btn-lg" disabled={mutation.isPending}>
