@@ -108,7 +108,7 @@ const UserList = () => {
           <div className="divide-y divide-slate-200 dark:divide-white/5">
             {activeUsers.map(u => (
               <div key={u.id} className="px-5 py-4 flex items-center gap-3 table-row-hover">
-                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-xs font-bold text-slate-900 dark:text-white">
+                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-xs font-bold text-white">
                   {getInitials(u.full_name)}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -201,7 +201,7 @@ const UserList = () => {
               </div>
               <div className="flex gap-3 pt-4">
                 <button type="button" className="w-full bg-transparent hover:bg-white/5 text-slate-700 dark:text-slate-300 font-medium py-2.5 px-4 rounded-xl border border-slate-300 dark:border-white/10 transition-all duration-200 active:scale-[0.98] flex-1" onClick={() => setEditUser(null)}>Batal</button>
-                <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex-1" disabled={updateMutation.isPending}>
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex-1" disabled={updateMutation.isPending}>
                   {updateMutation.isPending ? 'Menyimpan...' : 'Simpan'}
                 </button>
               </div>
@@ -272,7 +272,7 @@ const UserList = () => {
 
               <div className="flex gap-3 pt-4">
                 <button type="button" className="w-full bg-transparent hover:bg-white/5 text-slate-700 dark:text-slate-300 font-medium py-2.5 px-4 rounded-xl border border-slate-300 dark:border-white/10 transition-all duration-200 active:scale-[0.98] flex-1" onClick={() => setShowAddModal(false)}>Batal</button>
-                <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex-1" disabled={addMutation.isPending}>
+                <button type="submit" className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-2.5 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex-1" disabled={addMutation.isPending}>
                   {addMutation.isPending ? 'Menyimpan...' : 'Simpan'}
                 </button>
               </div>

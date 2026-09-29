@@ -2,7 +2,7 @@ const LoadingScreen = () => (
   <div className="fixed inset-0 bg-slate-50 dark:bg-slate-950 flex items-center justify-center z-50">
     <div className="text-center space-y-4">
       <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center mx-auto animate-pulse">
-        <span className="text-slate-900 dark:text-white font-bold text-lg">KP</span>
+        <span className="text-white font-bold text-lg">KP</span>
       </div>
       <div className="space-y-1">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Laporan Keuangan</p>

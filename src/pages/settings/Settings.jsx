@@ -3,10 +3,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   User, Lock, LogOut, Shield, Save, Eye, EyeOff,
   Camera, CheckCircle, AlertCircle, Smartphone, Monitor,
-  Moon, Sun
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useTheme } from '@/contexts/ThemeContext'
 import { authService } from '@/services/auth'
 import supabase from '@/services/supabase'
 import { getInitials, formatDateTime } from '@/utils/format'
@@ -16,7 +14,6 @@ import { useNavigate } from 'react-router-dom'
 
 const Settings = () => {
   const { user, profile, isAdmin, signOut, refreshProfile } = useAuth()
-  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('profile')
 
@@ -97,28 +94,16 @@ const Settings = () => {
   return (
     <div className="max-w-2xl mx-auto space-y-5">
       {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Pengaturan</h1>
-          <p className="text-xs text-slate-500">Kelola profil dan keamanan akun Anda</p>
-        </div>
-        <button 
-          onClick={toggleTheme}
-          className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-white/10 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm flex items-center gap-2"
-        >
-          {theme === 'dark' ? (
-            <><Sun size={14} /> <span className="text-xs font-medium hidden sm:inline">Mode Terang</span></>
-          ) : (
-            <><Moon size={14} /> <span className="text-xs font-medium hidden sm:inline">Mode Gelap</span></>
-          )}
-        </button>
+      <div>
+        <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Pengaturan</h1>
+        <p className="text-xs text-slate-500">Kelola profil dan keamanan akun Anda</p>
       </div>
 
       {/* Profile banner */}
       <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-xl font-bold text-slate-900 dark:text-white shadow-lg shadow-blue-500/20">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-xl font-bold text-white shadow-lg shadow-blue-500/20">
               {getInitials(profile?.full_name)}
             </div>
             <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center">
@@ -292,7 +277,7 @@ const Settings = () => {
           <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
             <div className="flex items-center gap-4 mb-5">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
-                <span className="text-slate-900 dark:text-white font-bold text-lg">KP</span>
+                <span className="text-white font-bold text-lg">KP</span>
               </div>
               <div>
                 <h3 className="text-base font-bold gradient-text">Laporan Keuangan</h3>

@@ -4,10 +4,11 @@ import {
   LayoutDashboard, TrendingUp, TrendingDown, CreditCard,
   Tags, Users, FileText, ClipboardList, Trash2,
   Menu, X, LogOut, ChevronRight, ChevronLeft, Bell, AlertTriangle,
-  Settings,
+  Settings, Moon, Sun
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTheme } from '@/contexts/ThemeContext'
 import { debtService } from '@/services/debts'
 import { getInitials, formatDate, formatCurrency } from '@/utils/format'
 import { Link } from 'react-router-dom'
@@ -36,6 +37,7 @@ const MOBILE_NAV = [
 
 const AppLayout = ({ children }) => {
   const { profile, isAdmin, role, signOut } = useAuth()
+  const { theme, toggleTheme } = useTheme()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
@@ -67,7 +69,7 @@ const AppLayout = ({ children }) => {
       <div className="p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-center">
         <Link to="/dashboard" className={`flex items-center gap-3 group w-full ${isMinimized ? 'justify-center' : ''}`}>
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
-            <span className="text-slate-900 dark:text-white font-bold text-sm">KP</span>
+            <span className="text-white font-bold text-sm">KP</span>
           </div>
           {!isMinimized && (
             <div className="min-w-0 flex-1">
@@ -109,7 +111,7 @@ const AppLayout = ({ children }) => {
           {!isMinimized && <span>Pengaturan</span>}
         </NavLink>
         <div className={`flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 transition-colors mt-1 ${isMinimized ? 'justify-center' : ''}`}>
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-slate-900 dark:text-white cursor-pointer" title={isMinimized ? profile?.full_name : undefined}>
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white cursor-pointer" title={isMinimized ? profile?.full_name : undefined}>
             {getInitials(profile?.full_name)}
           </div>
           {!isMinimized && (
@@ -149,7 +151,7 @@ const AppLayout = ({ children }) => {
       <div className={`lg:hidden fixed left-0 top-0 bottom-0 z-50 w-60 glass flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/5">
           <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">Menu</span>
-          <button onClick={() => setSidebarOpen(false)} className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white p-1">
+          <button onClick={() => setSidebarOpen(false)} className="text-slate-600 dark:text-slate-400 hover:text-white p-1">
             <X size={16} />
           </button>
         </div>
@@ -160,7 +162,7 @@ const AppLayout = ({ children }) => {
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Topbar */}
         <header className="h-14 flex items-center gap-3 px-4 border-b border-slate-200 dark:border-white/5 glass flex-shrink-0 z-30">
-          <button className="lg:hidden text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors" onClick={() => setSidebarOpen(true)}>
+          <button className="lg:hidden text-slate-600 dark:text-slate-400 hover:text-white transition-colors" onClick={() => setSidebarOpen(true)}>
             <Menu size={18} />
           </button>
 
@@ -180,7 +182,7 @@ const AppLayout = ({ children }) => {
                 className="relative text-amber-400 hover:text-amber-300 transition-colors p-1.5 rounded-lg hover:bg-amber-400/10"
               >
                 <Bell size={16} />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold text-slate-900 dark:text-white flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center">
                   {overdueCount > 9 ? '9+' : overdueCount}
                 </span>
               </button>
@@ -221,16 +223,25 @@ const AppLayout = ({ children }) => {
             </div>
           )}
 
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+            title="Ganti Tema"
+          >
+            {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+          </button>
+
           {/* Desktop user */}
           <Link to="/settings" className="hidden lg:flex items-center gap-2 hover:bg-white/5 rounded-lg px-2 py-1 transition-colors">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-white">
               {getInitials(profile?.full_name)}
             </div>
             <span className="text-xs text-slate-600 dark:text-slate-400">{profile?.full_name?.split(' ')[0] || 'User'}</span>
           </Link>
 
           {/* Mobile avatar */}
-          <Link to="/settings" className="lg:hidden w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white">
+          <Link to="/settings" className="lg:hidden w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-white">
             {getInitials(profile?.full_name)}
           </Link>
         </header>

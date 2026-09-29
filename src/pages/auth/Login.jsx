@@ -49,7 +49,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center relative overflow-hidden px-4 sm:px-6 lg:px-8 selection:bg-blue-500/30 selection:text-slate-900 dark:text-white">
+    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center relative overflow-hidden px-4 sm:px-6 lg:px-8 selection:bg-blue-500/30 selection:text-white">
       {/* Dynamic Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[25%] -right-[10%] w-[70%] h-[70%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse-soft" />
@@ -65,9 +65,9 @@ const Login = () => {
         <div className="text-center mb-10">
           <div className="w-20 h-20 rounded-[1.5rem] bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-500/20 border border-slate-300 dark:border-white/10 relative group hover:scale-105 transition-transform duration-300">
             <div className="absolute inset-0 rounded-[1.5rem] bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <span className="text-slate-900 dark:text-white font-black text-3xl tracking-tighter">KP</span>
+            <span className="text-white font-black text-3xl tracking-tighter">KP</span>
           </div>
-          <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white tracking-tight mb-2">
+          <h1 className="text-3xl font-bold font-display text-white tracking-tight mb-2">
             {resetMode ? 'Reset Password' : 'Selamat Datang'}
           </h1>
           <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
@@ -87,12 +87,12 @@ const Login = () => {
               <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6 border border-emerald-500/20">
                 <Mail size={28} className="text-emerald-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Email Terkirim</h3>
+              <h3 className="text-xl font-bold text-white mb-2">Email Terkirim</h3>
               <p className="text-sm text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
                 Link reset password telah dikirim ke <strong className="text-slate-800 dark:text-slate-200">{email}</strong>.<br/>Periksa kotak masuk atau spam Anda.
               </p>
               <button 
-                className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:border-white/10 active:scale-[0.98]" 
+                className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:bg-slate-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:border-white/10 active:scale-[0.98]" 
                 onClick={() => { setResetMode(false); setResetSent(false) }}
               >
                 Kembali ke Login
@@ -155,7 +155,7 @@ const Login = () => {
                   <div className="flex flex-col gap-3">
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
                       disabled={loading}
                     >
                       {loading ? <Spinner size={18} /> : null}
@@ -165,7 +165,7 @@ const Login = () => {
                 ) : (
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
                     disabled={loading}
                   >
                     {loading ? <Spinner size={18} /> : null}

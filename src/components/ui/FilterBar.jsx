@@ -48,7 +48,7 @@ const FilterBar = ({
           <SlidersHorizontal size={13} />
           <span className="hidden sm:inline">Filter</span>
           {hasActiveFilters && (
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-500 rounded-full text-[9px] font-bold text-slate-900 dark:text-white flex items-center justify-center">
+            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center">
               {filterCount + (startDate ? 1 : 0) + (endDate ? 1 : 0)}
             </span>
           )}
