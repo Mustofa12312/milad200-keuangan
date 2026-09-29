@@ -23,18 +23,15 @@ const ExpenseCreate = () => {
     unit: '',
     unitPrice: '',
   })
-  const [useDetails, setUseDetails] = useState(false)
   const [receiptFile, setReceiptFile] = useState(null)
   const [errors, setErrors] = useState({})
 
-  // Auto-calculate amount if useDetails is true
+  // Auto-calculate amount
   useEffect(() => {
-    if (useDetails) {
-      const vol = Number(form.volume) || 0
-      const price = Number(form.unitPrice) || 0
-      setForm(prev => ({ ...prev, amount: (vol * price).toString() }))
-    }
-  }, [form.volume, form.unitPrice, useDetails])
+    const vol = Number(form.volume) || 0
+    const price = Number(form.unitPrice) || 0
+    setForm(prev => ({ ...prev, amount: (vol * price).toString() }))
+  }, [form.volume, form.unitPrice])
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
@@ -56,12 +53,9 @@ const ExpenseCreate = () => {
     const e = {}
     if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
     if (!form.category_id) e.category_id = 'Kategori wajib dipilih'
-    if (useDetails) {
-      if (!form.volume || Number(form.volume) <= 0) e.volume = 'Volume wajib diisi'
-      if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Harga satuan wajib diisi'
-    } else {
-      if (!form.amount || Number(form.amount) <= 0) e.amount = 'Nominal harus lebih dari 0'
-    }
+    if (!form.volume || Number(form.volume) <= 0) e.volume = 'Volume wajib diisi'
+    if (!form.unit) e.unit = 'Satuan wajib dipilih'
+    if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Harga satuan wajib diisi'
     
     setErrors(e)
     return Object.keys(e).length === 0
@@ -71,7 +65,7 @@ const ExpenseCreate = () => {
     e.preventDefault()
     if (!validate()) return
     let finalDescription = form.description.trim() || null
-    if (useDetails && form.volume && form.unitPrice) {
+    if (form.volume && form.unitPrice) {
       const detailStr = `[${form.volume} ${form.unit || 'Item'} x Rp ${Number(form.unitPrice).toLocaleString('id-ID')}]`
       finalDescription = finalDescription ? `${detailStr} ${finalDescription}` : detailStr
     }
@@ -130,35 +124,42 @@ const ExpenseCreate = () => {
             {errors.category_id && <p className="text-xs text-red-400 mt-1">{errors.category_id}</p>}
           </div>
 
-          {/* Rincian Biaya Toggle */}
-          <div className="flex items-center justify-between p-3 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-white/5">
+          <div className="grid grid-cols-3 gap-3 p-3 rounded-lg bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30">
             <div>
-              <p className="text-xs font-medium text-slate-800 dark:text-slate-200">Gunakan Rincian Biaya</p>
-              <p className="text-[10px] text-slate-500">Hitung nominal otomatis (Volume × Harga)</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" checked={useDetails} onChange={() => setUseDetails(!useDetails)} />
-              <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-slate-600 peer-checked:bg-blue-500"></div>
-            </label>
-          </div>
-
-          {useDetails && (
-            <div className="grid grid-cols-3 gap-3 p-3 rounded-lg bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30">
-              <div>
-                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Volume *</label>
-                <input type="number" min="1" step="any"
+              <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Volume *</label>
+              <input type="number" min="1" step="any"
                   className={`input-field !py-1.5 !text-xs ${errors.volume ? 'border-red-500/50' : ''}`}
                   placeholder="0"
                   value={form.volume}
                   onChange={e => handleChange('volume', e.target.value)} />
               </div>
               <div>
-                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Satuan</label>
-                <input type="text"
-                  className="input-field !py-1.5 !text-xs"
-                  placeholder="Pcs/Org/Set"
+                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Satuan *</label>
+                <select
+                  className={`input-field !py-1.5 !text-xs ${errors.unit ? 'border-red-500/50' : ''}`}
                   value={form.unit}
-                  onChange={e => handleChange('unit', e.target.value)} />
+                  onChange={e => handleChange('unit', e.target.value)}
+                >
+                  <option value="">-- Pilih --</option>
+                  <option value="Orang">Orang</option>
+                  <option value="Pcs">Pcs</option>
+                  <option value="Set">Set</option>
+                  <option value="Paket">Paket</option>
+                  <option value="Buah">Buah</option>
+                  <option value="Lembar">Lembar</option>
+                  <option value="Liter">Liter</option>
+                  <option value="Kg">Kg</option>
+                  <option value="Gram">Gram</option>
+                  <option value="Meter">Meter</option>
+                  <option value="Karton">Karton/Dus</option>
+                  <option value="Rim">Rim</option>
+                  <option value="Bungkus">Bungkus</option>
+                  <option value="Kegiatan">Kegiatan</option>
+                  <option value="Hari">Hari</option>
+                  <option value="Bulan">Bulan</option>
+                  <option value="Tahun">Tahun</option>
+                  <option value="Lainnya">Lainnya...</option>
+                </select>
               </div>
               <div>
                 <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Harga Satuan *</label>
@@ -172,24 +173,22 @@ const ExpenseCreate = () => {
                   }} />
               </div>
             </div>
-          )}
 
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Nominal (Rp) *</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
               <input type="text" inputMode="numeric"
-                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''} ${useDetails ? 'bg-slate-100 dark:bg-slate-900 opacity-70' : ''}`}
+                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''} bg-slate-100 dark:bg-slate-900 opacity-70`}
                 placeholder="0"
                 value={form.amount ? Number(form.amount).toLocaleString('id-ID') : ''}
-                disabled={useDetails}
+                disabled={true}
                 onChange={e => {
                   const raw = e.target.value.replace(/\D/g, '')
                   handleChange('amount', raw)
                 }} />
             </div>
-            {errors.amount && !useDetails && <p className="text-xs text-red-400 mt-1">{errors.amount}</p>}
-            {useDetails && <p className="text-[10px] text-blue-500 mt-1">Nominal dihitung otomatis dari rincian biaya.</p>}
+            <p className="text-[10px] text-blue-500 mt-1">Nominal dihitung otomatis dari rincian biaya.</p>
           </div>
 
           <div>

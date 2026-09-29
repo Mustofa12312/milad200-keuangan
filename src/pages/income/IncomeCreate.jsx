@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
@@ -19,9 +19,19 @@ const IncomeCreate = () => {
     source: '',
     amount: '',
     description: '',
+    volume: '',
+    unit: '',
+    unitPrice: '',
   })
   const [receiptFile, setReceiptFile] = useState(null)
   const [errors, setErrors] = useState({})
+
+  // Auto-calculate amount
+  useEffect(() => {
+    const vol = Number(form.volume) || 0
+    const price = Number(form.unitPrice) || 0
+    setForm(prev => ({ ...prev, amount: (vol * price).toString() }))
+  }, [form.volume, form.unitPrice])
 
   const mutation = useMutation({
     mutationFn: (data) => transactionService.createTransaction(data.tx, data.file, user.id),
@@ -38,7 +48,9 @@ const IncomeCreate = () => {
     const e = {}
     if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
     if (!form.source.trim()) e.source = 'Sumber pemasukan wajib diisi'
-    if (!form.amount || Number(form.amount) <= 0) e.amount = 'Nominal harus lebih dari 0'
+    if (!form.volume || Number(form.volume) <= 0) e.volume = 'Volume wajib diisi'
+    if (!form.unit) e.unit = 'Satuan wajib dipilih'
+    if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Harga satuan wajib diisi'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -47,12 +59,18 @@ const IncomeCreate = () => {
     e.preventDefault()
     if (!validate()) return
 
+    let finalDescription = form.description.trim() || null
+    if (form.volume && form.unitPrice) {
+      const detailStr = `[${form.volume} ${form.unit || 'Item'} x Rp ${Number(form.unitPrice).toLocaleString('id-ID')}]`
+      finalDescription = finalDescription ? `${detailStr} ${finalDescription}` : detailStr
+    }
+
     const txData = {
       type: 'INCOME',
       transaction_date: form.transaction_date,
       source: form.source.trim(),
       amount: Number(form.amount),
-      description: form.description.trim() || null,
+      description: finalDescription,
       category_id: null,
     }
 
@@ -115,26 +133,78 @@ const IncomeCreate = () => {
             {errors.source && <p className="text-xs text-red-400 mt-1">{errors.source}</p>}
           </div>
 
+          {/* Rincian Biaya */}
+          <div className="grid grid-cols-3 gap-3 p-3 rounded-lg bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-900/30">
+            <div>
+              <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Volume *</label>
+              <input type="number" min="1" step="any"
+                className={`input-field !py-1.5 !text-xs ${errors.volume ? 'border-red-500/50' : ''}`}
+                placeholder="0"
+                value={form.volume}
+                onChange={e => handleChange('volume', e.target.value)} />
+            </div>
+            <div>
+              <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Satuan *</label>
+              <select
+                className={`input-field !py-1.5 !text-xs ${errors.unit ? 'border-red-500/50' : ''}`}
+                value={form.unit}
+                onChange={e => handleChange('unit', e.target.value)}
+              >
+                <option value="">-- Pilih --</option>
+                <option value="Orang">Orang</option>
+                <option value="Pcs">Pcs</option>
+                <option value="Set">Set</option>
+                <option value="Paket">Paket</option>
+                <option value="Buah">Buah</option>
+                <option value="Lembar">Lembar</option>
+                <option value="Liter">Liter</option>
+                <option value="Kg">Kg</option>
+                <option value="Gram">Gram</option>
+                <option value="Meter">Meter</option>
+                <option value="Karton">Karton/Dus</option>
+                <option value="Rim">Rim</option>
+                <option value="Bungkus">Bungkus</option>
+                <option value="Kegiatan">Kegiatan</option>
+                <option value="Hari">Hari</option>
+                <option value="Bulan">Bulan</option>
+                <option value="Tahun">Tahun</option>
+                <option value="Lainnya">Lainnya...</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Harga Satuan *</label>
+              <input type="text" inputMode="numeric"
+                className={`input-field !py-1.5 !text-xs currency ${errors.unitPrice ? 'border-red-500/50' : ''}`}
+                placeholder="0"
+                value={form.unitPrice ? Number(form.unitPrice).toLocaleString('id-ID') : ''}
+                onChange={e => {
+                  const raw = e.target.value.replace(/\D/g, '')
+                  handleChange('unitPrice', raw)
+                }} />
+            </div>
+          </div>
+
           {/* Nominal */}
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
-              Nominal (Rp) <span className="text-red-400">*</span>
+              Nominal (Rp) *
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
               <input
                 type="text"
                 inputMode="numeric"
-                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''}`}
+                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''} bg-slate-100 dark:bg-slate-900 opacity-70`}
                 placeholder="0"
                 value={form.amount ? formatAmountDisplay(form.amount.toString()) : ''}
+                disabled={true}
                 onChange={e => {
                   const raw = e.target.value.replace(/\D/g, '')
                   handleChange('amount', raw)
                 }}
               />
             </div>
-            {errors.amount && <p className="text-xs text-red-400 mt-1">{errors.amount}</p>}
+            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 mt-1">Nominal dihitung otomatis dari rincian.</p>
           </div>
 
           {/* Keterangan */}
