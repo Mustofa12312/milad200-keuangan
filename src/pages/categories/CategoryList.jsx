@@ -83,7 +83,7 @@ const CategoryList = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold font-display text-slate-100">Kategori</h1>
+          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Kategori</h1>
           <p className="text-xs text-slate-500">Kelola kategori pengeluaran</p>
         </div>
         {isAdmin && (
@@ -95,11 +95,11 @@ const CategoryList = () => {
       </div>
 
       {/* Active categories */}
-      <div className="glass rounded-xl border border-white/5 overflow-hidden">
-        <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-200">Kategori Aktif ({active.length})</h3>
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+        <div className="px-5 py-4 border-b border-slate-200 dark:border-white/5 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Kategori Aktif ({active.length})</h3>
           <button
-            className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-300 transition-colors"
             onClick={() => setShowInactive(!showInactive)}
           >
             {showInactive ? 'Sembunyikan' : 'Tampilkan'} nonaktif
@@ -109,14 +109,14 @@ const CategoryList = () => {
         {isLoading ? (
           <div className="p-5 space-y-2">{[...Array(5)].map((_, i) => <div key={i} className="skeleton h-10 rounded-lg" />)}</div>
         ) : active.length > 0 ? (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-slate-200 dark:divide-white/5">
             {active.map(cat => (
               <div key={cat.id} className="px-5 py-3.5 flex items-center gap-3 table-row-hover">
                 <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center flex-shrink-0">
                   <Tags size={15} className="text-blue-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-200">{cat.name}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{cat.name}</p>
                   {cat.description && <p className="text-xs text-slate-500">{cat.description}</p>}
                 </div>
                 {isAdmin && (
@@ -143,18 +143,18 @@ const CategoryList = () => {
 
       {/* Inactive categories */}
       {showInactive && inactive.length > 0 && (
-        <div className="glass rounded-xl border border-white/5 overflow-hidden">
-          <div className="px-5 py-4 border-b border-white/5">
-            <h3 className="text-sm font-semibold text-slate-400">Kategori Nonaktif ({inactive.length})</h3>
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-200 dark:border-white/5">
+            <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-400">Kategori Nonaktif ({inactive.length})</h3>
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-slate-200 dark:divide-white/5">
             {inactive.map(cat => (
               <div key={cat.id} className="px-5 py-3.5 flex items-center gap-3 opacity-60">
-                <div className="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center flex-shrink-0">
+                <div className="w-8 h-8 rounded-lg bg-slate-200 dark:bg-slate-700 flex items-center justify-center flex-shrink-0">
                   <Tags size={15} className="text-slate-500" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-slate-400 line-through">{cat.name}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 line-through">{cat.name}</p>
                 </div>
                 {isAdmin && (
                   <button
@@ -174,20 +174,20 @@ const CategoryList = () => {
       {/* Create/Edit Modal */}
       {showCreate && (
         <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-          <div className="glass border border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
-            <h3 className="text-base font-semibold text-slate-100 mb-4">
+          <div className="glass border border-slate-300 dark:border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">
               {editItem ? 'Edit Kategori' : 'Tambah Kategori'}
             </h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Nama Kategori *</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Nama Kategori *</label>
                 <input type="text" className={`input-field ${errors.name ? 'border-red-500/50' : ''}`}
                   placeholder="Contoh: Konsumsi, Transportasi..."
                   value={form.name} onChange={e => setForm(p => ({ ...p, name: e.target.value }))} />
                 {errors.name && <p className="text-xs text-red-400 mt-1">{errors.name}</p>}
               </div>
               <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Deskripsi</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Deskripsi</label>
                 <input type="text" className="input-field" placeholder="Opsional"
                   value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
               </div>

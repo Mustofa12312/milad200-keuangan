@@ -11,7 +11,7 @@ const ACTION_LABELS = {
   UPDATE: { label: 'Mengubah', color: 'text-blue-400 bg-blue-400/10' },
   DELETE: { label: 'Membatalkan', color: 'text-red-400 bg-red-400/10' },
   LOGIN: { label: 'Login', color: 'text-violet-400 bg-violet-400/10' },
-  LOGOUT: { label: 'Logout', color: 'text-slate-400 bg-slate-400/10' },
+  LOGOUT: { label: 'Logout', color: 'text-slate-600 dark:text-slate-400 bg-slate-400/10' },
   PAYMENT: { label: 'Pembayaran', color: 'text-amber-400 bg-amber-400/10' },
   ACTIVATE: { label: 'Mengaktifkan', color: 'text-emerald-400 bg-emerald-400/10' },
   DEACTIVATE: { label: 'Menonaktifkan', color: 'text-red-400 bg-red-400/10' },
@@ -50,7 +50,7 @@ const AuditLog = () => {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-lg font-bold font-display text-slate-100">Audit Log</h1>
+        <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Audit Log</h1>
         <p className="text-xs text-slate-500">Riwayat aktivitas seluruh pengguna</p>
       </div>
 
@@ -62,7 +62,7 @@ const AuditLog = () => {
       </div>
 
       {/* Filter */}
-      <div className="glass rounded-xl border border-white/5 p-4">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-4">
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           <div>
             <label className="block text-xs text-slate-500 mb-1">Aksi</label>
@@ -93,22 +93,22 @@ const AuditLog = () => {
       </div>
 
       {/* Log list */}
-      <div className="glass rounded-xl border border-white/5 overflow-hidden">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
         {isLoading ? (
           <div className="p-5 space-y-3">{[...Array(8)].map((_, i) => <div key={i} className="skeleton h-14 rounded-xl" />)}</div>
         ) : data?.data?.length > 0 ? (
           <>
-            <div className="divide-y divide-white/5">
+            <div className="divide-y divide-slate-200 dark:divide-white/5">
               {data.data.map(log => {
-                const actionInfo = ACTION_LABELS[log.action] || { label: log.action, color: 'text-slate-400 bg-slate-400/10' }
+                const actionInfo = ACTION_LABELS[log.action] || { label: log.action, color: 'text-slate-600 dark:text-slate-400 bg-slate-400/10' }
                 return (
                   <div key={log.id} className="px-5 py-4 flex items-start gap-3 table-row-hover">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500/30 to-violet-600/30 flex items-center justify-center flex-shrink-0 text-xs font-bold text-slate-300">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500/30 to-violet-600/30 flex items-center justify-center flex-shrink-0 text-xs font-bold text-slate-700 dark:text-slate-300">
                       {getInitials(log.user?.full_name)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                        <span className="text-sm font-medium text-slate-200">{log.user?.full_name || 'System'}</span>
+                        <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{log.user?.full_name || 'System'}</span>
                         <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${actionInfo.color}`}>
                           {actionInfo.label}
                         </span>
@@ -122,14 +122,14 @@ const AuditLog = () => {
                       {(log.old_data || log.new_data) && (
                         <div className="mt-2 p-2 rounded-lg bg-slate-800/50 text-[11px]">
                           {log.old_data?.amount && log.new_data?.amount && (
-                            <span className="text-slate-400">
+                            <span className="text-slate-600 dark:text-slate-400">
                               Nominal: <span className="text-red-400 line-through">{Number(log.old_data.amount).toLocaleString('id-ID')}</span>
                               {' → '}
                               <span className="text-emerald-400">{Number(log.new_data.amount).toLocaleString('id-ID')}</span>
                             </span>
                           )}
                           {log.new_data?.name && (
-                            <span className="text-slate-400">Nama: <span className="text-slate-200">{log.new_data.name}</span></span>
+                            <span className="text-slate-600 dark:text-slate-400">Nama: <span className="text-slate-800 dark:text-slate-200">{log.new_data.name}</span></span>
                           )}
                         </div>
                       )}

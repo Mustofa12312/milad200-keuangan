@@ -3,7 +3,7 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, TrendingUp, TrendingDown, CreditCard,
   Tags, Users, FileText, ClipboardList, Trash2,
-  Menu, X, LogOut, ChevronRight, Bell, AlertTriangle,
+  Menu, X, LogOut, ChevronRight, ChevronLeft, Bell, AlertTriangle,
   Settings,
 } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
@@ -22,7 +22,6 @@ const NAV_ITEMS = [
   { to: '/users', icon: Users, label: 'Pengguna', roles: ['ADMIN'] },
   { to: '/audit', icon: ClipboardList, label: 'Audit Log', roles: ['ADMIN'] },
   { to: '/cancelled', icon: Trash2, label: 'Dibatalkan', roles: ['ADMIN'] },
-  { to: '/settings', icon: Settings, label: 'Pengaturan', roles: ['ADMIN', 'USER'] },
 ]
 
 
@@ -38,6 +37,7 @@ const MOBILE_NAV = [
 const AppLayout = ({ children }) => {
   const { profile, isAdmin, role, signOut } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isMinimized, setIsMinimized] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -62,36 +62,40 @@ const AppLayout = ({ children }) => {
   const currentPage = filteredNav.find(n => location.pathname.startsWith(n.to))?.label || 'Dashboard'
 
   const SidebarContent = () => (
-    <aside className="flex flex-col h-full">
+    <aside className="flex flex-col h-full overflow-hidden">
       {/* Logo */}
-      <div className="p-5 border-b border-white/5">
-        <Link to="/dashboard" className="flex items-center gap-3 group">
+      <div className="p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-center">
+        <Link to="/dashboard" className={`flex items-center gap-3 group w-full ${isMinimized ? 'justify-center' : ''}`}>
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
-            <span className="text-white font-bold text-sm">KP</span>
+            <span className="text-slate-900 dark:text-white font-bold text-sm">KP</span>
           </div>
-          <div className="min-w-0">
-            <p className="text-xs font-bold text-slate-100 leading-tight">Laporan Keuangan</p>
-            <p className="text-[10px] text-slate-500 leading-tight truncate">200 Tahun Panyeppen</p>
-          </div>
+          {!isMinimized && (
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-tight truncate">Laporan Keuangan</p>
+              <p className="text-[10px] text-slate-500 leading-tight truncate">200 Tahun Panyeppen</p>
+            </div>
+          )}
         </Link>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-1">Menu Utama</p>
+        {!isMinimized && <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-1">Menu Utama</p>}
+        {isMinimized && <div className="h-2"></div>}
         {filteredNav.slice(0, 5).map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-            <Icon size={15} className="flex-shrink-0" />
-            <span>{label}</span>
+          <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? label : undefined}>
+            <Icon size={isMinimized ? 18 : 15} className="flex-shrink-0" />
+            {!isMinimized && <span>{label}</span>}
           </NavLink>
         ))}
         {isAdmin && filteredNav.length > 5 && (
           <>
-            <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-4">Admin</p>
+            {!isMinimized && <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-4">Admin</p>}
+            {isMinimized && <div className="h-4 border-t border-slate-200 dark:border-white/5 mx-2 my-2"></div>}
             {filteredNav.slice(5).map(({ to, icon: Icon, label }) => (
-              <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-                <Icon size={15} className="flex-shrink-0" />
-                <span>{label}</span>
+              <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? label : undefined}>
+                <Icon size={isMinimized ? 18 : 15} className="flex-shrink-0" />
+                {!isMinimized && <span>{label}</span>}
               </NavLink>
             ))}
           </>
@@ -99,32 +103,43 @@ const AppLayout = ({ children }) => {
       </nav>
 
       {/* Bottom: Profile + Settings */}
-      <div className="p-3 border-t border-white/5 space-y-1">
-        <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-          <Settings size={15} />
-          <span>Pengaturan</span>
+      <div className="p-3 border-t border-slate-200 dark:border-white/5 space-y-1">
+        <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? 'Pengaturan' : undefined}>
+          <Settings size={isMinimized ? 18 : 15} className="flex-shrink-0" />
+          {!isMinimized && <span>Pengaturan</span>}
         </NavLink>
-        <div className="flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 transition-colors mt-1">
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white">
+        <div className={`flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 transition-colors mt-1 ${isMinimized ? 'justify-center' : ''}`}>
+          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-slate-900 dark:text-white cursor-pointer" title={isMinimized ? profile?.full_name : undefined}>
             {getInitials(profile?.full_name)}
           </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-xs font-medium text-slate-200 truncate">{profile?.full_name || 'User'}</p>
-            <p className="text-[10px] text-slate-500">{isAdmin ? 'Admin' : 'Petugas'}</p>
-          </div>
-          <button onClick={handleSignOut} className="text-slate-600 hover:text-red-400 transition-colors p-1 rounded" title="Keluar">
-            <LogOut size={13} />
-          </button>
+          {!isMinimized && (
+            <>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{profile?.full_name || 'User'}</p>
+                <p className="text-[10px] text-slate-500 truncate">{isAdmin ? 'Admin' : 'Petugas'}</p>
+              </div>
+              <button onClick={handleSignOut} className="text-slate-600 hover:text-red-400 transition-colors p-1 rounded flex-shrink-0" title="Keluar">
+                <LogOut size={13} />
+              </button>
+            </>
+          )}
         </div>
       </div>
     </aside>
   )
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-950">
+    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex w-56 flex-shrink-0 flex-col glass border-r border-white/5">
+      <div className={`hidden lg:flex flex-shrink-0 flex-col glass border-r border-slate-200 dark:border-white/5 transition-all duration-300 relative z-40 ${isMinimized ? 'w-20' : 'w-56'}`}>
         <SidebarContent />
+        <button 
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="absolute -right-3 top-[17px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-white/10 rounded-full p-1 shadow-lg transition-colors z-50 flex items-center justify-center"
+          title={isMinimized ? 'Perbesar Menu' : 'Perkecil Menu'}
+        >
+          {isMinimized ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+        </button>
       </div>
 
       {/* Mobile Sidebar Overlay */}
@@ -132,9 +147,9 @@ const AppLayout = ({ children }) => {
         <div className="lg:hidden fixed inset-0 z-40 modal-overlay" onClick={() => setSidebarOpen(false)} />
       )}
       <div className={`lg:hidden fixed left-0 top-0 bottom-0 z-50 w-60 glass flex flex-col transition-transform duration-300 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between p-4 border-b border-white/5">
-          <span className="text-sm font-semibold text-slate-200">Menu</span>
-          <button onClick={() => setSidebarOpen(false)} className="text-slate-400 hover:text-white p-1">
+        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-white/5">
+          <span className="text-sm font-semibold text-slate-800 dark:text-slate-200">Menu</span>
+          <button onClick={() => setSidebarOpen(false)} className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white p-1">
             <X size={16} />
           </button>
         </div>
@@ -144,15 +159,15 @@ const AppLayout = ({ children }) => {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
         {/* Topbar */}
-        <header className="h-14 flex items-center gap-3 px-4 border-b border-white/5 glass flex-shrink-0 z-30">
-          <button className="lg:hidden text-slate-400 hover:text-white transition-colors" onClick={() => setSidebarOpen(true)}>
+        <header className="h-14 flex items-center gap-3 px-4 border-b border-slate-200 dark:border-white/5 glass flex-shrink-0 z-30">
+          <button className="lg:hidden text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:text-white transition-colors" onClick={() => setSidebarOpen(true)}>
             <Menu size={18} />
           </button>
 
           <div className="flex items-center gap-1.5 text-sm text-slate-500 hidden sm:flex">
             <span className="text-[10px] text-slate-600">200 Tahun Panyeppen</span>
             <ChevronRight size={12} />
-            <span className="font-medium text-slate-300 text-xs">{currentPage}</span>
+            <span className="font-medium text-slate-700 dark:text-slate-300 text-xs">{currentPage}</span>
           </div>
 
           <div className="flex-1" />
@@ -165,7 +180,7 @@ const AppLayout = ({ children }) => {
                 className="relative text-amber-400 hover:text-amber-300 transition-colors p-1.5 rounded-lg hover:bg-amber-400/10"
               >
                 <Bell size={16} />
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-500 rounded-full text-[9px] font-bold text-slate-900 dark:text-white flex items-center justify-center">
                   {overdueCount > 9 ? '9+' : overdueCount}
                 </span>
               </button>
@@ -173,12 +188,12 @@ const AppLayout = ({ children }) => {
               {notifOpen && (
                 <>
                   <div className="fixed inset-0 z-10" onClick={() => setNotifOpen(false)} />
-                  <div className="absolute right-0 top-9 z-20 w-72 glass border border-white/10 rounded-xl shadow-2xl animate-fade-in overflow-hidden">
-                    <div className="px-4 py-3 border-b border-white/5">
-                      <p className="text-xs font-semibold text-slate-200">Hutang Jatuh Tempo</p>
+                  <div className="absolute right-0 top-9 z-20 w-72 glass border border-slate-300 dark:border-white/10 rounded-xl shadow-2xl animate-fade-in overflow-hidden">
+                    <div className="px-4 py-3 border-b border-slate-200 dark:border-white/5">
+                      <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">Hutang Jatuh Tempo</p>
                       <p className="text-[10px] text-slate-500">{overdueCount} hutang perlu perhatian</p>
                     </div>
-                    <div className="max-h-64 overflow-y-auto divide-y divide-white/5">
+                    <div className="max-h-64 overflow-y-auto divide-y divide-slate-200 dark:divide-white/5">
                       {debtData?.slice(0, 5).map(debt => (
                         <Link
                           key={debt.id}
@@ -188,14 +203,14 @@ const AppLayout = ({ children }) => {
                         >
                           <AlertTriangle size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />
                           <div className="min-w-0">
-                            <p className="text-xs font-medium text-slate-200 truncate">{debt.party_name}</p>
+                            <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{debt.party_name}</p>
                             <p className="text-[10px] text-red-400">Jatuh tempo: {formatDate(debt.due_date)}</p>
                             <p className="text-[10px] text-slate-500">Sisa: {formatCurrency(debt.remaining_amount)}</p>
                           </div>
                         </Link>
                       ))}
                     </div>
-                    <div className="px-4 py-2 border-t border-white/5">
+                    <div className="px-4 py-2 border-t border-slate-200 dark:border-white/5">
                       <Link to="/debt" onClick={() => setNotifOpen(false)} className="text-xs text-blue-400 hover:text-blue-300">
                         Lihat semua hutang →
                       </Link>
@@ -208,14 +223,14 @@ const AppLayout = ({ children }) => {
 
           {/* Desktop user */}
           <Link to="/settings" className="hidden lg:flex items-center gap-2 hover:bg-white/5 rounded-lg px-2 py-1 transition-colors">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-white">
+            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white">
               {getInitials(profile?.full_name)}
             </div>
-            <span className="text-xs text-slate-400">{profile?.full_name?.split(' ')[0] || 'User'}</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">{profile?.full_name?.split(' ')[0] || 'User'}</span>
           </Link>
 
           {/* Mobile avatar */}
-          <Link to="/settings" className="lg:hidden w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-white">
+          <Link to="/settings" className="lg:hidden w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-[10px] font-bold text-slate-900 dark:text-white">
             {getInitials(profile?.full_name)}
           </Link>
         </header>
@@ -228,7 +243,7 @@ const AppLayout = ({ children }) => {
         </main>
 
         {/* Mobile Bottom Navigation */}
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass border-t border-white/5">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-30 glass border-t border-slate-200 dark:border-white/5">
           <div className="flex items-center justify-around px-1 py-2">
             {MOBILE_NAV.map(({ to, icon: Icon, label }) => {
               const isActive = location.pathname.startsWith(to)
@@ -239,7 +254,7 @@ const AppLayout = ({ children }) => {
                   className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl transition-all ${
                     isActive
                       ? 'text-blue-400 bg-blue-500/15'
-                      : 'text-slate-500 hover:text-slate-300'
+                      : 'text-slate-500 hover:text-slate-700 dark:text-slate-300'
                   }`}
                 >
                   <Icon size={18} />

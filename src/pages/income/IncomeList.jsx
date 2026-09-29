@@ -78,7 +78,7 @@ const IncomeList = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold font-display text-slate-100">Pemasukan</h1>
+          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Pemasukan</h1>
           <p className="text-xs text-slate-500">
             {data?.count != null ? `${data.count} transaksi ditemukan` : 'Kelola semua transaksi pemasukan'}
           </p>
@@ -137,7 +137,7 @@ const IncomeList = () => {
       </div>
 
       {/* Table */}
-      <div className="glass rounded-xl border border-white/5 overflow-hidden">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
         <TransactionTable
           data={data?.data}
           totalPages={data?.totalPages}

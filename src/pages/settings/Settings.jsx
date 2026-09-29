@@ -95,15 +95,15 @@ const Settings = () => {
     <div className="max-w-2xl mx-auto space-y-5">
       {/* Header */}
       <div>
-        <h1 className="text-lg font-bold font-display text-slate-100">Pengaturan</h1>
+        <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Pengaturan</h1>
         <p className="text-xs text-slate-500">Kelola profil dan keamanan akun Anda</p>
       </div>
 
       {/* Profile banner */}
-      <div className="glass rounded-xl border border-white/5 p-5">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
         <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-xl font-bold text-white shadow-lg shadow-blue-500/20">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center text-xl font-bold text-slate-900 dark:text-white shadow-lg shadow-blue-500/20">
               {getInitials(profile?.full_name)}
             </div>
             <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-emerald-500 border-2 border-slate-900 flex items-center justify-center">
@@ -111,8 +111,8 @@ const Settings = () => {
             </div>
           </div>
           <div className="flex-1 min-w-0">
-            <h2 className="text-base font-bold text-slate-100">{profile?.full_name || 'Pengguna'}</h2>
-            <p className="text-sm text-slate-400">{user?.email}</p>
+            <h2 className="text-base font-bold text-slate-900 dark:text-slate-100">{profile?.full_name || 'Pengguna'}</h2>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{user?.email}</p>
             <div className="flex items-center gap-2 mt-1">
               <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${isAdmin ? 'bg-violet-500/15 text-violet-400 border border-violet-500/20' : 'bg-blue-500/15 text-blue-400 border border-blue-500/20'}`}>
                 {isAdmin ? '👑 Administrator' : '👤 Petugas'}
@@ -126,7 +126,7 @@ const Settings = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 glass rounded-xl border border-white/5">
+      <div className="flex gap-1 p-1 glass rounded-xl border border-slate-200 dark:border-white/5">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
@@ -134,7 +134,7 @@ const Settings = () => {
             className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-medium transition-all ${
               activeTab === key
                 ? 'bg-blue-500/20 text-blue-400 border border-blue-500/20'
-                : 'text-slate-500 hover:text-slate-300'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-300'
             }`}
           >
             <Icon size={13} />
@@ -145,11 +145,11 @@ const Settings = () => {
 
       {/* Tab content */}
       {activeTab === 'profile' && (
-        <div className="glass rounded-xl border border-white/5 p-5 animate-fade-in">
-          <h3 className="text-sm font-semibold text-slate-200 mb-4">Informasi Profil</h3>
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5 animate-fade-in">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-4">Informasi Profil</h3>
           <form onSubmit={handleUpdateProfile} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Nama Lengkap</label>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Nama Lengkap</label>
               <input
                 type="text"
                 className="input-field"
@@ -159,12 +159,12 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Email</label>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Email</label>
               <input type="email" className="input-field opacity-60" value={user?.email || ''} disabled />
               <p className="text-[10px] text-slate-500 mt-1">Email tidak dapat diubah</p>
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1.5">Role</label>
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Role</label>
               <input
                 type="text"
                 className="input-field opacity-60"
@@ -175,7 +175,7 @@ const Settings = () => {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Bergabung</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Bergabung</label>
                 <input
                   type="text"
                   className="input-field opacity-60"
@@ -184,7 +184,7 @@ const Settings = () => {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1.5">Terakhir Login</label>
+                <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Terakhir Login</label>
                 <input
                   type="text"
                   className="input-field opacity-60"
@@ -204,15 +204,15 @@ const Settings = () => {
       {activeTab === 'security' && (
         <div className="space-y-4 animate-fade-in">
           {/* Change password */}
-          <div className="glass rounded-xl border border-white/5 p-5">
-            <h3 className="text-sm font-semibold text-slate-200 mb-4">Ubah Password</h3>
+          <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-4">Ubah Password</h3>
             <form onSubmit={handleUpdatePassword} className="space-y-4">
               {[
                 { key: 'newPassword', label: 'Password Baru', show: showPasswords.new, toggleKey: 'new' },
                 { key: 'confirmPassword', label: 'Konfirmasi Password Baru', show: showPasswords.confirm, toggleKey: 'confirm' },
               ].map(({ key, label, show, toggleKey }) => (
                 <div key={key}>
-                  <label className="block text-xs font-medium text-slate-400 mb-1.5">{label}</label>
+                  <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">{label}</label>
                   <div className="relative">
                     <Lock size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
                     <input
@@ -224,7 +224,7 @@ const Settings = () => {
                     />
                     <button
                       type="button"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-300 transition-colors"
                       onClick={() => setShowPasswords(p => ({ ...p, [toggleKey]: !p[toggleKey] }))}
                     >
                       {show ? <EyeOff size={14} /> : <Eye size={14} />}
@@ -237,7 +237,7 @@ const Settings = () => {
               {/* Password strength */}
               {passwordForm.newPassword && (
                 <div className="p-3 rounded-lg bg-slate-800/50 space-y-1.5">
-                  <p className="text-[10px] text-slate-400 font-medium">Kekuatan Password:</p>
+                  <p className="text-[10px] text-slate-600 dark:text-slate-400 font-medium">Kekuatan Password:</p>
                   {[
                     { label: 'Minimal 8 karakter', ok: passwordForm.newPassword.length >= 8 },
                     { label: 'Mengandung angka', ok: /\d/.test(passwordForm.newPassword) },
@@ -262,7 +262,7 @@ const Settings = () => {
           {/* Danger zone */}
           <div className="glass rounded-xl border border-red-500/20 p-5 bg-red-500/5">
             <h3 className="text-sm font-semibold text-red-400 mb-3">Zona Berbahaya</h3>
-            <p className="text-xs text-slate-400 mb-4">
+            <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
               Keluar dari semua perangkat akan menghapus semua sesi aktif Anda.
             </p>
             <button onClick={handleSignOut} className="btn btn-danger btn-sm w-full">
@@ -274,14 +274,14 @@ const Settings = () => {
 
       {activeTab === 'about' && (
         <div className="space-y-4 animate-fade-in">
-          <div className="glass rounded-xl border border-white/5 p-5">
+          <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
             <div className="flex items-center gap-4 mb-5">
               <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center">
-                <span className="text-white font-bold text-lg">KP</span>
+                <span className="text-slate-900 dark:text-white font-bold text-lg">KP</span>
               </div>
               <div>
                 <h3 className="text-base font-bold gradient-text">Laporan Keuangan</h3>
-                <p className="text-xs text-slate-400">200 Tahun Panyeppen</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">200 Tahun Panyeppen</p>
               </div>
             </div>
 
@@ -294,16 +294,16 @@ const Settings = () => {
                 { label: 'Auth', value: 'Semua Panitia Milad' },
                 { label: 'Storage', value: 'Pondok Pesantren Panyeppen' },
               ].map(({ label, value }) => (
-                <div key={label} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
-                  <span className="text-xs text-slate-400">{label}</span>
-                  <span className="text-xs font-medium text-slate-200">{value}</span>
+                <div key={label} className="flex items-center justify-between py-2 border-b border-slate-200 dark:border-white/5 last:border-0">
+                  <span className="text-xs text-slate-600 dark:text-slate-400">{label}</span>
+                  <span className="text-xs font-medium text-slate-800 dark:text-slate-200">{value}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="glass rounded-xl border border-white/5 p-5">
-            <h3 className="text-sm font-semibold text-slate-200 mb-3">Fitur Aktif</h3>
+          <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200 mb-3">Fitur Aktif</h3>
             <div className="space-y-2">
               {[
                 '✅ Login & Manajemen Sesi',
@@ -323,7 +323,7 @@ const Settings = () => {
                 '✅ Soft Delete Transaksi',
                 '✅ Responsive Mobile',
               ].map((f, i) => (
-                <p key={i} className="text-xs text-slate-300">{f}</p>
+                <p key={i} className="text-xs text-slate-700 dark:text-slate-300">{f}</p>
               ))}
             </div>
           </div>

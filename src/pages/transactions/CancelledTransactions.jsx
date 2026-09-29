@@ -67,7 +67,7 @@ const CancelledTransactions = () => {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-lg font-bold font-display text-slate-100">Transaksi Dibatalkan</h1>
+        <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Transaksi Dibatalkan</h1>
         <p className="text-xs text-slate-500">Riwayat transaksi yang telah dibatalkan oleh Admin</p>
       </div>
 
@@ -81,7 +81,7 @@ const CancelledTransactions = () => {
       </div>
 
       {/* Search */}
-      <div className="glass rounded-xl border border-white/5 p-4">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-4">
         <div className="relative">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
@@ -95,7 +95,7 @@ const CancelledTransactions = () => {
       </div>
 
       {/* Table */}
-      <div className="glass rounded-xl border border-white/5 overflow-hidden">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
         {isLoading ? (
           <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => <div key={i} className="skeleton h-12 rounded-lg" />)}
@@ -105,33 +105,33 @@ const CancelledTransactions = () => {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-white/5">
-                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">Tanggal</th>
-                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">Jenis</th>
-                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">Keterangan</th>
-                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">Nominal</th>
-                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden md:table-cell">Dibatalkan oleh</th>
-                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden lg:table-cell">Waktu Pembatalan</th>
+                  <tr className="border-b border-slate-200 dark:border-white/5">
+                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Tanggal</th>
+                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Jenis</th>
+                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Keterangan</th>
+                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Nominal</th>
+                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden md:table-cell">Dibatalkan oleh</th>
+                    <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden lg:table-cell">Waktu Pembatalan</th>
                     <th className="px-5 py-3" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                   {data.data.map(tx => (
                     <tr key={tx.id} className="table-row-hover opacity-70 hover:opacity-100 transition-opacity">
-                      <td className="px-5 py-3.5 text-sm text-slate-300">{formatDate(tx.transaction_date)}</td>
+                      <td className="px-5 py-3.5 text-sm text-slate-700 dark:text-slate-300">{formatDate(tx.transaction_date)}</td>
                       <td className="px-5 py-3.5">
                         <Badge
                           type={tx.type}
                           label={tx.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran'}
                         />
                       </td>
-                      <td className="px-5 py-3.5 text-sm text-slate-400">
+                      <td className="px-5 py-3.5 text-sm text-slate-600 dark:text-slate-400">
                         {tx.source || tx.categories?.name || tx.description || '-'}
                       </td>
                       <td className={`px-5 py-3.5 text-sm font-semibold currency line-through ${tx.type === 'INCOME' ? 'text-emerald-600' : 'text-red-600'}`}>
                         {formatCurrency(tx.amount)}
                       </td>
-                      <td className="px-5 py-3.5 text-xs text-slate-400 hidden md:table-cell">
+                      <td className="px-5 py-3.5 text-xs text-slate-600 dark:text-slate-400 hidden md:table-cell">
                         {tx.deleter?.full_name || '-'}
                       </td>
                       <td className="px-5 py-3.5 text-xs text-slate-500 hidden lg:table-cell">

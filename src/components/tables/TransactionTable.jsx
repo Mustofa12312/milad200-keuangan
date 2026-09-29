@@ -62,22 +62,22 @@ const TransactionTable = ({
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-white/5">
-              <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">Tanggal</th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">
+            <tr className="border-b border-slate-200 dark:border-white/5">
+              <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Tanggal</th>
+              <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">
                 {isIncome ? 'Sumber' : 'Kategori'}
               </th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden md:table-cell">Keterangan</th>
-              <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden lg:table-cell">Petugas</th>
-              <th className="text-right px-5 py-3 text-xs font-medium text-slate-400">Nominal</th>
-              <th className="px-5 py-3 text-xs font-medium text-slate-400">Nota</th>
+              <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden md:table-cell">Keterangan</th>
+              <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden lg:table-cell">Petugas</th>
+              <th className="text-right px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Nominal</th>
+              <th className="px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Nota</th>
               <th className="px-5 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-slate-200 dark:divide-white/5">
             {data.map(tx => (
               <tr key={tx.id} className="table-row-hover group">
-                <td className="px-5 py-3.5 text-sm text-slate-300 whitespace-nowrap">
+                <td className="px-5 py-3.5 text-sm text-slate-700 dark:text-slate-300 whitespace-nowrap">
                   {formatDate(tx.transaction_date)}
                 </td>
                 <td className="px-5 py-3.5">
@@ -85,12 +85,12 @@ const TransactionTable = ({
                     <div className={`w-7 h-7 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0`}>
                       <Icon size={13} className={iconColor} />
                     </div>
-                    <span className="text-sm font-medium text-slate-200 truncate max-w-36">
+                    <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate max-w-36">
                       {isIncome ? tx.source : tx.categories?.name || '-'}
                     </span>
                   </div>
                 </td>
-                <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">
+                <td className="px-5 py-3.5 text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">
                   {truncate(tx.description, 35) || '—'}
                 </td>
                 <td className="px-5 py-3.5 text-xs text-slate-500 hidden lg:table-cell">
@@ -138,12 +138,12 @@ const TransactionTable = ({
       </div>
 
       {/* Mobile cards */}
-      <div className="sm:hidden divide-y divide-white/5">
+      <div className="sm:hidden divide-y divide-slate-200 dark:divide-white/5">
         {data.map(tx => (
           <div key={tx.id} className="p-4">
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-slate-200 truncate">
+                <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
                   {isIncome ? tx.source : tx.categories?.name || 'Pengeluaran'}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">

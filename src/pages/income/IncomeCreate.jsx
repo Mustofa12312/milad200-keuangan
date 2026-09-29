@@ -78,17 +78,17 @@ const IncomeCreate = () => {
           <ArrowLeft size={14} />
         </button>
         <div>
-          <h1 className="text-lg font-bold font-display text-slate-100">Tambah Pemasukan</h1>
+          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Tambah Pemasukan</h1>
           <p className="text-xs text-slate-500">Catat transaksi pemasukan baru</p>
         </div>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="glass rounded-xl border border-white/5 p-5 space-y-4">
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5 space-y-4">
           {/* Tanggal */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
               Tanggal <span className="text-red-400">*</span>
             </label>
             <input
@@ -103,7 +103,7 @@ const IncomeCreate = () => {
 
           {/* Sumber */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
               Sumber Pemasukan <span className="text-red-400">*</span>
             </label>
             <input
@@ -118,11 +118,11 @@ const IncomeCreate = () => {
 
           {/* Nominal */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">
               Nominal (Rp) <span className="text-red-400">*</span>
             </label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">Rp</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -140,7 +140,7 @@ const IncomeCreate = () => {
 
           {/* Keterangan */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Keterangan</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Keterangan</label>
             <textarea
               className="input-field resize-none"
               rows={3}
@@ -152,7 +152,7 @@ const IncomeCreate = () => {
 
           {/* Petugas */}
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Petugas</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Petugas</label>
             <input
               type="text"
               className="input-field opacity-60"
@@ -163,8 +163,8 @@ const IncomeCreate = () => {
         </div>
 
         {/* Receipt */}
-        <div className="glass rounded-xl border border-white/5 p-5">
-          <label className="block text-xs font-medium text-slate-400 mb-3">
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">
             Foto Nota / Bukti <span className="text-red-400">*</span>
           </label>
           <ReceiptUploader

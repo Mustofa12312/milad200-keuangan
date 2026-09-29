@@ -74,36 +74,36 @@ const IncomeEdit = () => {
       <div className="flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm"><ArrowLeft size={14} /></button>
         <div>
-          <h1 className="text-lg font-bold font-display text-slate-100">Edit Pemasukan</h1>
+          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Edit Pemasukan</h1>
           <p className="text-xs text-slate-500">Perbarui data transaksi pemasukan</p>
         </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="glass rounded-xl border border-white/5 p-5 space-y-4">
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5 space-y-4">
           {/* Warning banner */}
           <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
             <p className="text-xs text-amber-400">⚠️ Perubahan ini akan dicatat di Audit Log</p>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Tanggal *</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Tanggal *</label>
             <input type="date" className={`input-field ${errors.transaction_date ? 'border-red-500/50' : ''}`}
               value={form.transaction_date} onChange={e => setForm(p => ({ ...p, transaction_date: e.target.value }))} />
             {errors.transaction_date && <p className="text-xs text-red-400 mt-1">{errors.transaction_date}</p>}
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Sumber *</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Sumber *</label>
             <input type="text" className={`input-field ${errors.source ? 'border-red-500/50' : ''}`}
               value={form.source} onChange={e => setForm(p => ({ ...p, source: e.target.value }))} />
             {errors.source && <p className="text-xs text-red-400 mt-1">{errors.source}</p>}
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Nominal (Rp) *</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Nominal (Rp) *</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">Rp</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
               <input type="text" inputMode="numeric"
                 className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''}`}
                 value={form.amount ? Number(form.amount).toLocaleString('id-ID') : ''}
@@ -116,7 +116,7 @@ const IncomeEdit = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-400 mb-1.5">Keterangan</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Keterangan</label>
             <textarea className="input-field resize-none" rows={3}
               value={form.description}
               onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />

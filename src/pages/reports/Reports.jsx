@@ -114,15 +114,15 @@ const Reports = () => {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-lg font-bold font-display text-slate-100">Laporan</h1>
+        <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Laporan</h1>
         <p className="text-xs text-slate-500">Generate dan export laporan keuangan</p>
       </div>
 
       {/* Report config */}
-      <div className="glass rounded-xl border border-white/5 p-5 space-y-4">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5 space-y-4">
         {/* Type selector */}
         <div>
-          <label className="block text-xs font-medium text-slate-400 mb-2">Jenis Laporan</label>
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">Jenis Laporan</label>
           <div className="flex gap-2">
             {[
               { key: 'income', label: 'Pemasukan', color: 'emerald' },
@@ -145,20 +145,20 @@ const Reports = () => {
         {/* Filters */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">Dari Tanggal</label>
+            <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Dari Tanggal</label>
             <input type="date" className="input-field"
               value={filters.startDate}
               onChange={e => setFilters(p => ({ ...p, startDate: e.target.value }))} />
           </div>
           <div>
-            <label className="block text-xs text-slate-400 mb-1.5">Sampai Tanggal</label>
+            <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Sampai Tanggal</label>
             <input type="date" className="input-field"
               value={filters.endDate}
               onChange={e => setFilters(p => ({ ...p, endDate: e.target.value }))} />
           </div>
           {reportType === 'expense' && (
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">Kategori</label>
+              <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Kategori</label>
               <select className="input-field"
                 value={filters.category_id}
                 onChange={e => setFilters(p => ({ ...p, category_id: e.target.value }))}>
@@ -169,7 +169,7 @@ const Reports = () => {
           )}
           {reportType === 'debt' && (
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">Status Hutang</label>
+              <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Status Hutang</label>
               <select className="input-field"
                 value={filters.status || ''}
                 onChange={e => setFilters(p => ({ ...p, status: e.target.value }))}>
@@ -182,7 +182,7 @@ const Reports = () => {
           )}
           {isAdmin && (
             <div>
-              <label className="block text-xs text-slate-400 mb-1.5">Petugas</label>
+              <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Petugas</label>
               <select className="input-field"
                 value={filters.created_by}
                 onChange={e => setFilters(p => ({ ...p, created_by: e.target.value }))}>
@@ -214,10 +214,10 @@ const Reports = () => {
       {reportData && (
         <div className="space-y-4 animate-fade-in">
           {/* Summary */}
-          <div className="glass rounded-xl border border-white/5 p-5">
+          <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
               <div>
-                <h3 className="text-base font-semibold text-slate-100">
+                <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100">
                   Laporan {reportType === 'income' ? 'Pemasukan' : reportType === 'expense' ? 'Pengeluaran' : 'Hutang'}
                 </h3>
                 <p className="text-xs text-slate-500 mt-0.5">{periodLabel}</p>
@@ -234,21 +234,21 @@ const Reports = () => {
             {reportType === 'debt' ? (
               <div className="grid grid-cols-3 gap-3">
                 <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                  <p className="text-xs text-slate-400 mb-1">Total Hutang</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Hutang</p>
                   <p className="text-lg font-bold currency text-amber-400">{formatCurrency(reportData.totalDebt)}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                  <p className="text-xs text-slate-400 mb-1">Total Terbayar</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total Terbayar</p>
                   <p className="text-lg font-bold currency text-emerald-400">{formatCurrency(reportData.totalPaid)}</p>
                 </div>
                 <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20">
-                  <p className="text-xs text-slate-400 mb-1">Sisa Hutang</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Sisa Hutang</p>
                   <p className="text-lg font-bold currency text-red-400">{formatCurrency(reportData.totalRemaining)}</p>
                 </div>
               </div>
             ) : (
               <div className={`p-4 rounded-xl ${reportType === 'income' ? 'bg-emerald-500/10 border border-emerald-500/20' : 'bg-red-500/10 border border-red-500/20'}`}>
-                <p className="text-xs text-slate-400 mb-1">Total {reportType === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Total {reportType === 'income' ? 'Pemasukan' : 'Pengeluaran'}</p>
                 <p className={`text-2xl font-bold currency ${reportType === 'income' ? 'text-emerald-400' : 'text-red-400'}`}>
                   {formatCurrency(reportData.total)}
                 </p>
@@ -259,7 +259,7 @@ const Reports = () => {
             {/* Category breakdown for expense */}
             {reportType === 'expense' && reportData.byCategory && (
               <div className="mt-4">
-                <h4 className="text-xs font-medium text-slate-400 mb-3">Rincian per Kategori</h4>
+                <h4 className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">Rincian per Kategori</h4>
                 <div className="space-y-2">
                   {Object.entries(reportData.byCategory)
                     .sort(([, a], [, b]) => b - a)
@@ -268,13 +268,13 @@ const Reports = () => {
                       return (
                         <div key={name}>
                           <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-slate-300">{name}</span>
+                            <span className="text-slate-700 dark:text-slate-300">{name}</span>
                             <div className="flex items-center gap-3">
-                              <span className="text-slate-400">{pct}%</span>
-                              <span className="font-semibold text-slate-200 currency">{formatCurrency(amount)}</span>
+                              <span className="text-slate-600 dark:text-slate-400">{pct}%</span>
+                              <span className="font-semibold text-slate-800 dark:text-slate-200 currency">{formatCurrency(amount)}</span>
                             </div>
                           </div>
-                          <div className="w-full bg-slate-700 rounded-full h-1">
+                          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
                             <div className="h-1 rounded-full bg-red-400" style={{ width: `${pct}%` }} />
                           </div>
                         </div>
@@ -288,38 +288,38 @@ const Reports = () => {
 
           {/* Transaction table */}
           {reportData.data?.length > 0 ? (
-            <div className="glass rounded-xl border border-white/5 overflow-hidden">
-              <div className="px-5 py-4 border-b border-white/5">
-                <h3 className="text-sm font-semibold text-slate-200">Detail Transaksi</h3>
+            <div className="glass rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
+              <div className="px-5 py-4 border-b border-slate-200 dark:border-white/5">
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Detail Transaksi</h3>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-white/5">
-                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">Tanggal</th>
-                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-400">
+                    <tr className="border-b border-slate-200 dark:border-white/5">
+                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">Tanggal</th>
+                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">
                         {reportType === 'income' ? 'Sumber' : reportType === 'expense' ? 'Kategori' : 'Pihak Terkait'}
                       </th>
-                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden md:table-cell">Keterangan</th>
-                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-400 hidden lg:table-cell">
+                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden md:table-cell">Keterangan</th>
+                      <th className="text-left px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400 hidden lg:table-cell">
                         {reportType === 'debt' ? 'Status' : 'Petugas'}
                       </th>
-                      <th className="text-right px-5 py-3 text-xs font-medium text-slate-400">
+                      <th className="text-right px-5 py-3 text-xs font-medium text-slate-600 dark:text-slate-400">
                         {reportType === 'debt' ? 'Sisa Hutang' : 'Nominal'}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/5">
+                  <tbody className="divide-y divide-slate-200 dark:divide-white/5">
                     {reportData.data.map(tx => (
                       <tr key={tx.id} className="table-row-hover">
-                        <td className="px-5 py-3.5 text-sm text-slate-300">
+                        <td className="px-5 py-3.5 text-sm text-slate-700 dark:text-slate-300">
                           {formatDate(reportType === 'debt' ? tx.due_date : tx.transaction_date)}
                         </td>
-                        <td className="px-5 py-3.5 text-sm text-slate-200">
+                        <td className="px-5 py-3.5 text-sm text-slate-800 dark:text-slate-200">
                           {reportType === 'debt' ? tx.party_name : (tx.source || tx.categories?.name || '-')}
                         </td>
-                        <td className="px-5 py-3.5 text-sm text-slate-400 hidden md:table-cell">{tx.description || '-'}</td>
-                        <td className="px-5 py-3.5 text-xs text-slate-400 hidden lg:table-cell">
+                        <td className="px-5 py-3.5 text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">{tx.description || '-'}</td>
+                        <td className="px-5 py-3.5 text-xs text-slate-600 dark:text-slate-400 hidden lg:table-cell">
                           {reportType === 'debt' ? tx.status : (tx.creator?.full_name || '-')}
                         </td>
                         <td className={`px-5 py-3.5 text-sm font-semibold text-right currency ${reportType === 'income' ? 'text-emerald-400' : reportType === 'expense' ? 'text-red-400' : 'text-amber-400'}`}>
@@ -329,8 +329,8 @@ const Reports = () => {
                     ))}
                   </tbody>
                   <tfoot>
-                    <tr className="border-t border-white/10">
-                      <td colSpan={4} className="px-5 py-3 text-sm font-semibold text-slate-300">Total {reportType === 'debt' ? 'Sisa' : ''}</td>
+                    <tr className="border-t border-slate-300 dark:border-white/10">
+                      <td colSpan={4} className="px-5 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300">Total {reportType === 'debt' ? 'Sisa' : ''}</td>
                       <td className={`px-5 py-3 text-base font-bold text-right currency ${reportType === 'income' ? 'text-emerald-400' : reportType === 'expense' ? 'text-red-400' : 'text-amber-400'}`}>
                         {formatCurrency(reportType === 'debt' ? reportData.totalRemaining : reportData.total)}
                       </td>
@@ -340,7 +340,7 @@ const Reports = () => {
               </div>
             </div>
           ) : (
-            <div className="glass rounded-xl border border-white/5 py-12">
+            <div className="glass rounded-xl border border-slate-200 dark:border-white/5 py-12">
               <EmptyState icon={FileText} title="Tidak ada transaksi" description="Tidak ada data pada periode dan filter yang dipilih" />
             </div>
           )}

@@ -49,7 +49,7 @@ const Login = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center relative overflow-hidden px-4 sm:px-6 lg:px-8 selection:bg-blue-500/30 selection:text-white">
+    <div className="min-h-screen bg-[#0B1120] flex items-center justify-center relative overflow-hidden px-4 sm:px-6 lg:px-8 selection:bg-blue-500/30 selection:text-slate-900 dark:text-white">
       {/* Dynamic Background Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-[25%] -right-[10%] w-[70%] h-[70%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse-soft" />
@@ -63,14 +63,14 @@ const Login = () => {
       <div className="w-full max-w-[420px] relative z-10 animate-fade-in">
         {/* Header/Logo */}
         <div className="text-center mb-10">
-          <div className="w-20 h-20 rounded-[1.5rem] bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-500/20 border border-white/10 relative group hover:scale-105 transition-transform duration-300">
+          <div className="w-20 h-20 rounded-[1.5rem] bg-gradient-to-br from-blue-500 via-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-blue-500/20 border border-slate-300 dark:border-white/10 relative group hover:scale-105 transition-transform duration-300">
             <div className="absolute inset-0 rounded-[1.5rem] bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            <span className="text-white font-black text-3xl tracking-tighter">KP</span>
+            <span className="text-slate-900 dark:text-white font-black text-3xl tracking-tighter">KP</span>
           </div>
-          <h1 className="text-3xl font-bold font-display text-white tracking-tight mb-2">
+          <h1 className="text-3xl font-bold font-display text-slate-900 dark:text-white tracking-tight mb-2">
             {resetMode ? 'Reset Password' : 'Selamat Datang'}
           </h1>
-          <p className="text-slate-400 text-sm font-medium">
+          <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
             {resetMode
               ? 'Masukkan email untuk menerima link reset'
               : 'Laporan Keuangan 200 Tahun Panyeppen'}
@@ -78,7 +78,7 @@ const Login = () => {
         </div>
 
         {/* Main Card */}
-        <div className="bg-slate-900/60 backdrop-blur-xl rounded-[2rem] p-8 border border-white/10 shadow-2xl shadow-black/50 relative overflow-hidden">
+        <div className="bg-slate-900/60 backdrop-blur-xl rounded-[2rem] p-8 border border-slate-300 dark:border-white/10 shadow-2xl shadow-black/50 relative overflow-hidden">
           {/* Subtle top border highlight */}
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
 
@@ -87,12 +87,12 @@ const Login = () => {
               <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6 border border-emerald-500/20">
                 <Mail size={28} className="text-emerald-400" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-2">Email Terkirim</h3>
-              <p className="text-sm text-slate-400 mb-8 leading-relaxed">
-                Link reset password telah dikirim ke <strong className="text-slate-200">{email}</strong>.<br/>Periksa kotak masuk atau spam Anda.
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Email Terkirim</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
+                Link reset password telah dikirim ke <strong className="text-slate-800 dark:text-slate-200">{email}</strong>.<br/>Periksa kotak masuk atau spam Anda.
               </p>
               <button 
-                className="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 border border-white/5 hover:border-white/10 active:scale-[0.98]" 
+                className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 border border-slate-200 dark:border-white/5 hover:border-slate-300 dark:border-white/10 active:scale-[0.98]" 
                 onClick={() => { setResetMode(false); setResetSent(false) }}
               >
                 Kembali ke Login
@@ -108,12 +108,12 @@ const Login = () => {
               )}
 
               <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-slate-300 ml-1">Email</label>
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 ml-1">Email</label>
                 <div className="relative group">
                   <Mail size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
                   <input
                     type="email"
-                    className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
+                    className="w-full bg-slate-50/50 dark:bg-slate-950/50 border border-slate-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-4 text-slate-800 dark:text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
                     placeholder="nama@email.com"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
@@ -126,13 +126,13 @@ const Login = () => {
               {!resetMode && (
                 <div className="space-y-1.5">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="block text-sm font-medium text-slate-300">Password</label>
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">Password</label>
                   </div>
                   <div className="relative group">
                     <Lock size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-blue-400 transition-colors" />
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      className="w-full bg-slate-950/50 border border-white/10 rounded-xl py-3 pl-11 pr-12 text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
+                      className="w-full bg-slate-50/50 dark:bg-slate-950/50 border border-slate-300 dark:border-white/10 rounded-xl py-3 pl-11 pr-12 text-slate-800 dark:text-slate-200 text-sm focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all placeholder:text-slate-600"
                       placeholder="••••••••"
                       value={password}
                       onChange={e => setPassword(e.target.value)}
@@ -142,7 +142,7 @@ const Login = () => {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors focus:outline-none"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-300 transition-colors focus:outline-none"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -155,7 +155,7 @@ const Login = () => {
                   <div className="flex flex-col gap-3">
                     <button
                       type="submit"
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
                       disabled={loading}
                     >
                       {loading ? <Spinner size={18} /> : null}
@@ -165,7 +165,7 @@ const Login = () => {
                 ) : (
                   <button
                     type="submit"
-                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
+                    className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-slate-900 dark:text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/25 transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2"
                     disabled={loading}
                   >
                     {loading ? <Spinner size={18} /> : null}
@@ -178,7 +178,7 @@ const Login = () => {
                 <div className="text-center mt-4">
                   <button
                     type="button"
-                    className="text-sm text-slate-400 hover:text-blue-400 transition-colors font-medium"
+                    className="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-400 transition-colors font-medium"
                     onClick={() => { setResetMode(true); setError(null) }}
                   >
                     Lupa password?
@@ -190,7 +190,7 @@ const Login = () => {
                 <div className="text-center mt-4">
                   <button
                     type="button"
-                    className="text-sm text-slate-400 hover:text-blue-400 transition-colors font-medium flex items-center justify-center gap-1 mx-auto"
+                    className="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-400 transition-colors font-medium flex items-center justify-center gap-1 mx-auto"
                     onClick={() => { setResetMode(false); setError(null) }}
                   >
                     <ArrowLeft size={14} /> Kembali ke Login

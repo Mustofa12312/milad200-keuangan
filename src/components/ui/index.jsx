@@ -17,7 +17,7 @@ export const StatCard = ({ title, value, subtitle, icon: Icon, color = 'blue', t
 
   if (loading) {
     return (
-      <div className="glass rounded-xl p-5 border border-white/5">
+      <div className="glass rounded-xl p-5 border border-slate-200 dark:border-white/5">
         <div className="skeleton h-4 w-24 mb-3" />
         <div className="skeleton h-7 w-36 mb-2" />
         <div className="skeleton h-3 w-20" />
@@ -29,8 +29,8 @@ export const StatCard = ({ title, value, subtitle, icon: Icon, color = 'blue', t
     <div className={`glass rounded-xl p-5 border bg-gradient-to-br ${colorMap[color]} animate-fade-in`}>
       <div className="flex items-start justify-between">
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">{title}</p>
-          <p className="text-xl font-bold text-slate-100 currency leading-tight">{value}</p>
+          <p className="text-xs font-medium text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-1">{title}</p>
+          <p className="text-xl font-bold text-slate-900 dark:text-slate-100 currency leading-tight">{value}</p>
           {subtitle && <p className="text-xs text-slate-500 mt-1">{subtitle}</p>}
           {trend !== undefined && (
             <div className={`flex items-center gap-1 mt-2 text-xs font-medium ${trend >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
@@ -51,10 +51,10 @@ export const StatCard = ({ title, value, subtitle, icon: Icon, color = 'blue', t
 
 // Generic card wrapper
 export const Card = ({ children, className = '', title, actions }) => (
-  <div className={`glass rounded-xl border border-white/5 ${className}`}>
+  <div className={`glass rounded-xl border border-slate-200 dark:border-white/5 ${className}`}>
     {(title || actions) && (
-      <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
-        {title && <h3 className="text-sm font-semibold text-slate-200">{title}</h3>}
+      <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-white/5">
+        {title && <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">{title}</h3>}
         {actions && <div className="flex items-center gap-2">{actions}</div>}
       </div>
     )}
@@ -66,11 +66,11 @@ export const Card = ({ children, className = '', title, actions }) => (
 export const EmptyState = ({ icon: Icon, title, description, action }) => (
   <div className="flex flex-col items-center justify-center py-16 text-center">
     {Icon && (
-      <div className="w-14 h-14 rounded-2xl bg-slate-800 flex items-center justify-center mb-4">
+      <div className="w-14 h-14 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mb-4">
         <Icon size={24} className="text-slate-500" />
       </div>
     )}
-    <h3 className="text-sm font-semibold text-slate-300 mb-1">{title}</h3>
+    <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-1">{title}</h3>
     {description && <p className="text-xs text-slate-500 max-w-xs">{description}</p>}
     {action && <div className="mt-4">{action}</div>}
   </div>
@@ -144,9 +144,9 @@ export const ConfirmDialog = ({ open, title, message, onConfirm, onCancel, loadi
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center modal-overlay">
-      <div className="glass border border-white/10 rounded-xl w-full max-w-sm mx-4 p-6 animate-fade-in">
-        <h3 className="text-base font-semibold text-slate-100 mb-2">{title}</h3>
-        <p className="text-sm text-slate-400 mb-6">{message}</p>
+      <div className="glass border border-slate-300 dark:border-white/10 rounded-xl w-full max-w-sm mx-4 p-6 animate-fade-in">
+        <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-2">{title}</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">{message}</p>
         <div className="flex gap-3 justify-end">
           <button className="btn btn-ghost" onClick={onCancel} disabled={loading}>Batal</button>
           <button
@@ -176,7 +176,7 @@ export const Badge = ({ type, label, size = 'sm' }) => {
     USER: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
   }
 
-  const style = styles[type] || 'bg-slate-700 text-slate-400 border-slate-600'
+  const style = styles[type] || 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-slate-600'
 
   return (
     <span className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${style}`}>
@@ -198,7 +198,7 @@ export const StatusDot = ({ active }) => (
 export const SectionHeader = ({ title, subtitle, action }) => (
   <div className="flex items-start justify-between gap-4 mb-4">
     <div>
-      <h2 className="text-base font-semibold font-display text-slate-100">{title}</h2>
+      <h2 className="text-base font-semibold font-display text-slate-900 dark:text-slate-100">{title}</h2>
       {subtitle && <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>}
     </div>
     {action}

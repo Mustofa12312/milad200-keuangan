@@ -29,15 +29,15 @@ const CATEGORY_COLORS = ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', 
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload?.length) {
     return (
-      <div className="glass border border-white/10 rounded-lg p-3 shadow-xl min-w-36">
-        <p className="text-xs font-medium text-slate-300 mb-2">{label}</p>
+      <div className="glass border border-slate-300 dark:border-white/10 rounded-lg p-3 shadow-xl min-w-36">
+        <p className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">{label}</p>
         {payload.map((p, i) => (
           <div key={i} className="flex items-center justify-between gap-4 text-xs mb-0.5">
             <div className="flex items-center gap-1.5">
               <div className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: p.color }} />
-              <span className="text-slate-400">{p.name}</span>
+              <span className="text-slate-600 dark:text-slate-400">{p.name}</span>
             </div>
-            <span className="font-semibold text-slate-100">{formatCurrency(p.value)}</span>
+            <span className="font-semibold text-slate-900 dark:text-slate-100">{formatCurrency(p.value)}</span>
           </div>
         ))}
       </div>
@@ -179,10 +179,10 @@ const Dashboard = () => {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Area chart */}
-        <div className="lg:col-span-2 glass rounded-xl border border-white/5 p-4 sm:p-5">
+        <div className="lg:col-span-2 glass rounded-xl border border-slate-200 dark:border-white/5 p-4 sm:p-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div>
-              <h3 className="text-sm font-semibold text-slate-200">Pemasukan vs Pengeluaran</h3>
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Pemasukan vs Pengeluaran</h3>
               <p className="text-xs text-slate-500 mt-0.5">Perbandingan arus kas</p>
             </div>
             <div className="flex gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 scrollbar-hide">
@@ -252,7 +252,7 @@ const Dashboard = () => {
               { color: '#10b981', label: 'Pemasukan' },
               { color: '#ef4444', label: 'Pengeluaran' },
             ].map(({ color, label }) => (
-              <div key={label} className="flex items-center gap-1.5 text-xs text-slate-400">
+              <div key={label} className="flex items-center gap-1.5 text-xs text-slate-600 dark:text-slate-400">
                 <div className="w-3 h-0.5 rounded-full" style={{ background: color }} />
                 {label}
               </div>
@@ -261,9 +261,9 @@ const Dashboard = () => {
         </div>
 
         {/* Pie chart */}
-        <div className="glass rounded-xl border border-white/5 p-5">
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
           <div className="mb-3">
-            <h3 className="text-sm font-semibold text-slate-200">Per Kategori</h3>
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Per Kategori</h3>
             <p className="text-xs text-slate-500 mt-0.5">Pengeluaran</p>
           </div>
           {categoryData.length > 0 ? (
@@ -295,7 +295,7 @@ const Dashboard = () => {
                         className="w-2 h-2 rounded-full flex-shrink-0"
                         style={{ background: CATEGORY_COLORS[i % CATEGORY_COLORS.length] }}
                       />
-                      <span className="text-slate-400 truncate">{item.name}</span>
+                      <span className="text-slate-600 dark:text-slate-400 truncate">{item.name}</span>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0 ml-2">
                       <span className="text-slate-500">{item.pct}%</span>
@@ -313,24 +313,24 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div className="glass rounded-xl border border-white/5">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-white/5">
           <div>
-            <h3 className="text-sm font-semibold text-slate-200">Transaksi Terbaru</h3>
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Transaksi Terbaru</h3>
             <p className="text-xs text-slate-500 mt-0.5">8 aktivitas terakhir</p>
           </div>
           <div className="flex gap-2">
-            <Link to="/income" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            <Link to="/income" className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-300 transition-colors">
               Pemasukan →
             </Link>
             <span className="text-slate-700">|</span>
-            <Link to="/expense" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+            <Link to="/expense" className="text-xs text-slate-500 hover:text-slate-700 dark:text-slate-300 transition-colors">
               Pengeluaran →
             </Link>
           </div>
         </div>
 
-        <div className="divide-y divide-white/5">
+        <div className="divide-y divide-slate-200 dark:divide-white/5">
           {txLoading ? (
             [...Array(6)].map((_, i) => (
               <div key={i} className="px-5 py-3.5 flex items-center gap-3">
@@ -356,7 +356,7 @@ const Dashboard = () => {
                   }
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-200 truncate">
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
                     {tx.source || tx.categories?.name || 'Transaksi'}
                   </p>
                   <p className="text-xs text-slate-500">
@@ -385,12 +385,12 @@ const Dashboard = () => {
 
       {/* Overdue debt detail (admin) */}
       {isAdmin && overdueDebts?.length > 0 && (
-        <div className="glass rounded-xl border border-white/5">
-          <div className="flex items-center justify-between px-5 py-4 border-b border-white/5">
-            <h3 className="text-sm font-semibold text-slate-200">Hutang Jatuh Tempo</h3>
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-white/5">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Hutang Jatuh Tempo</h3>
             <Link to="/debt" className="text-xs text-amber-400 hover:text-amber-300">Kelola →</Link>
           </div>
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-slate-200 dark:divide-white/5">
             {overdueDebts.slice(0, 5).map(debt => (
               <Link
                 key={debt.id}
@@ -401,7 +401,7 @@ const Dashboard = () => {
                   <AlertTriangle size={15} className="text-amber-400" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-slate-200">{debt.party_name}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{debt.party_name}</p>
                   <p className="text-xs text-red-400">Jatuh tempo: {formatDate(debt.due_date)}</p>
                 </div>
                 <div className="text-right flex-shrink-0">

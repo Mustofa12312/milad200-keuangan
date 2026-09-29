@@ -76,27 +76,27 @@ const DebtDetail = () => {
       <div className="flex items-center gap-3">
         <button onClick={() => navigate(-1)} className="btn btn-ghost btn-sm"><ArrowLeft size={14} /></button>
         <div>
-          <h1 className="text-lg font-bold font-display text-slate-100">{debt.party_name}</h1>
+          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">{debt.party_name}</h1>
           <p className="text-xs text-slate-500">Detail hutang organisasi</p>
         </div>
       </div>
 
       {/* Main info */}
-      <div className="glass rounded-xl border border-white/5 p-5 space-y-4">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5 space-y-4">
         <div className="flex items-center justify-between">
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium ${statusColor[debt.status]}`}>
             <StatusIcon size={13} />
             {getStatusLabel(debt.status)}
           </div>
           {debt.due_date && (
-            <p className="text-xs text-slate-400">Jatuh tempo: <span className="text-slate-200">{formatDate(debt.due_date)}</span></p>
+            <p className="text-xs text-slate-600 dark:text-slate-400">Jatuh tempo: <span className="text-slate-800 dark:text-slate-200">{formatDate(debt.due_date)}</span></p>
           )}
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <p className="text-xs text-slate-500 mb-0.5">Total Hutang</p>
-            <p className="text-xl font-bold text-slate-100 currency">{formatCurrency(debt.original_amount)}</p>
+            <p className="text-xl font-bold text-slate-900 dark:text-slate-100 currency">{formatCurrency(debt.original_amount)}</p>
           </div>
           <div>
             <p className="text-xs text-slate-500 mb-0.5">Sisa Hutang</p>
@@ -107,10 +107,10 @@ const DebtDetail = () => {
         {/* Progress */}
         <div>
           <div className="flex items-center justify-between text-xs mb-1.5">
-            <span className="text-slate-400">Progress Pembayaran</span>
-            <span className="font-medium text-slate-200">{paidPct}%</span>
+            <span className="text-slate-600 dark:text-slate-400">Progress Pembayaran</span>
+            <span className="font-medium text-slate-800 dark:text-slate-200">{paidPct}%</span>
           </div>
-          <div className="w-full bg-slate-700 rounded-full h-2">
+          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
             <div
               className="h-2 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-500"
               style={{ width: `${paidPct}%` }}
@@ -127,18 +127,18 @@ const DebtDetail = () => {
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div>
             <p className="text-slate-500">Tanggal Hutang</p>
-            <p className="text-slate-200 font-medium">{formatDate(debt.debt_date)}</p>
+            <p className="text-slate-800 dark:text-slate-200 font-medium">{formatDate(debt.debt_date)}</p>
           </div>
           <div>
             <p className="text-slate-500">Dicatat oleh</p>
-            <p className="text-slate-200 font-medium">{debt.creator?.full_name || '-'}</p>
+            <p className="text-slate-800 dark:text-slate-200 font-medium">{debt.creator?.full_name || '-'}</p>
           </div>
         </div>
 
         {debt.description && (
           <div>
             <p className="text-xs text-slate-500 mb-1">Keterangan</p>
-            <p className="text-sm text-slate-300">{debt.description}</p>
+            <p className="text-sm text-slate-700 dark:text-slate-300">{debt.description}</p>
           </div>
         )}
 
@@ -154,18 +154,18 @@ const DebtDetail = () => {
       </div>
 
       {/* Payment history */}
-      <div className="glass rounded-xl border border-white/5">
-        <div className="px-5 py-4 border-b border-white/5">
-          <h3 className="text-sm font-semibold text-slate-200">Riwayat Pembayaran</h3>
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5">
+        <div className="px-5 py-4 border-b border-slate-200 dark:border-white/5">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">Riwayat Pembayaran</h3>
         </div>
         {debt.payments?.length > 0 ? (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-slate-200 dark:divide-white/5">
             {[...debt.payments].reverse().map(p => (
               <div key={p.id} className="px-5 py-3.5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-slate-200 currency">{formatCurrency(p.amount)}</p>
+                  <p className="text-sm font-medium text-slate-800 dark:text-slate-200 currency">{formatCurrency(p.amount)}</p>
                   <p className="text-xs text-slate-500">{formatDate(p.payment_date)} • {p.creator?.full_name}</p>
-                  {p.description && <p className="text-xs text-slate-400 mt-0.5">{p.description}</p>}
+                  {p.description && <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">{p.description}</p>}
                 </div>
                 <div className="w-7 h-7 rounded-full bg-emerald-500/15 flex items-center justify-center">
                   <CheckCircle size={14} className="text-emerald-400" />
@@ -183,13 +183,13 @@ const DebtDetail = () => {
       {/* Payment modal */}
       {showPayModal && (
         <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
-          <div className="glass border border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
-            <h3 className="text-base font-semibold text-slate-100 mb-4">Catat Pembayaran</h3>
+          <div className="glass border border-slate-300 dark:border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
+            <h3 className="text-base font-semibold text-slate-900 dark:text-slate-100 mb-4">Catat Pembayaran</h3>
             <form onSubmit={handlePay} className="space-y-4">
               <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Nominal Pembayaran *</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Nominal Pembayaran *</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm font-medium">Rp</span>
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
                   <input type="text" inputMode="numeric"
                     className={`input-field pl-9 currency ${payErrors.amount ? 'border-red-500/50' : ''}`}
                     placeholder="0"
@@ -201,14 +201,14 @@ const DebtDetail = () => {
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Tanggal Bayar *</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Tanggal Bayar *</label>
                 <input type="date" className={`input-field ${payErrors.payment_date ? 'border-red-500/50' : ''}`}
                   value={payForm.payment_date}
                   onChange={e => setPayForm(p => ({ ...p, payment_date: e.target.value }))} />
               </div>
 
               <div>
-                <label className="block text-xs text-slate-400 mb-1.5">Keterangan</label>
+                <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Keterangan</label>
                 <input type="text" className="input-field" placeholder="Opsional"
                   value={payForm.description}
                   onChange={e => setPayForm(p => ({ ...p, description: e.target.value }))} />

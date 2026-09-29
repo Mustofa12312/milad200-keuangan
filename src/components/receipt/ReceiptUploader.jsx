@@ -56,11 +56,11 @@ const ReceiptUploader = ({ value, onChange, required = false, error }) => {
   if (preview) {
     return (
       <>
-        <div className="relative rounded-xl overflow-hidden border border-white/10 bg-slate-800/50">
+        <div className="relative rounded-xl overflow-hidden border border-slate-300 dark:border-white/10 bg-slate-800/50">
           <img
             src={preview}
             alt="Preview nota"
-            className="w-full max-h-48 object-contain bg-slate-900"
+            className="w-full max-h-48 object-contain bg-white dark:bg-slate-900"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 to-transparent" />
           <div className="absolute bottom-0 left-0 right-0 p-3 flex items-center justify-between">
@@ -139,14 +139,14 @@ const ReceiptUploader = ({ value, onChange, required = false, error }) => {
           {compressing ? (
             <div className="flex flex-col items-center gap-3">
               <Spinner size={24} />
-              <p className="text-xs text-slate-400">Mengkompres foto...</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Mengkompres foto...</p>
             </div>
           ) : (
             <>
-              <div className="w-12 h-12 rounded-xl bg-slate-800 flex items-center justify-center mx-auto mb-3">
-                <Upload size={20} className="text-slate-400" />
+              <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center mx-auto mb-3">
+                <Upload size={20} className="text-slate-600 dark:text-slate-400" />
               </div>
-              <p className="text-sm font-medium text-slate-300 mb-1">Upload Foto Nota</p>
+              <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Upload Foto Nota</p>
               <p className="text-xs text-slate-500">
                 Seret foto ke sini atau klik untuk memilih
               </p>

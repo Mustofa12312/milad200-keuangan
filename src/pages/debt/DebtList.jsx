@@ -34,7 +34,7 @@ const DebtList = () => {
     <div className="space-y-5">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold font-display text-slate-100">Hutang</h1>
+          <h1 className="text-lg font-bold font-display text-slate-900 dark:text-slate-100">Hutang</h1>
           <p className="text-xs text-slate-500">Kelola hutang organisasi</p>
         </div>
         <Link to="/debt/create" className="btn btn-primary btn-sm" style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)' }}>
@@ -57,7 +57,7 @@ const DebtList = () => {
       </div>
 
       {/* Filter */}
-      <div className="glass rounded-xl border border-white/5 p-4">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-4">
         <div className="flex gap-2">
           {['', 'BELUM LUNAS', 'SEBAGIAN', 'LUNAS'].map(s => (
             <button
@@ -72,11 +72,11 @@ const DebtList = () => {
       </div>
 
       {/* List */}
-      <div className="glass rounded-xl border border-white/5 overflow-hidden">
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 overflow-hidden">
         {isLoading ? (
           <div className="p-6 space-y-3">{[...Array(4)].map((_, i) => <div key={i} className="skeleton h-20 rounded-xl" />)}</div>
         ) : data?.data?.length > 0 ? (
-          <div className="divide-y divide-white/5">
+          <div className="divide-y divide-slate-200 dark:divide-white/5">
             {data.data.map(debt => {
               const StatusIcon = statusIcon[debt.status] || AlertCircle
               const paidPct = Math.round(((debt.original_amount - debt.remaining_amount) / debt.original_amount) * 100)
@@ -91,8 +91,8 @@ const DebtList = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-semibold text-slate-200">{debt.party_name}</p>
-                      <p className="text-sm font-bold text-slate-100 currency">{formatCurrency(debt.remaining_amount)}</p>
+                      <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{debt.party_name}</p>
+                      <p className="text-sm font-bold text-slate-900 dark:text-slate-100 currency">{formatCurrency(debt.remaining_amount)}</p>
                     </div>
                     <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
                       <span>
@@ -104,7 +104,7 @@ const DebtList = () => {
                       </span>
                     </div>
                     {/* Progress bar */}
-                    <div className="w-full bg-slate-700 rounded-full h-1.5">
+                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
                       <div
                         className="h-1.5 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all"
                         style={{ width: `${paidPct}%` }}

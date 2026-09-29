@@ -20,7 +20,7 @@ const FilterBar = ({
   const hasActiveFilters = startDate || endDate || filterCount > 0
 
   return (
-    <div className="glass rounded-xl border border-white/5 p-4 space-y-3">
+    <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-4 space-y-3">
       {/* Search + toggle */}
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -35,7 +35,7 @@ const FilterBar = ({
           {search && (
             <button
               onClick={() => onSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:text-slate-300"
             >
               <X size={12} />
             </button>
@@ -48,7 +48,7 @@ const FilterBar = ({
           <SlidersHorizontal size={13} />
           <span className="hidden sm:inline">Filter</span>
           {hasActiveFilters && (
-            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-500 rounded-full text-[9px] font-bold text-white flex items-center justify-center">
+            <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-500 rounded-full text-[9px] font-bold text-slate-900 dark:text-white flex items-center justify-center">
               {filterCount + (startDate ? 1 : 0) + (endDate ? 1 : 0)}
             </span>
           )}
@@ -57,7 +57,7 @@ const FilterBar = ({
 
       {/* Expandable filter panel */}
       {open && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-2 border-t border-white/5 animate-fade-in">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 pt-2 border-t border-slate-200 dark:border-white/5 animate-fade-in">
           <div>
             <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">
               Dari Tanggal

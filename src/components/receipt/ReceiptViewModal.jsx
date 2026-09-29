@@ -30,13 +30,13 @@ const ReceiptViewModal = ({ receipt, onClose }) => {
       onClick={onClose}
     >
       <div
-        className="glass border border-white/10 rounded-xl w-full max-w-lg animate-fade-in overflow-hidden"
+        className="glass border border-slate-300 dark:border-white/10 rounded-xl w-full max-w-lg animate-fade-in overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-white/5">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 dark:border-white/5">
           <div>
-            <p className="text-sm font-medium text-slate-200">Foto Nota</p>
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-200">Foto Nota</p>
             <p className="text-xs text-slate-500">{receipt.file_name}</p>
           </div>
           <div className="flex items-center gap-2">
@@ -47,7 +47,7 @@ const ReceiptViewModal = ({ receipt, onClose }) => {
             >
               <ZoomOut size={12} />
             </button>
-            <span className="text-xs text-slate-400">{Math.round(zoom * 100)}%</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">{Math.round(zoom * 100)}%</span>
             <button
               onClick={() => setZoom(z => Math.min(3, z + 0.25))}
               className="btn btn-ghost btn-xs"
@@ -67,11 +67,11 @@ const ReceiptViewModal = ({ receipt, onClose }) => {
         </div>
 
         {/* Image */}
-        <div className="overflow-auto max-h-96 bg-slate-900 flex items-center justify-center min-h-48">
+        <div className="overflow-auto max-h-96 bg-white dark:bg-slate-900 flex items-center justify-center min-h-48">
           {loading ? (
             <div className="flex flex-col items-center gap-3 py-12">
               <Spinner size={24} />
-              <p className="text-xs text-slate-400">Memuat foto...</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400">Memuat foto...</p>
             </div>
           ) : error ? (
             <div className="py-12 text-center">
@@ -89,7 +89,7 @@ const ReceiptViewModal = ({ receipt, onClose }) => {
 
         {/* Footer */}
         {receipt.file_size && (
-          <div className="px-4 py-2 border-t border-white/5">
+          <div className="px-4 py-2 border-t border-slate-200 dark:border-white/5">
             <p className="text-xs text-slate-500">
               Ukuran: {(receipt.file_size / 1024).toFixed(0)} KB
             </p>
