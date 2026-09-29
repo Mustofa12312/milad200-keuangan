@@ -32,10 +32,36 @@ export const userService = {
   },
 
   async createUser(email, password, profileData) {
-    throw new Error(
-      'Pembuatan pengguna baru dari aplikasi dinonaktifkan untuk keamanan. ' +
-      'Silakan gunakan menu Authentication di Supabase Dashboard untuk mengundang atau membuat pengguna baru, ' +
-      'kemudian atur Role-nya di halaman Pengguna ini.'
-    )
+    const { supabaseAdmin } = await import('./supabase')
+    
+    // Create the user in Auth
+    const { data: authData, error: authError } = await supabaseAdmin.auth.signUp({
+      email,
+      password,
+    })
+    
+    if (authError) throw authError
+    
+    if (authData?.user?.identities?.length === 0) {
+      throw new Error('Email ini sudah terdaftar.')
+    }
+    
+    // Because we have a trigger that creates the profile on auth signup, 
+    // we just need to update it with the name and role.
+    const userId = authData.user.id
+    
+    // Update profile
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({ 
+        full_name: profileData.full_name,
+        role_id: profileData.role_id,
+        is_active: true
+      })
+      .eq('user_id', userId)
+      
+    if (profileError) throw profileError
+    
+    return authData.user
   },
 }

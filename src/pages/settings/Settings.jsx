@@ -288,11 +288,11 @@ const Settings = () => {
             <div className="space-y-3">
               {[
                 { label: 'Versi', value: '1.0.0 — Fase 2' },
-                { label: 'Stack', value: 'React + Vite + Tailwind + Supabase' },
-                { label: 'Deployment', value: 'Vercel' },
-                { label: 'Database', value: 'PostgreSQL (Supabase)' },
-                { label: 'Auth', value: 'Supabase Auth + RLS' },
-                { label: 'Storage', value: 'Supabase Storage' },
+                { label: 'Stack', value: 'Pengguna Lebih Dipermudah ' },
+                { label: 'Deployment', value: 'Milad 200 Tahun' },
+                { label: 'Database', value: 'Pondok Pesantren Panyeppen' },
+                { label: 'Auth', value: 'Semua Panitia Milad' },
+                { label: 'Storage', value: 'Pondok Pesantren Panyeppen' },
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
                   <span className="text-xs text-slate-400">{label}</span>

@@ -14,6 +14,8 @@ const UserList = () => {
   const [editUser, setEditUser] = useState(null)
   const [toggleTarget, setToggleTarget] = useState(null)
   const [editForm, setEditForm] = useState({ full_name: '', role_id: '' })
+  const [showAddModal, setShowAddModal] = useState(false)
+  const [addForm, setAddForm] = useState({ email: '', password: '', full_name: '', role_id: '' })
 
   const { data: users, isLoading } = useQuery({
     queryKey: ['users'],
@@ -33,6 +35,17 @@ const UserList = () => {
       setEditUser(null)
     },
     onError: (err) => toast.error(err.message || 'Gagal memperbarui user'),
+  })
+
+  const addMutation = useMutation({
+    mutationFn: (data) => userService.createUser(data.email, data.password, { full_name: data.full_name, role_id: data.role_id }),
+    onSuccess: () => {
+      toast.success('Pengguna berhasil ditambahkan!')
+      qc.invalidateQueries({ queryKey: ['users'] })
+      setShowAddModal(false)
+      setAddForm({ email: '', password: '', full_name: '', role_id: '' })
+    },
+    onError: (err) => toast.error(err.message || 'Gagal menambahkan pengguna'),
   })
 
   const toggleMutation = useMutation({
@@ -55,6 +68,11 @@ const UserList = () => {
     updateMutation.mutate({ id: editUser.id, updates: editForm })
   }
 
+  const handleAdd = (e) => {
+    e.preventDefault()
+    addMutation.mutate(addForm)
+  }
+
   const activeUsers = users?.filter(u => u.is_active) || []
   const inactiveUsers = users?.filter(u => !u.is_active) || []
 
@@ -69,14 +87,13 @@ const UserList = () => {
           <span className="text-xs text-slate-500 bg-slate-800 px-2.5 py-1 rounded-full">
             {activeUsers.length} aktif
           </span>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            className="btn btn-primary btn-sm"
+          >
+            <Plus size={14} /> Tambah
+          </button>
         </div>
-      </div>
-
-      {/* Info note */}
-      <div className="glass rounded-xl border border-blue-500/20 p-4 bg-blue-500/5">
-        <p className="text-xs text-blue-400">
-          💡 Untuk menambah pengguna baru, buat akun melalui Supabase Dashboard atau fitur invite. User baru akan otomatis muncul setelah login pertama kali.
-        </p>
       </div>
 
       {/* Active users */}
@@ -154,6 +171,7 @@ const UserList = () => {
       )}
 
       {/* Edit modal */}
+      {/* Edit modal */}
       {editUser && (
         <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
           <div className="glass border border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
@@ -161,23 +179,67 @@ const UserList = () => {
             <form onSubmit={handleUpdate} className="space-y-4">
               <div>
                 <label className="block text-xs text-slate-400 mb-1.5">Nama Lengkap</label>
-                <input type="text" className="input-field"
+                <input type="text" className="input-field" required
                   value={editForm.full_name}
                   onChange={e => setEditForm(p => ({ ...p, full_name: e.target.value }))} />
               </div>
               <div>
                 <label className="block text-xs text-slate-400 mb-1.5">Role</label>
-                <select className="input-field"
+                <select className="input-field" required
                   value={editForm.role_id}
                   onChange={e => setEditForm(p => ({ ...p, role_id: e.target.value }))}>
                   <option value="">-- Pilih Role --</option>
                   {roles?.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
                 </select>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-3 pt-2">
                 <button type="button" className="btn btn-ghost flex-1" onClick={() => setEditUser(null)}>Batal</button>
                 <button type="submit" className="btn btn-primary flex-1" disabled={updateMutation.isPending}>
                   {updateMutation.isPending ? 'Menyimpan...' : 'Simpan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 z-50 modal-overlay flex items-center justify-center p-4">
+          <div className="glass border border-white/10 rounded-xl w-full max-w-sm p-5 animate-fade-in">
+            <h3 className="text-base font-semibold text-slate-100 mb-4">Tambah Pengguna</h3>
+            <form onSubmit={handleAdd} className="space-y-4">
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5">Email</label>
+                <input type="email" required className="input-field"
+                  value={addForm.email}
+                  onChange={e => setAddForm(p => ({ ...p, email: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5">Password</label>
+                <input type="password" required minLength={6} className="input-field"
+                  value={addForm.password}
+                  onChange={e => setAddForm(p => ({ ...p, password: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5">Nama Lengkap</label>
+                <input type="text" required className="input-field"
+                  value={addForm.full_name}
+                  onChange={e => setAddForm(p => ({ ...p, full_name: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1.5">Role</label>
+                <select className="input-field" required
+                  value={addForm.role_id}
+                  onChange={e => setAddForm(p => ({ ...p, role_id: e.target.value }))}>
+                  <option value="">-- Pilih Role --</option>
+                  {roles?.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button type="button" className="btn btn-ghost flex-1" onClick={() => setShowAddModal(false)}>Batal</button>
+                <button type="submit" className="btn btn-primary flex-1" disabled={addMutation.isPending}>
+                  {addMutation.isPending ? 'Menyimpan...' : 'Simpan'}
                 </button>
               </div>
             </form>
