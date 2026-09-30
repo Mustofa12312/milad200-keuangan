@@ -163,32 +163,32 @@ const ExpenseCreate = () => {
               </div>
               <div>
                 <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Harga Satuan *</label>
-                <input type="text" inputMode="numeric"
-                  className={`input-field !py-1.5 !text-xs currency ${errors.unitPrice ? 'border-red-500/50' : ''}`}
-                  placeholder="0"
-                  value={form.unitPrice ? Number(form.unitPrice).toLocaleString('id-ID') : ''}
-                  onChange={e => {
-                    const raw = e.target.value.replace(/\D/g, '')
-                    handleChange('unitPrice', raw)
-                  }} />
+                <div className="relative">
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-medium">Rp</span>
+                  <input type="text" inputMode="numeric"
+                    className={`input-field !py-1.5 !pl-7 !text-xs currency ${errors.unitPrice ? 'border-red-500/50' : ''}`}
+                    placeholder="0"
+                    value={form.unitPrice ? Number(form.unitPrice).toLocaleString('id-ID') : ''}
+                    onChange={e => {
+                      const raw = e.target.value.replace(/\D/g, '')
+                      handleChange('unitPrice', raw)
+                    }} />
+                </div>
               </div>
             </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Nominal (Rp) *</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Total Nominal</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
-              <input type="text" inputMode="numeric"
-                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''} bg-slate-100 dark:bg-slate-900 opacity-70`}
-                placeholder="0"
-                value={form.amount ? Number(form.amount).toLocaleString('id-ID') : ''}
-                disabled={true}
-                onChange={e => {
-                  const raw = e.target.value.replace(/\D/g, '')
-                  handleChange('amount', raw)
-                }} />
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">Rp</span>
+              <input type="text"
+                className="input-field !pl-10 !bg-slate-100 dark:!bg-slate-900/50 !text-slate-500 cursor-not-allowed font-semibold border-dashed"
+                value={form.amount ? Number(form.amount).toLocaleString('id-ID') : '0'}
+                disabled />
             </div>
-            <p className="text-[10px] text-blue-500 mt-1">Nominal dihitung otomatis dari rincian biaya.</p>
+            <p className="text-[10px] text-blue-500 mt-1.5 flex items-center gap-1.5">
+              <span className="w-1 h-1 rounded-full bg-blue-500"></span> Total otomatis dihitung dari rincian biaya.
+            </p>
           </div>
 
           <div>

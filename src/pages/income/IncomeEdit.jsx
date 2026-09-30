@@ -103,9 +103,9 @@ const IncomeEdit = () => {
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Nominal (Rp) *</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
               <input type="text" inputMode="numeric"
-                className={`input-field pl-9 currency ${errors.amount ? 'border-red-500/50' : ''}`}
+                className={`input-field !pl-10 currency ${errors.amount ? 'border-red-500/50' : ''}`}
                 value={form.amount ? Number(form.amount).toLocaleString('id-ID') : ''}
                 onChange={e => {
                   const raw = e.target.value.replace(/\D/g, '')

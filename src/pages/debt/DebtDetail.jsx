@@ -189,9 +189,9 @@ const DebtDetail = () => {
               <div>
                 <label className="block text-xs text-slate-600 dark:text-slate-400 mb-1.5">Nominal Pembayaran *</label>
                 <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
+                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-600 dark:text-slate-400 text-sm font-medium">Rp</span>
                   <input type="text" inputMode="numeric"
-                    className={`input-field pl-9 currency ${payErrors.amount ? 'border-red-500/50' : ''}`}
+                    className={`input-field !pl-10 currency ${payErrors.amount ? 'border-red-500/50' : ''}`}
                     placeholder="0"
                     value={payForm.amount ? Number(payForm.amount).toLocaleString('id-ID') : ''}
                     onChange={e => setPayForm(p => ({ ...p, amount: e.target.value.replace(/\D/g, '') }))} />

@@ -83,11 +83,11 @@ const CancelledTransactions = () => {
       {/* Search */}
       <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-4">
         <div className="relative">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
             type="text"
             placeholder="Cari transaksi dibatalkan..."
-            className="input-field pl-9"
+            className="input-field !pl-10"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
