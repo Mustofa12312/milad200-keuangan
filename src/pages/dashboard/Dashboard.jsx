@@ -87,7 +87,7 @@ const Dashboard = () => {
 
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Selamat Pagi' : hour < 17 ? 'Selamat Siang' : 'Selamat Malam'
-  const firstName = profile?.full_name?.split(' ')[0] || 'Admin'
+  const displayName = profile?.full_name || 'Admin'
 
   return (
     <div className="space-y-5">
@@ -95,7 +95,7 @@ const Dashboard = () => {
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-xl font-bold font-display gradient-text">
-            {greeting}, {firstName}! 👋
+            {greeting}, {displayName}! 👋
           </h1>
           <p className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
             <Calendar size={11} />
