@@ -27,7 +27,12 @@ export const reportService = {
   async getExpenseReport({ startDate, endDate, category_id, created_by } = {}) {
     let query = supabase
       .from('transactions')
-      .select(`*, categories(name), creator:profiles!transactions_created_by_fkey(full_name)`)
+      .select(`
+        *, 
+        categories(name), 
+        creator:profiles!transactions_created_by_fkey(full_name),
+        receipts:transaction_receipts(id)
+      `)
       .eq('type', 'EXPENSE')
       .eq('is_deleted', false)
 
@@ -91,6 +96,68 @@ export const reportService = {
     const ws = XLSX.utils.json_to_sheet(data)
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, sheetName)
+    XLSX.writeFile(wb, `${filename}.xlsx`)
+  },
+
+  // Export Special Expense Excel
+  exportExpenseExcelCustom(transactions, filename = 'laporan_pengeluaran') {
+    const wb = XLSX.utils.book_new()
+
+    const parseDescription = (desc) => {
+      if (!desc) return { volume: 1, unit: 'Paket', price: 0, text: '-' }
+      const match = desc.match(/^\[([\d.]+) ([\w/\\\s]+) x Rp ([\d,.]+)\]\s*(.*)/i)
+      if (match) {
+        return {
+          volume: parseFloat(match[1]),
+          unit: match[2],
+          price: parseFloat(match[3].replace(/\./g, '')),
+          text: match[4] || desc
+        }
+      }
+      return { volume: 1, unit: 'Paket', price: 0, text: desc }
+    }
+
+    const byCategory = {}
+    let grandTotal = 0
+
+    transactions.forEach(t => {
+      const cat = t.categories?.name || 'Lain-lain'
+      if (!byCategory[cat]) byCategory[cat] = []
+      byCategory[cat].push(t)
+      grandTotal += Number(t.amount)
+    })
+
+    // Rekap Sheet
+    const rekapData = Object.keys(byCategory).map(cat => {
+      const sum = byCategory[cat].reduce((acc, curr) => acc + Number(curr.amount), 0)
+      return {
+        'Uraian': cat,
+        'Jumlah': sum
+      }
+    })
+    rekapData.push({ 'Uraian': 'TOTAL', 'Jumlah': grandTotal })
+
+    const wsRekap = XLSX.utils.json_to_sheet(rekapData)
+    XLSX.utils.book_append_sheet(wb, wsRekap, 'Rekap')
+
+    // Category Sheets
+    Object.keys(byCategory).forEach(cat => {
+      const rows = byCategory[cat].map(t => {
+        const parsed = parseDescription(t.description)
+        return {
+          'Tanggal': t.transaction_date,
+          'Uraian': parsed.text,
+          'Volume': parsed.volume,
+          'Satuan': parsed.unit,
+          'Harga Satuan': parsed.price || (Number(t.amount) / parsed.volume),
+          'Jumlah': Number(t.amount),
+          'Nota': t.receipts && t.receipts.length > 0 ? 'Ada' : '-'
+        }
+      })
+      const ws = XLSX.utils.json_to_sheet(rows)
+      XLSX.utils.book_append_sheet(wb, ws, cat.substring(0, 31))
+    })
+
     XLSX.writeFile(wb, `${filename}.xlsx`)
   },
 

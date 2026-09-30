@@ -69,6 +69,12 @@ const Reports = () => {
 
   const handleExportExcel = () => {
     if (!reportData?.data?.length) return
+
+    if (reportType === 'expense') {
+      reportService.exportExpenseExcelCustom(reportData.data, `laporan-${reportType}`)
+      return
+    }
+
     const rows = reportData.data.map(t => ({
       Tanggal: t.transaction_date ? formatDate(t.transaction_date) : formatDate(t.due_date),
       Jenis: reportType === 'debt' ? 'Hutang' : (t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran'),
