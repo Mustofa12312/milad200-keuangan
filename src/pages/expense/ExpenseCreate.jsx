@@ -192,7 +192,7 @@ const ExpenseCreate = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Keterangan</label>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Uraian</label>
             <textarea className="input-field resize-none" rows={3}
               placeholder="Keterangan pengeluaran (opsional)..."
               value={form.description}
