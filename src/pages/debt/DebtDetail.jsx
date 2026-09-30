@@ -143,13 +143,30 @@ const DebtDetail = () => {
         )}
 
         {debt.status !== 'LUNAS' && (
-          <button
-            onClick={() => setShowPayModal(true)}
-            className="btn w-full"
-            style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white' }}
-          >
-            <Plus size={14} /> Catat Pembayaran
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                if(window.confirm('Yakin ingin menandai hutang ini sebagai lunas? (Sisa hutang otomatis terbayar)')) {
+                  payMutation.mutate({
+                    amount: Number(debt.remaining_amount),
+                    payment_date: new Date().toISOString().split('T')[0],
+                    description: 'Pelunasan (Otomatis)',
+                  })
+                }
+              }}
+              className="btn flex-1 bg-emerald-500 hover:bg-emerald-600 text-white border-none"
+              disabled={payMutation.isPending}
+            >
+              <CheckCircle size={14} /> Tandai Lunas
+            </button>
+            <button
+              onClick={() => setShowPayModal(true)}
+              className="btn flex-1"
+              style={{ background: 'linear-gradient(135deg, #f59e0b, #d97706)', color: 'white' }}
+            >
+              <Plus size={14} /> Catat Pembayaran
+            </button>
+          </div>
         )}
       </div>
 

@@ -3,10 +3,11 @@ import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, TrendingUp, TrendingDown, CreditCard,
   Tags, Users, FileText, ClipboardList, Trash2,
-  Menu, X, LogOut, ChevronRight, ChevronLeft, Bell, AlertTriangle,
+  Menu, X, LogOut, ChevronRight, ChevronLeft, Bell, AlertTriangle, CheckCircle,
   Settings, Moon, Sun
 } from 'lucide-react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import toast from 'react-hot-toast'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { debtService } from '@/services/debts'
@@ -43,6 +44,7 @@ const AppLayout = ({ children }) => {
   const [notifOpen, setNotifOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const qc = useQueryClient()
 
   useEffect(() => { setSidebarOpen(false) }, [location.pathname])
 
@@ -54,6 +56,22 @@ const AppLayout = ({ children }) => {
     enabled: isAdmin,
   })
   const overdueCount = debtData?.length || 0
+
+  const markAsPaidMutation = useMutation({
+    mutationFn: (debt) => debtService.addPayment(debt.id, {
+      amount: debt.remaining_amount,
+      payment_date: new Date().toISOString().split('T')[0],
+      description: 'Pelunasan (Otomatis dari Notifikasi)'
+    }, profile.id),
+    onSuccess: () => {
+      toast.success('Hutang ditandai lunas!')
+      qc.invalidateQueries({ queryKey: ['debts-overdue'] })
+      qc.invalidateQueries({ queryKey: ['debts'] })
+      qc.invalidateQueries({ queryKey: ['debt-summary'] })
+      qc.invalidateQueries({ queryKey: ['debt'] })
+    },
+    onError: (err) => toast.error(err.message || 'Gagal menandai lunas'),
+  })
 
   const handleSignOut = async () => {
     await signOut()
@@ -200,15 +218,29 @@ const AppLayout = ({ children }) => {
                         <Link
                           key={debt.id}
                           to={`/debt/${debt.id}`}
-                          className="flex items-start gap-3 px-4 py-3 hover:bg-white/5 transition-colors"
+                          className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-white/5 transition-colors group"
                           onClick={() => setNotifOpen(false)}
                         >
-                          <AlertTriangle size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />
-                          <div className="min-w-0">
-                            <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{debt.party_name}</p>
-                            <p className="text-[10px] text-red-400">Jatuh tempo: {formatDate(debt.due_date)}</p>
-                            <p className="text-[10px] text-slate-500">Sisa: {formatCurrency(debt.remaining_amount)}</p>
+                          <div className="flex items-start gap-3 min-w-0 flex-1">
+                            <AlertTriangle size={14} className="text-amber-400 flex-shrink-0 mt-0.5" />
+                            <div className="min-w-0">
+                              <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{debt.party_name}</p>
+                              <p className="text-[10px] text-red-400">Jatuh tempo: {formatDate(debt.due_date)}</p>
+                              <p className="text-[10px] text-slate-500">Sisa: {formatCurrency(debt.remaining_amount)}</p>
+                            </div>
                           </div>
+                          <button 
+                            onClick={(e) => {
+                              e.preventDefault()
+                              e.stopPropagation()
+                              markAsPaidMutation.mutate(debt)
+                            }}
+                            disabled={markAsPaidMutation.isPending}
+                            className="p-1.5 text-emerald-500 hover:text-white hover:bg-emerald-500 rounded-lg transition-colors flex-shrink-0 opacity-0 group-hover:opacity-100 disabled:opacity-50"
+                            title="Tandai Selesai / Lunas"
+                          >
+                            <CheckCircle size={16} />
+                          </button>
                         </Link>
                       ))}
                     </div>
