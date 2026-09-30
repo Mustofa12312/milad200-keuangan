@@ -156,21 +156,15 @@ const Reports = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Dari Tanggal</label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><Calendar size={14} /></span>
-              <input type="date" className="input-field !pl-10"
-                value={filters.startDate}
-                onChange={e => setFilters(p => ({ ...p, startDate: e.target.value }))} />
-            </div>
+            <input type="date" className="input-field"
+              value={filters.startDate}
+              onChange={e => setFilters(p => ({ ...p, startDate: e.target.value }))} />
           </div>
           <div>
             <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Sampai Tanggal</label>
-            <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><Calendar size={14} /></span>
-              <input type="date" className="input-field !pl-10"
-                value={filters.endDate}
-                onChange={e => setFilters(p => ({ ...p, endDate: e.target.value }))} />
-            </div>
+            <input type="date" className="input-field"
+              value={filters.endDate}
+              onChange={e => setFilters(p => ({ ...p, endDate: e.target.value }))} />
           </div>
           {reportType === 'expense' && (
             <div>
