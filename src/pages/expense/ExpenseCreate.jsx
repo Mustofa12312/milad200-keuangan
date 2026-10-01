@@ -157,6 +157,7 @@ const ExpenseCreate = () => {
                   <option value="Kegiatan">Kegiatan</option>
                   <option value="Hari">Hari</option>
                   <option value="Bulan">Bulan</option>
+                  <option value="Bulan">1 Nota </option>
                   <option value="Tahun">Tahun</option>
                   <option value="Lainnya">Lainnya...</option>
                 </select>
