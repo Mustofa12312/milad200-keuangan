@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import toast from 'react-hot-toast'
 
@@ -26,15 +26,17 @@ const ExpenseEdit = () => {
 
   const [form, setForm] = useState({ transaction_date: '', category_id: '', amount: '', description: '' })
   const [errors, setErrors] = useState({})
+  const [loadedId, setLoadedId] = useState(null)
 
-  useEffect(() => {
-    if (tx) setForm({
+  if (tx && tx.id !== loadedId) {
+    setLoadedId(tx.id)
+    setForm({
       transaction_date: tx.transaction_date,
       category_id: tx.category_id || '',
       amount: tx.amount?.toString() || '',
       description: tx.description || '',
     })
-  }, [tx])
+  }
 
   const mutation = useMutation({
     mutationFn: (updates) => transactionService.updateTransaction(id, updates, user.id),

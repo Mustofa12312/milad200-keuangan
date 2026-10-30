@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 /**
  * Debounce a value by given delay
@@ -39,9 +39,11 @@ export function useToggle(initial = false) {
  * Previous value for comparisons
  */
 export function usePrevious(value) {
-  const ref = useRef()
-  useEffect(() => { ref.current = value }, [value])
-  return ref.current
+  const [state, setState] = useState({ prev: value, current: value })
+  if (state.current !== value) {
+    setState({ prev: state.current, current: value })
+  }
+  return state.prev
 }
 
 /**

@@ -53,6 +53,7 @@ export const debtService = {
   },
 
 
+  async addPayment(debtId, paymentData, userId) {
     // Get current debt
     const { data: debt, error: debtError } = await supabase
       .from('debts')
@@ -61,7 +62,13 @@ export const debtService = {
       .single()
     if (debtError) throw debtError
 
-    const newRemaining = Number(debt.remaining_amount) - Number(paymentData.amount)
+    const amount = Number(paymentData.amount)
+    if (amount <= 0) throw new Error('Nominal pembayaran harus lebih dari 0')
+    if (amount > Number(debt.remaining_amount)) {
+      throw new Error(`Pembayaran tidak boleh melebihi sisa hutang (${debt.remaining_amount})`)
+    }
+
+    const newRemaining = Number(debt.remaining_amount) - amount
     const newStatus = newRemaining <= 0 ? 'LUNAS' : 'SEBAGIAN'
 
     // Add payment record
@@ -82,9 +89,13 @@ export const debtService = {
         updated_at: new Date().toISOString(),
       })
       .eq('id', debtId)
-    if (updateError) throw updateError
+    if (updateError) {
+      // Rollback payment record
+      await supabase.from('debt_payments').delete().eq('id', payment.id)
+      throw updateError
+    }
 
-    await logAudit(userId, 'PAYMENT', 'debt', debtId, null, paymentData)
+    await logAudit(userId, 'PAYMENT', 'debt', debtId, { remaining_amount: debt.remaining_amount, status: debt.status }, { amount, payment_date: paymentData.payment_date, remaining_amount: newRemaining, status: newStatus })
     return payment
   },
 
@@ -118,6 +129,7 @@ export const debtService = {
   },
 
   async updateDebt(id, updates, userId) {
+    const { data: old } = await supabase.from('debts').select('*').eq('id', id).single()
     const { data, error } = await supabase
       .from('debts')
       .update({ ...updates, updated_by: userId, updated_at: new Date().toISOString() })
@@ -125,7 +137,7 @@ export const debtService = {
       .select()
       .single()
     if (error) throw error
-    await logAudit(userId, 'UPDATE', 'debt', id, null, updates)
+    await logAudit(userId, 'UPDATE', 'debt', id, old, updates)
     return data
   },
 }

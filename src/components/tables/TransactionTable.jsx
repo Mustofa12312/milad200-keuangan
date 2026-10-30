@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Edit2, Trash2, Eye, ArrowUpRight, ArrowDownRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { formatCurrency, formatDate, truncate } from '@/utils/format'
-import { Pagination, EmptyState, Badge } from '@/components/ui'
+import { Pagination, EmptyState } from '@/components/ui'
 import ReceiptViewModal from '@/components/receipt/ReceiptViewModal'
 
 /**
@@ -23,7 +23,6 @@ const TransactionTable = ({
 
   const isIncome = type === 'INCOME'
   const basePath = isIncome ? '/income' : '/expense'
-  const color = isIncome ? 'emerald' : 'red'
   const Icon = isIncome ? ArrowUpRight : ArrowDownRight
   const iconBg = isIncome ? 'bg-emerald-500/15' : 'bg-red-500/15'
   const iconColor = isIncome ? 'text-emerald-400' : 'text-red-400'

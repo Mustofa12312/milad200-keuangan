@@ -176,10 +176,11 @@ export const Badge = ({ type, label, size = 'sm' }) => {
     USER: 'bg-blue-500/15 text-blue-400 border-blue-500/20',
   }
 
+  const sizeClass = size === 'md' ? 'text-xs px-2.5 py-1' : 'text-[11px] px-2 py-0.5'
   const style = styles[type] || 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-400 border-slate-600'
 
   return (
-    <span className={`inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full border ${style}`}>
+    <span className={`inline-flex items-center font-medium rounded-full border ${sizeClass} ${style}`}>
       {label || type}
     </span>
   )

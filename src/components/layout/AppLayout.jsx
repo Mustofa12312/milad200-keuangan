@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, TrendingUp, TrendingDown, CreditCard,
@@ -8,8 +8,8 @@ import {
 } from 'lucide-react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-import { useAuth } from '@/contexts/AuthContext'
-import { useTheme } from '@/contexts/ThemeContext'
+import { useAuth } from '@/contexts/auth'
+import { useTheme } from '@/contexts/theme'
 import { debtService } from '@/services/debts'
 import { getInitials, formatDate, formatCurrency } from '@/utils/format'
 import { Link } from 'react-router-dom'
@@ -36,24 +36,95 @@ const MOBILE_NAV = [
   { to: '/reports', icon: FileText, label: 'Laporan' },
 ]
 
+const SidebarContent = ({ isMinimized, profile, isAdmin, filteredNav, onSignOut }) => (
+  <aside className="flex flex-col h-full overflow-hidden">
+    {/* Logo */}
+    <div className="p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-center">
+      <Link to="/dashboard" className={`flex items-center gap-3 group w-full ${isMinimized ? 'justify-center' : ''}`}>
+        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
+          <span className="text-white font-bold text-sm">KP</span>
+        </div>
+        {!isMinimized && (
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-tight truncate">Laporan Keuangan</p>
+            <p className="text-[10px] text-slate-500 leading-tight truncate">200 Tahun Panyeppen</p>
+          </div>
+        )}
+      </Link>
+    </div>
+
+    {/* Nav */}
+    <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+      {!isMinimized && <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-1">Menu Utama</p>}
+      {isMinimized && <div className="h-2"></div>}
+      {filteredNav.slice(0, 5).map(({ to, icon: Icon, label }) => (
+        <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? label : undefined}>
+          <Icon size={isMinimized ? 18 : 15} className="flex-shrink-0" />
+          {!isMinimized && <span>{label}</span>}
+        </NavLink>
+      ))}
+      {isAdmin && filteredNav.length > 5 && (
+        <>
+          {!isMinimized && <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-4">Admin</p>}
+          {isMinimized && <div className="h-4 border-t border-slate-200 dark:border-white/5 mx-2 my-2"></div>}
+          {filteredNav.slice(5).map(({ to, icon: Icon, label }) => (
+            <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? label : undefined}>
+              <Icon size={isMinimized ? 18 : 15} className="flex-shrink-0" />
+              {!isMinimized && <span>{label}</span>}
+            </NavLink>
+          ))}
+        </>
+      )}
+    </nav>
+
+    {/* Bottom: Profile + Settings */}
+    <div className="p-3 border-t border-slate-200 dark:border-white/5 space-y-1">
+      <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? 'Pengaturan' : undefined}>
+        <Settings size={isMinimized ? 18 : 15} className="flex-shrink-0" />
+        {!isMinimized && <span>Pengaturan</span>}
+      </NavLink>
+      <div className={`flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 transition-colors mt-1 ${isMinimized ? 'justify-center' : ''}`}>
+        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white cursor-pointer" title={isMinimized ? profile?.full_name : undefined}>
+          {getInitials(profile?.full_name)}
+        </div>
+        {!isMinimized && (
+          <>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{profile?.full_name || 'User'}</p>
+              <p className="text-[10px] text-slate-500 truncate">{isAdmin ? 'Admin' : 'Petugas'}</p>
+            </div>
+            <button onClick={onSignOut} className="text-slate-600 hover:text-red-400 transition-colors p-1 rounded flex-shrink-0" title="Keluar">
+              <LogOut size={13} />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  </aside>
+)
+
 const AppLayout = ({ children }) => {
-  const { profile, isAdmin, role, signOut } = useAuth()
+  const { profile, isAdmin, role, signOut, user } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
+  const [prevPath, setPrevPath] = useState(location.pathname)
   const navigate = useNavigate()
   const location = useLocation()
   const qc = useQueryClient()
 
-  useEffect(() => { setSidebarOpen(false) }, [location.pathname])
+  if (prevPath !== location.pathname) {
+    setPrevPath(location.pathname)
+    setSidebarOpen(false)
+  }
 
   // Fetch overdue debts for notification
   const { data: debtData } = useQuery({
     queryKey: ['debts-overdue'],
     queryFn: () => debtService.getOverdueDebts(),
     staleTime: 60000,
-    enabled: isAdmin,
+    enabled: isAdmin && !!user,
   })
   const overdueCount = debtData?.length || 0
 
@@ -62,7 +133,7 @@ const AppLayout = ({ children }) => {
       amount: debt.remaining_amount,
       payment_date: new Date().toISOString().split('T')[0],
       description: 'Pelunasan (Otomatis dari Notifikasi)'
-    }, profile.id),
+    }, user?.id),
     onSuccess: () => {
       toast.success('Hutang ditandai lunas!')
       qc.invalidateQueries({ queryKey: ['debts-overdue'] })
@@ -81,78 +152,11 @@ const AppLayout = ({ children }) => {
   const filteredNav = NAV_ITEMS.filter(item => item.roles.includes(role))
   const currentPage = filteredNav.find(n => location.pathname.startsWith(n.to))?.label || 'Dashboard'
 
-  const SidebarContent = () => (
-    <aside className="flex flex-col h-full overflow-hidden">
-      {/* Logo */}
-      <div className="p-5 border-b border-slate-200 dark:border-white/5 flex items-center justify-center">
-        <Link to="/dashboard" className={`flex items-center gap-3 group w-full ${isMinimized ? 'justify-center' : ''}`}>
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform shadow-lg shadow-blue-500/20">
-            <span className="text-white font-bold text-sm">KP</span>
-          </div>
-          {!isMinimized && (
-            <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-tight truncate">Laporan Keuangan</p>
-              <p className="text-[10px] text-slate-500 leading-tight truncate">200 Tahun Panyeppen</p>
-            </div>
-          )}
-        </Link>
-      </div>
-
-      {/* Nav */}
-      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        {!isMinimized && <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-1">Menu Utama</p>}
-        {isMinimized && <div className="h-2"></div>}
-        {filteredNav.slice(0, 5).map(({ to, icon: Icon, label }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? label : undefined}>
-            <Icon size={isMinimized ? 18 : 15} className="flex-shrink-0" />
-            {!isMinimized && <span>{label}</span>}
-          </NavLink>
-        ))}
-        {isAdmin && filteredNav.length > 5 && (
-          <>
-            {!isMinimized && <p className="text-[10px] font-semibold text-slate-600 uppercase tracking-widest px-3 mb-2 mt-4">Admin</p>}
-            {isMinimized && <div className="h-4 border-t border-slate-200 dark:border-white/5 mx-2 my-2"></div>}
-            {filteredNav.slice(5).map(({ to, icon: Icon, label }) => (
-              <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? label : undefined}>
-                <Icon size={isMinimized ? 18 : 15} className="flex-shrink-0" />
-                {!isMinimized && <span>{label}</span>}
-              </NavLink>
-            ))}
-          </>
-        )}
-      </nav>
-
-      {/* Bottom: Profile + Settings */}
-      <div className="p-3 border-t border-slate-200 dark:border-white/5 space-y-1">
-        <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''} ${isMinimized ? 'justify-center px-0' : ''}`} title={isMinimized ? 'Pengaturan' : undefined}>
-          <Settings size={isMinimized ? 18 : 15} className="flex-shrink-0" />
-          {!isMinimized && <span>Pengaturan</span>}
-        </NavLink>
-        <div className={`flex items-center gap-2.5 p-2 rounded-lg hover:bg-white/5 transition-colors mt-1 ${isMinimized ? 'justify-center' : ''}`}>
-          <div className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center flex-shrink-0 text-[10px] font-bold text-white cursor-pointer" title={isMinimized ? profile?.full_name : undefined}>
-            {getInitials(profile?.full_name)}
-          </div>
-          {!isMinimized && (
-            <>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate">{profile?.full_name || 'User'}</p>
-                <p className="text-[10px] text-slate-500 truncate">{isAdmin ? 'Admin' : 'Petugas'}</p>
-              </div>
-              <button onClick={handleSignOut} className="text-slate-600 hover:text-red-400 transition-colors p-1 rounded flex-shrink-0" title="Keluar">
-                <LogOut size={13} />
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-    </aside>
-  )
-
   return (
     <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950">
       {/* Desktop Sidebar */}
       <div className={`hidden lg:flex flex-shrink-0 flex-col glass border-r border-slate-200 dark:border-white/5 transition-all duration-300 relative z-40 ${isMinimized ? 'w-20' : 'w-56'}`}>
-        <SidebarContent />
+        <SidebarContent isMinimized={isMinimized} profile={profile} isAdmin={isAdmin} filteredNav={filteredNav} onSignOut={handleSignOut} />
         <button 
           onClick={() => setIsMinimized(!isMinimized)}
           className="absolute -right-3 top-[17px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-white/10 rounded-full p-1 shadow-lg transition-colors z-50 flex items-center justify-center"
@@ -173,7 +177,7 @@ const AppLayout = ({ children }) => {
             <X size={16} />
           </button>
         </div>
-        <SidebarContent />
+        <SidebarContent isMinimized={isMinimized} profile={profile} isAdmin={isAdmin} filteredNav={filteredNav} onSignOut={handleSignOut} />
       </div>
 
       {/* Main */}

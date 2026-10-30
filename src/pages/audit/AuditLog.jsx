@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { ClipboardList, User, Search, Filter } from 'lucide-react'
+import { ClipboardList } from 'lucide-react'
 import { auditService } from '@/services/auditLog'
 import { userService } from '@/services/users'
 import { formatDateTime, formatRelative, getInitials } from '@/utils/format'

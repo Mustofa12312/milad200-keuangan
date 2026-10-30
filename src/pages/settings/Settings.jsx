@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   User, Lock, LogOut, Shield, Save, Eye, EyeOff,
-  Camera, CheckCircle, AlertCircle, Smartphone, Monitor,
+  CheckCircle, AlertCircle,
 } from 'lucide-react'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 import { authService } from '@/services/auth'
 import supabase from '@/services/supabase'
 import { getInitials, formatDateTime } from '@/utils/format'

@@ -3,9 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Plus, CheckCircle, Clock, AlertCircle } from 'lucide-react'
 import { debtService } from '@/services/debts'
-import { useAuth } from '@/contexts/AuthContext'
-import { formatCurrency, formatDate, formatRelative, getStatusLabel } from '@/utils/format'
-import { Spinner, ConfirmDialog } from '@/components/ui'
+import { useAuth } from '@/contexts/auth'
+import { formatCurrency, formatDate, getStatusLabel } from '@/utils/format'
+import { Spinner } from '@/components/ui'
 import toast from 'react-hot-toast'
 
 const statusIcon = { 'LUNAS': CheckCircle, 'SEBAGIAN': Clock, 'BELUM LUNAS': AlertCircle }

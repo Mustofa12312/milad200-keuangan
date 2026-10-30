@@ -1,13 +1,12 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import ReceiptUploader from '@/components/receipt/ReceiptUploader'
 import toast from 'react-hot-toast'
-import { compressImage } from '@/utils/imageCompression'
 
 const IncomeCreate = () => {
   const { user, profile } = useAuth()
@@ -42,6 +41,7 @@ const IncomeCreate = () => {
     if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
     if (!form.source.trim()) e.source = 'Sumber pemasukan wajib diisi'
     if (!form.amount || Number(form.amount) <= 0) e.amount = 'Nominal harus lebih dari 0'
+    if (!receiptFile) e.receipt = 'Foto nota wajib dilampirkan'
     setErrors(e)
     return Object.keys(e).length === 0
   }
@@ -167,11 +167,15 @@ const IncomeCreate = () => {
         {/* Receipt */}
         <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
           <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">
-            Foto Nota / Bukti (Opsional)
+            Foto Nota / Bukti <span className="text-red-400">*</span>
           </label>
           <ReceiptUploader
             value={receiptFile}
-            onChange={setReceiptFile}
+            onChange={(file) => {
+              setReceiptFile(file)
+              if (errors.receipt) setErrors(prev => ({ ...prev, receipt: undefined }))
+            }}
+            required
             error={errors.receipt}
           />
         </div>

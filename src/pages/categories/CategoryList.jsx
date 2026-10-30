@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, Tags, Edit2, Power } from 'lucide-react'
 import { categoryService } from '@/services/categories'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 import { EmptyState, ConfirmDialog } from '@/components/ui'
 import toast from 'react-hot-toast'
 

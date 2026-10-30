@@ -16,7 +16,7 @@ import { transactionService } from '@/services/transactions'
 import { debtService } from '@/services/debts'
 import { StatCard, EmptyState } from '@/components/ui'
 import { formatCurrency, formatDate, formatRelative } from '@/utils/format'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 
 const CHART_PERIODS = [
   { key: 'week', label: '7 Hari' },

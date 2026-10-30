@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import ReceiptUploader from '@/components/receipt/ReceiptUploader'
 import toast from 'react-hot-toast'
@@ -17,7 +17,6 @@ const ExpenseCreate = () => {
   const [form, setForm] = useState({
     transaction_date: new Date().toISOString().split('T')[0],
     category_id: '',
-    amount: '',
     description: '',
     volume: '',
     unit: '',
@@ -26,12 +25,8 @@ const ExpenseCreate = () => {
   const [receiptFile, setReceiptFile] = useState(null)
   const [errors, setErrors] = useState({})
 
-  // Auto-calculate amount
-  useEffect(() => {
-    const vol = Number(form.volume) || 0
-    const price = Number(form.unitPrice) || 0
-    setForm(prev => ({ ...prev, amount: (vol * price).toString() }))
-  }, [form.volume, form.unitPrice])
+  // Derived total — no state/effect needed
+  const totalAmount = (Number(form.volume) || 0) * (Number(form.unitPrice) || 0)
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
@@ -56,6 +51,8 @@ const ExpenseCreate = () => {
     if (!form.volume || Number(form.volume) <= 0) e.volume = 'Volume wajib diisi'
     if (!form.unit) e.unit = 'Satuan wajib dipilih'
     if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Harga satuan wajib diisi'
+    if (totalAmount <= 0) e.volume = 'Total nominal harus lebih dari 0'
+    if (!receiptFile) e.receipt = 'Foto nota wajib dilampirkan'
     
     setErrors(e)
     return Object.keys(e).length === 0
@@ -76,7 +73,7 @@ const ExpenseCreate = () => {
         transaction_date: form.transaction_date,
         category_id: form.category_id,
         source: null,
-        amount: Number(form.amount),
+        amount: totalAmount,
         description: finalDescription,
       },
       file: receiptFile,
@@ -184,7 +181,7 @@ const ExpenseCreate = () => {
               <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 font-semibold">Rp</span>
               <input type="text"
                 className="input-field !pl-10 !bg-slate-100 dark:!bg-slate-900/50 !text-slate-500 cursor-not-allowed font-semibold border-dashed"
-                value={form.amount ? Number(form.amount).toLocaleString('id-ID') : '0'}
+                value={totalAmount ? totalAmount.toLocaleString('id-ID') : '0'}
                 disabled />
             </div>
             <p className="text-[10px] text-blue-500 mt-1.5 flex items-center gap-1.5">
@@ -208,9 +205,17 @@ const ExpenseCreate = () => {
 
         <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
           <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">
-            Foto Nota (Opsional)
+            Foto Nota <span className="text-red-400">*</span>
           </label>
-          <ReceiptUploader value={receiptFile} onChange={setReceiptFile} error={errors.receipt} />
+          <ReceiptUploader
+            value={receiptFile}
+            onChange={(file) => {
+              setReceiptFile(file)
+              if (errors.receipt) setErrors(prev => ({ ...prev, receipt: undefined }))
+            }}
+            required
+            error={errors.receipt}
+          />
         </div>
 
         <button type="submit" className="btn btn-danger w-full btn-lg" disabled={mutation.isPending}>

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Calendar, Folder, Users, Search } from 'lucide-react'
+import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search } from 'lucide-react'
 import { reportService } from '@/services/reports'
 import { categoryService } from '@/services/categories'
 import { userService } from '@/services/users'
 import { formatCurrency, formatDate } from '@/utils/format'
 import { EmptyState, Spinner } from '@/components/ui'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 
 const Reports = () => {
   const { isAdmin } = useAuth()

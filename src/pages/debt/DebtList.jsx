@@ -1,10 +1,9 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Search, CreditCard, ChevronRight, Clock, CheckCircle, AlertCircle } from 'lucide-react'
+import { useQuery } from '@tanstack/react-query'
+import { Plus, CreditCard, ChevronRight, Clock, CheckCircle, AlertCircle } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { debtService } from '@/services/debts'
 import { formatCurrency, formatDate, getStatusLabel } from '@/utils/format'
-import { useAuth } from '@/contexts/AuthContext'
 import { EmptyState, Pagination, StatCard } from '@/components/ui'
 
 const statusIcon = { 'LUNAS': CheckCircle, 'SEBAGIAN': Clock, 'BELUM LUNAS': AlertCircle }

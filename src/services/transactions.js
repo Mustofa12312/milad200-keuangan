@@ -89,7 +89,12 @@ export const transactionService = {
           mime_type: receiptFile.type,
           uploaded_by: userId,
         })
-      if (receiptError) throw receiptError
+      if (receiptError) {
+      // Rollback: remove uploaded file and delete transaction
+      if (receiptPath) await supabase.storage.from('transaction-receipts').remove([receiptPath])
+      await supabase.from('transactions').delete().eq('id', transaction.id)
+      throw receiptError
+    }
     }
 
     // 4. Audit log

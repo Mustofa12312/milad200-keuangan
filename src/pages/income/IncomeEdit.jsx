@@ -1,60 +1,24 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
-import { useAuth } from '@/contexts/AuthContext'
+import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import toast from 'react-hot-toast'
 
-const IncomeEdit = () => {
-  const { id } = useParams()
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const qc = useQueryClient()
-
-  const { data: tx, isLoading } = useQuery({
-    queryKey: ['transaction', id],
-    queryFn: () => transactionService.getTransactionById(id),
-  })
-
-  const [form, setForm] = useState({ transaction_date: '', source: '', amount: '', description: '' })
-  const [errors, setErrors] = useState({})
-
-  useEffect(() => {
-    if (tx) {
-      setForm({
-        transaction_date: tx.transaction_date,
-        source: tx.source || '',
-        amount: tx.amount?.toString() || '',
-        description: tx.description || '',
-      })
-    }
-  }, [tx])
-
-  const mutation = useMutation({
-    mutationFn: (updates) => transactionService.updateTransaction(id, updates, user.id),
-    onSuccess: () => {
-      toast.success('Pemasukan berhasil diperbarui!')
-      qc.invalidateQueries({ queryKey: ['transactions'] })
-      qc.invalidateQueries({ queryKey: ['summary'] })
-      navigate('/income')
-    },
-    onError: (err) => toast.error(err.message || 'Gagal memperbarui'),
-  })
-
-  const validate = () => {
-    const e = {}
-    if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
-    if (!form.source.trim()) e.source = 'Sumber wajib diisi'
-    if (!form.amount || Number(form.amount) <= 0) e.amount = 'Nominal harus lebih dari 0'
-    setErrors(e)
-    return Object.keys(e).length === 0
-  }
-
+const IncomeEditForm = ({ mutation, setForm, form, errors, setErrors }) => {
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!validate()) return
+    const e2 = {}
+    if (!form.transaction_date) e2.transaction_date = 'Tanggal wajib diisi'
+    if (!form.source.trim()) e2.source = 'Sumber wajib diisi'
+    if (!form.amount || Number(form.amount) <= 0) e2.amount = 'Nominal harus lebih dari 0'
+    if (Object.keys(e2).length > 0) {
+      setErrors(e2)
+      return
+    }
+    setErrors({})
     mutation.mutate({
       transaction_date: form.transaction_date,
       source: form.source.trim(),
@@ -62,12 +26,6 @@ const IncomeEdit = () => {
       description: form.description.trim() || null,
     })
   }
-
-  if (isLoading) return (
-    <div className="flex items-center justify-center py-20">
-      <Spinner size={24} />
-    </div>
-  )
 
   return (
     <div className="max-w-lg mx-auto space-y-5">
@@ -81,7 +39,6 @@ const IncomeEdit = () => {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5 space-y-4">
-          {/* Warning banner */}
           <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
             <p className="text-xs text-amber-400">⚠️ Perubahan ini akan dicatat di Audit Log</p>
           </div>
@@ -129,6 +86,59 @@ const IncomeEdit = () => {
         </button>
       </form>
     </div>
+  )
+}
+
+const IncomeEdit = () => {
+  const { id } = useParams()
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const qc = useQueryClient()
+
+  const { data: tx, isLoading } = useQuery({
+    queryKey: ['transaction', id],
+    queryFn: () => transactionService.getTransactionById(id),
+  })
+
+  const [form, setForm] = useState({ transaction_date: '', source: '', amount: '', description: '' })
+  const [errors, setErrors] = useState({})
+  const [loadedId, setLoadedId] = useState(null)
+
+  if (tx && tx.id !== loadedId) {
+    setLoadedId(tx.id)
+    setForm({
+      transaction_date: tx.transaction_date,
+      source: tx.source || '',
+      amount: tx.amount?.toString() || '',
+      description: tx.description || '',
+    })
+  }
+
+  const mutation = useMutation({
+    mutationFn: (updates) => transactionService.updateTransaction(id, updates, user.id),
+    onSuccess: () => {
+      toast.success('Pemasukan berhasil diperbarui!')
+      qc.invalidateQueries({ queryKey: ['transactions'] })
+      qc.invalidateQueries({ queryKey: ['summary'] })
+      navigate('/income')
+    },
+    onError: (err) => toast.error(err.message || 'Gagal memperbarui'),
+  })
+
+  if (isLoading) return (
+    <div className="flex items-center justify-center py-20">
+      <Spinner size={24} />
+    </div>
+  )
+
+  return (
+    <IncomeEditForm
+      mutation={mutation}
+      form={form}
+      setForm={setForm}
+      errors={errors}
+      setErrors={setErrors}
+    />
   )
 }
 
