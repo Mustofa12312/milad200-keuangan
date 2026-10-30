@@ -106,12 +106,12 @@ const SidebarContent = ({ isMinimized, profile, isAdmin, filteredNav, onSignOut 
 const AppLayout = ({ children }) => {
   const { profile, isAdmin, role, signOut, user } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const navigate = useNavigate()
+  const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMinimized, setIsMinimized] = useState(false)
   const [notifOpen, setNotifOpen] = useState(false)
   const [prevPath, setPrevPath] = useState(location.pathname)
-  const navigate = useNavigate()
-  const location = useLocation()
   const qc = useQueryClient()
 
   if (prevPath !== location.pathname) {

@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+
+<html lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Laporan Keuangan - 200 Tahun Panyeppen</title>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Inter & SF Pro Display compatible font -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+          },
+          colors: {
+            apple: {
+              canvas: '#F5F5F7',
+              card: '#FFFFFF',
+              border: '#E5E5EA',
+              subtle: '#F2F2F7',
+              textPrimary: '#1D1D1F',
+              textSecondary: '#86868B',
+              blue: '#0071E3',
+              blueSoft: 'rgba(0, 113, 227, 0.08)',
+              green: '#34C759',
+              greenSoft: 'rgba(52, 199, 89, 0.10)',
+              red: '#FF3B30',
+              redSoft: 'rgba(255, 59, 48, 0.10)',
+              amber: '#FF9500',
+              amberSoft: 'rgba(255, 149, 0, 0.10)',
+              purple: '#AF52DE',
+            }
+          },
+          boxShadow: {
+            'apple-sm': '0 2px 8px -2px rgba(0, 0, 0, 0.04), 0 1px 4px -1px rgba(0, 0, 0, 0.02)',
+            'apple-card': '0 4px 20px -4px rgba(0, 0, 0, 0.05), 0 2px 6px -2px rgba(0, 0, 0, 0.02)',
+            'apple-hover': '0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 6px 10px -4px rgba(0, 0, 0, 0.03)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Apple UI Styles -->
+<style data-purpose="apple-typography-and-effects">
+    body {
+      letter-spacing: -0.015em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Apple smooth scroll and transitions */
+    .apple-transition {
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Subtle custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D1D1D6;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #AEAEB2;
+    }
+  </style>
+<!-- END: Custom Apple UI Styles -->
+</head>
+<body class="bg-apple-canvas text-apple-textPrimary min-h-screen flex selection:bg-apple-blue selection:text-white">
+<!-- BEGIN: Sidebar Navigation -->
+<aside class="w-64 bg-apple-card border-r border-apple-border flex flex-col justify-between shrink-0 h-screen sticky top-0 px-4 py-5 z-30" data-purpose="main-sidebar">
+<div class="flex flex-col space-y-6">
+<!-- App Brand & Identity -->
+<div class="flex items-center space-x-3 px-2">
+<div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-apple-blue to-sky-400 flex items-center justify-center text-white font-bold text-base shadow-sm ring-2 ring-white">
+          KP
+        </div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold tracking-tight text-apple-textPrimary">Laporan Keuangan</span>
+<span class="text-xs text-apple-textSecondary font-normal">200 Tahun Panyeppen</span>
+</div>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-6">
+<!-- Main Section -->
+<div>
+<span class="px-3 text-[11px] font-semibold uppercase tracking-wider text-apple-textSecondary">Menu Utama</span>
+<ul class="mt-2 space-y-1">
+<li>
+<!-- Active Item with Apple pill highlight -->
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl bg-apple-blue text-white font-medium text-sm shadow-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Dashboard</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Pemasukan</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Pengeluaran</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Hutang</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Laporan</span>
+</a>
+</li>
+</ul>
+</div>
+<!-- Admin Section -->
+<div>
+<span class="px-3 text-[11px] font-semibold uppercase tracking-wider text-apple-textSecondary">Admin</span>
+<ul class="mt-2 space-y-1">
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Kategori</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Pengguna</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Audit Log</span>
+</a>
+</li>
+<li>
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle font-medium text-sm apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Dibatalkan</span>
+</a>
+</li>
+</ul>
+</div>
+</nav>
+</div>
+<!-- Sidebar Footer / User Profile -->
+<div class="border-t border-apple-border pt-4 space-y-3">
+<a class="flex items-center space-x-3 px-3 py-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle text-sm font-medium apple-transition" href="#">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Pengaturan</span>
+</a>
+<!-- Profile Container -->
+<div class="flex items-center justify-between p-2 rounded-2xl bg-apple-subtle/70">
+<div class="flex items-center space-x-2.5">
+<div class="w-8 h-8 rounded-full bg-apple-blue flex items-center justify-center text-white text-xs font-semibold">
+            M
+          </div>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-apple-textPrimary">milad200</span>
+<span class="text-[10px] text-apple-textSecondary">Admin</span>
+</div>
+</div>
+<button class="p-1.5 text-apple-textSecondary hover:text-apple-red rounded-lg apple-transition" title="Keluar" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</div>
+</aside>
+<!-- END: Sidebar Navigation -->
+<!-- BEGIN: Main Dashboard View -->
+<div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+<!-- Top Navigation Bar -->
+<header class="h-16 border-b border-apple-border/80 bg-apple-card/80 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between px-8" data-purpose="top-header">
+<div class="flex items-center space-x-2 text-xs font-medium text-apple-textSecondary">
+<span class="hover:text-apple-textPrimary cursor-pointer apple-transition">200 Tahun Panyeppen</span>
+<svg class="w-3.5 h-3.5 text-apple-textSecondary" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+<span class="text-apple-textPrimary font-semibold">Dashboard</span>
+</div>
+<!-- Action items on the right -->
+<div class="flex items-center space-x-3">
+<!-- Notification button -->
+<button aria-label="Notifikasi" class="relative p-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle apple-transition">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 bg-apple-red rounded-full ring-2 ring-white"></span>
+</button>
+<!-- Dark/Light Mode toggle dummy -->
+<button aria-label="Toggle Theme" class="p-2 rounded-xl text-apple-textSecondary hover:text-apple-textPrimary hover:bg-apple-subtle apple-transition">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<div class="h-4 w-[1px] bg-apple-border mx-1"></div>
+<!-- User Quick Pill -->
+<div class="flex items-center space-x-2 pl-1 cursor-pointer">
+<div class="w-7 h-7 rounded-full bg-apple-blue/15 text-apple-blue font-semibold text-xs flex items-center justify-center">
+            M
+          </div>
+<span class="text-xs font-semibold text-apple-textPrimary">milad200</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 p-8 max-w-7xl mx-auto w-full space-y-6">
+<!-- Greeting & Action Buttons Section -->
+<section class="flex flex-col sm:flex-row sm:items-center justify-between gap-4" data-purpose="greeting-header">
+<div>
+<h1 class="text-2xl font-bold tracking-tight text-apple-textPrimary flex items-center gap-2">
+            Selamat Siang, milad200! <span class="text-xl">👋</span>
+</h1>
+<p class="text-xs text-apple-textSecondary flex items-center gap-1.5 mt-1 font-medium">
+<svg class="w-3.5 h-3.5 text-apple-textSecondary" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Jumat, 30 Oktober 2026
+          </p>
+</div>
+<!-- Action Buttons -->
+<div class="flex items-center gap-3">
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-apple-green text-white font-medium text-xs shadow-apple-sm hover:brightness-105 active:scale-95 apple-transition" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+<span>Pemasukan</span>
+</button>
+<button class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-apple-red text-white font-medium text-xs shadow-apple-sm hover:brightness-105 active:scale-95 apple-transition" type="button">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+<span>Pengeluaran</span>
+</button>
+</div>
+</section>
+<!-- Alert / Warning Pill Banner -->
+<section data-purpose="alert-notification">
+<a class="flex items-center justify-between px-5 py-3 rounded-2xl bg-white border border-apple-amber/30 shadow-apple-sm hover:border-apple-amber apple-transition group" href="#">
+<div class="flex items-center space-x-3.5">
+<div class="w-8 h-8 rounded-xl bg-apple-amberSoft flex items-center justify-center text-apple-amber shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<p class="text-xs font-semibold text-apple-textPrimary">1 Hutang Jatuh Tempo!</p>
+<p class="text-[11px] text-apple-textSecondary">BMS</p>
+</div>
+</div>
+<svg class="w-4 h-4 text-apple-textSecondary group-hover:translate-x-0.5 group-hover:text-apple-textPrimary apple-transition" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+</section>
+<!-- Summary Statistics Grid -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-purpose="stat-summary-cards">
+<!-- Stat Card 1: Saldo Saat Ini -->
+<div class="bg-apple-card rounded-2xl p-5 border border-apple-border shadow-apple-card hover:shadow-apple-hover apple-transition flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-semibold text-apple-textSecondary uppercase tracking-wide">Saldo Saat Ini</span>
+<div class="w-8 h-8 rounded-xl bg-apple-blueSoft flex items-center justify-center text-apple-blue">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-xl font-bold tracking-tight text-apple-textPrimary">Rp 3.529.019</span>
+</div>
+</div>
+<!-- Stat Card 2: Total Pemasukan -->
+<div class="bg-apple-card rounded-2xl p-5 border border-apple-border shadow-apple-card hover:shadow-apple-hover apple-transition flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-semibold text-apple-textSecondary uppercase tracking-wide">Total Pemasukan</span>
+<div class="w-8 h-8 rounded-xl bg-apple-greenSoft flex items-center justify-center text-apple-green">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-xl font-bold tracking-tight text-apple-textPrimary">Rp 12.000.000</span>
+</div>
+</div>
+<!-- Stat Card 3: Total Pengeluaran -->
+<div class="bg-apple-card rounded-2xl p-5 border border-apple-border shadow-apple-card hover:shadow-apple-hover apple-transition flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<span class="text-[11px] font-semibold text-apple-textSecondary uppercase tracking-wide">Total Pengeluaran</span>
+<div class="w-8 h-8 rounded-xl bg-apple-redSoft flex items-center justify-center text-apple-red">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<div class="mt-4">
+<span class="text-xl font-bold tracking-tight text-apple-textPrimary">Rp 8.470.981</span>
+</div>
+</div>
+<!-- Stat Card 4: Total Hutang -->
+<div class="bg-apple-card rounded-2xl p-5 border border-apple-border shadow-apple-card hover:shadow-apple-hover apple-transition flex flex-col justify-between">
+<div class="flex items-center justify-between">
+<div>
+<span class="text-[11px] font-semibold text-apple-textSecondary uppercase tracking-wide">Total Hutang</span>
+</div>
+<div class="w-8 h-8 rounded-xl bg-apple-amberSoft flex items-center justify-center text-apple-amber">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+</div>
+<div class="mt-4 flex items-baseline justify-between">
+<span class="text-xl font-bold tracking-tight text-apple-textPrimary">Rp 12.000.000</span>
+<span class="text-[11px] text-apple-amber font-medium bg-apple-amberSoft px-2 py-0.5 rounded-full">2 belum lunas</span>
+</div>
+</div>
+</section>
+<!-- Charts Section: Line Chart & Donut Chart -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6" data-purpose="charts-section">
+<!-- Left Column: Line Chart (Cashflow) -->
+<div class="lg:col-span-8 bg-apple-card rounded-2xl p-6 border border-apple-border shadow-apple-card flex flex-col justify-between">
+<div>
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+<div>
+<h2 class="text-sm font-bold text-apple-textPrimary">Pemasukan vs Pengeluaran</h2>
+<p class="text-xs text-apple-textSecondary mt-0.5">Perbandingan arus kas</p>
+</div>
+<!-- Apple Segmented Control Filter -->
+<div class="inline-flex bg-apple-subtle p-0.5 rounded-xl border border-apple-border/50 text-xs font-medium">
+<button class="px-3 py-1 text-apple-textSecondary hover:text-apple-textPrimary rounded-lg apple-transition">7 Hari</button>
+<button class="px-3 py-1 bg-white text-apple-textPrimary font-semibold shadow-sm rounded-lg">Bulan Ini</button>
+<button class="px-3 py-1 text-apple-textSecondary hover:text-apple-textPrimary rounded-lg apple-transition">Tahun Ini</button>
+</div>
+</div>
+<!-- Vector Line Chart SVG Graphic -->
+<div class="relative w-full h-56 pt-2">
+<svg class="w-full h-full overflow-visible" preserveaspectratio="none" viewbox="0 0 600 200">
+<defs>
+<!-- Gradient for Income -->
+<lineargradient id="incomeGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#34C759" stop-opacity="0.25"></stop>
+<stop offset="100%" stop-color="#34C759" stop-opacity="0.0"></stop>
+</lineargradient>
+<!-- Gradient for Expense -->
+<lineargradient id="expenseGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#FF3B30" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#FF3B30" stop-opacity="0.0"></stop>
+</lineargradient>
+</defs>
+<!-- Horizontal subtle gridlines -->
+<line stroke="#F2F2F7" stroke-width="1" x1="0" x2="600" y1="20" y2="20"></line>
+<line stroke="#F2F2F7" stroke-width="1" x1="0" x2="600" y1="65" y2="65"></line>
+<line stroke="#F2F2F7" stroke-width="1" x1="0" x2="600" y1="110" y2="110"></line>
+<line stroke="#F2F2F7" stroke-width="1" x1="0" x2="600" y1="155" y2="155"></line>
+<!-- Left Y-Axis Labels -->
+<text fill="#86868B" font-family="sans-serif" font-size="9" x="5" y="24">Rp 10.0jt</text>
+<text fill="#86868B" font-family="sans-serif" font-size="9" x="5" y="69">Rp 7.5jt</text>
+<text fill="#86868B" font-family="sans-serif" font-size="9" x="5" y="114">Rp 5.0jt</text>
+<text fill="#86868B" font-family="sans-serif" font-size="9" x="5" y="159">Rp 2.5jt</text>
+<!-- Income Area Fill & Line (Peak around day 12) -->
+<path d="M 10 160 Q 40 170 70 170 T 170 170 C 190 170 200 20 215 20 C 230 20 240 170 260 170 L 590 170 L 590 175 L 10 175 Z" fill="url(#incomeGradient)"></path>
+<path d="M 10 160 Q 40 170 70 170 T 170 170 C 190 170 200 20 215 20 C 230 20 240 170 260 170 L 590 170" fill="none" stroke="#34C759" stroke-linecap="round" stroke-width="2.5"></path>
+<!-- Expense Area Fill & Line (Peaks around day 18 and day 28) -->
+<path d="M 10 170 C 60 170 90 166 120 166 C 180 166 240 172 265 172 C 280 172 295 110 310 110 C 330 110 350 172 380 172 C 450 172 480 164 520 164 C 550 164 570 170 590 170 L 590 175 L 10 175 Z" fill="url(#expenseGradient)"></path>
+<path d="M 10 170 C 60 170 90 166 120 166 C 180 166 240 172 265 172 C 280 172 295 110 310 110 C 330 110 350 172 380 172 C 450 172 480 164 520 164 C 550 164 570 170 590 170" fill="none" stroke="#FF3B30" stroke-linecap="round" stroke-width="2"></path>
+</svg>
+</div>
+<!-- X-Axis Labels -->
+<div class="flex justify-between text-[11px] text-apple-textSecondary px-2 pt-2 border-t border-apple-border/40">
+<span>1</span>
+<span>6</span>
+<span>11</span>
+<span>16</span>
+<span>21</span>
+<span>26</span>
+<span>31</span>
+</div>
+</div>
+<!-- Line Legend -->
+<div class="flex items-center justify-center space-x-6 mt-4 pt-3 border-t border-apple-border/40">
+<div class="flex items-center space-x-2">
+<span class="w-3 h-1 bg-apple-green rounded-full"></span>
+<span class="text-xs font-medium text-apple-textSecondary">Pemasukan</span>
+</div>
+<div class="flex items-center space-x-2">
+<span class="w-3 h-1 bg-apple-red rounded-full"></span>
+<span class="text-xs font-medium text-apple-textSecondary">Pengeluaran</span>
+</div>
+</div>
+</div>
+<!-- Right Column: Donut Chart (Per Kategori - Pengeluaran) -->
+<div class="lg:col-span-4 bg-apple-card rounded-2xl p-6 border border-apple-border shadow-apple-card flex flex-col justify-between">
+<div>
+<div class="mb-4">
+<h2 class="text-sm font-bold text-apple-textPrimary">Per Kategori</h2>
+<p class="text-xs text-apple-textSecondary mt-0.5">Pengeluaran</p>
+</div>
+<!-- Donut SVG Illustration -->
+<div class="flex items-center justify-center py-2">
+<div class="relative w-44 h-44">
+<svg class="w-full h-full -rotate-90" viewbox="0 0 100 100">
+<!-- Background subtle circle -->
+<circle cx="50" cy="50" fill="none" r="36" stroke="#F2F2F7" stroke-width="12"></circle>
+<!-- Segment 1: Insentif dan Jasa 54% (Circumference ~ 226) -->
+<!-- Dash: 226.2 * 0.54 = 122.1, gap: 104 -->
+<circle cx="50" cy="50" fill="none" r="36" stroke="#0071E3" stroke-dasharray="122.1 226.2" stroke-dashoffset="0" stroke-width="12"></circle>
+<!-- Segment 2: Pengadaan dan Perbaikan 28% -> Dash: 63.3 -->
+<circle cx="50" cy="50" fill="none" r="36" stroke="#AF52DE" stroke-dasharray="63.3 226.2" stroke-dashoffset="-124" stroke-width="12"></circle>
+<!-- Segment 3: Konsumsi dan Biaya Rapat 9% -> Dash: 20.3 -->
+<circle cx="50" cy="50" fill="none" r="36" stroke="#34C759" stroke-dasharray="20.3 226.2" stroke-dashoffset="-189" stroke-width="12"></circle>
+<!-- Segment 4: ATK 9% -> Dash: 20.3 -->
+<circle cx="50" cy="50" fill="none" r="36" stroke="#FF9500" stroke-dasharray="20.3 226.2" stroke-dashoffset="-211" stroke-width="12"></circle>
+</svg>
+<!-- Center Info overlay -->
+<div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+<span class="text-xs font-semibold text-apple-textSecondary">Total</span>
+<span class="text-sm font-bold text-apple-textPrimary">100%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Breakdown List -->
+<div class="space-y-2 mt-4 pt-3 border-t border-apple-border/50 text-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-apple-blue shrink-0"></span>
+<span class="text-apple-textSecondary truncate max-w-[140px]">Insentif dan Jasa</span>
+</div>
+<span class="font-semibold text-apple-textPrimary">54%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-apple-purple shrink-0"></span>
+<span class="text-apple-textSecondary truncate max-w-[140px]">Pengadaan &amp; Perbaikan</span>
+</div>
+<span class="font-semibold text-apple-textPrimary">28%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-apple-green shrink-0"></span>
+<span class="text-apple-textSecondary truncate max-w-[140px]">Konsumsi &amp; Biaya Rapat</span>
+</div>
+<span class="font-semibold text-apple-textPrimary">9%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2.5 h-2.5 rounded-full bg-apple-amber shrink-0"></span>
+<span class="text-apple-textSecondary truncate max-w-[140px]">ATK</span>
+</div>
+<span class="font-semibold text-apple-textPrimary">9%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Recent Transactions Section -->
+<section class="bg-apple-card rounded-2xl border border-apple-border shadow-apple-card overflow-hidden" data-purpose="recent-transactions">
+<!-- Header -->
+<div class="p-6 pb-4 border-b border-apple-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div>
+<h2 class="text-base font-bold text-apple-textPrimary">Transaksi Terbaru</h2>
+<p class="text-xs text-apple-textSecondary mt-0.5">8 aktivitas terakhir</p>
+</div>
+<!-- Category Quick Links -->
+<div class="flex items-center space-x-3 text-xs font-semibold">
+<a class="text-apple-blue hover:underline inline-flex items-center gap-1" href="#">
+              Pemasukan
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+<span class="text-apple-border">|</span>
+<a class="text-apple-blue hover:underline inline-flex items-center gap-1" href="#">
+              Pengeluaran
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</a>
+</div>
+</div>
+<!-- Transactions List -->
+<div class="divide-y divide-apple-border/50">
+<!-- Row 1 -->
+<div class="p-4 px-6 flex items-center justify-between hover:bg-apple-canvas/60 apple-transition">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-xl bg-apple-redSoft flex items-center justify-center text-apple-red shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h4 class="text-xs font-semibold text-apple-textPrimary">Pengadaan dan Perbaikan</h4>
+<p class="text-[11px] text-apple-textSecondary mt-0.5">Ust. Abror Rosyid, S.E. • 1 hari lalu</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-apple-red">- Rp 50.000</span>
+<p class="text-[10px] text-apple-textSecondary mt-0.5">28 Okt 2026</p>
+</div>
+</div>
+<!-- Row 2 -->
+<div class="p-4 px-6 flex items-center justify-between hover:bg-apple-canvas/60 apple-transition">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-xl bg-apple-redSoft flex items-center justify-center text-apple-red shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h4 class="text-xs font-semibold text-apple-textPrimary">Insentif dan Jasa</h4>
+<p class="text-[11px] text-apple-textSecondary mt-0.5">Ust. Abror Rosyid, S.E. • 2 hari lalu</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-apple-red">- Rp 400.000</span>
+<p class="text-[10px] text-apple-textSecondary mt-0.5">27 Okt 2026</p>
+</div>
+</div>
+<!-- Row 3 -->
+<div class="p-4 px-6 flex items-center justify-between hover:bg-apple-canvas/60 apple-transition">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-xl bg-apple-redSoft flex items-center justify-center text-apple-red shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h4 class="text-xs font-semibold text-apple-textPrimary">Pengadaan dan Perbaikan</h4>
+<p class="text-[11px] text-apple-textSecondary mt-0.5">Ust. Abror Rosyid, S.E. • 3 hari lalu</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-apple-red">- Rp 50.000</span>
+<p class="text-[10px] text-apple-textSecondary mt-0.5">26 Okt 2026</p>
+</div>
+</div>
+<!-- Row 4 -->
+<div class="p-4 px-6 flex items-center justify-between hover:bg-apple-canvas/60 apple-transition">
+<div class="flex items-center space-x-3.5">
+<div class="w-9 h-9 rounded-xl bg-apple-redSoft flex items-center justify-center text-apple-red shrink-0">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<div>
+<h4 class="text-xs font-semibold text-apple-textPrimary">Pengadaan dan Perbaikan</h4>
+<p class="text-[11px] text-apple-textSecondary mt-0.5">Ust. Abror Rosyid, S.E. • 4 hari lalu</p>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-bold text-apple-red">- Rp 50.000</span>
+<p class="text-[10px] text-apple-textSecondary mt-0.5">25 Okt 2026</p>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- END: Main Dashboard View -->
+</body></html>
