@@ -16,6 +16,7 @@ const ReceiptViewModal = ({ receipt, onClose }) => {
         const signedUrl = await transactionService.getSignedUrl(receipt.storage_path)
         setUrl(signedUrl)
       } catch (err) {
+        console.error("Error loading receipt: ", err)
         setError('Gagal memuat foto nota')
       } finally {
         setLoading(false)

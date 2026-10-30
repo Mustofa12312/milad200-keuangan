@@ -140,7 +140,7 @@ const ExpenseCreate = () => {
                   value={form.unit}
                   onChange={e => handleChange('unit', e.target.value)}
                 >
-                  <option value="">-- Pilih --</option>
+                  <option value="">-- Pilih --</option> 
                   <option value="Orang">Orang</option>
                   <option value="Pcs">Pcs</option>
                   <option value="Set">Set</option>
@@ -157,7 +157,7 @@ const ExpenseCreate = () => {
                   <option value="Kegiatan">Kegiatan</option>
                   <option value="Hari">Hari</option>
                   <option value="Bulan">Bulan</option>
-                  <option value="Bulan">1 Nota </option>
+                  <option value="1 Nota">1 Nota </option>
                   <option value="Tahun">Tahun</option>
                   <option value="Lainnya">Lainnya...</option>
                 </select>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Search, Filter, X, SlidersHorizontal } from 'lucide-react'
+import { Search, X, SlidersHorizontal } from 'lucide-react'
 
 /**
  * Reusable filter bar with search, date range, and custom filter slots

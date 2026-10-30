@@ -52,7 +52,6 @@ export const transactionService = {
     // 1. Upload receipt first
     let receiptPath = null
     if (receiptFile) {
-      const fileExt = receiptFile.name.split('.').pop()
       const fileName = `${crypto.randomUUID()}.webp`
       const folder = transactionData.type === 'INCOME' ? 'income' : 'expense'
       const year = new Date().getFullYear()

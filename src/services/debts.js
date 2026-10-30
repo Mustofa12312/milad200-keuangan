@@ -52,19 +52,7 @@ export const debtService = {
     return data
   },
 
-  async updateDebt(id, updates, userId) {
-    const { data, error } = await supabase
-      .from('debts')
-      .update({ ...updates, updated_by: userId, updated_at: new Date().toISOString() })
-      .eq('id', id)
-      .select()
-      .single()
-    if (error) throw error
-    await logAudit(userId, 'UPDATE', 'debt', id, null, updates)
-    return data
-  },
 
-  async addPayment(debtId, paymentData, userId) {
     // Get current debt
     const { data: debt, error: debtError } = await supabase
       .from('debts')
