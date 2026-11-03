@@ -5,3 +5,4 @@ export const DEFAULT_SUB_EVENTS = [
   'Acara Puncak / Resepsi',
   'Umum / Sekretariat',
 ]
+

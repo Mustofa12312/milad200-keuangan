@@ -4,6 +4,7 @@ import { Plus, TrendingDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
+import { DEFAULT_SUB_EVENTS } from '@/constants/events'
 import { formatCurrency } from '@/utils/format'
 import { useAuth } from '@/contexts/auth'
 import { ConfirmDialog, StatCard } from '@/components/ui'
@@ -21,6 +22,7 @@ const ExpenseList = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
+  const [sourceFilter, setSourceFilter] = useState('')
   const [sortBy, setSortBy] = useState('transaction_date')
   const [sortOrder, setSortOrder] = useState('desc')
   const [deleteId, setDeleteId] = useState(null)
@@ -40,11 +42,12 @@ const ExpenseList = () => {
     setStartDate('')
     setEndDate('')
     setCategoryFilter('')
+    setSourceFilter('')
     setPage(1)
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: ['transactions', 'EXPENSE', page, debouncedSearch, startDate, endDate, categoryFilter, sortBy, sortOrder],
+    queryKey: ['transactions', 'EXPENSE', page, debouncedSearch, startDate, endDate, categoryFilter, sourceFilter, sortBy, sortOrder],
     queryFn: () => transactionService.getTransactions({
       type: 'EXPENSE',
       page,
@@ -53,6 +56,7 @@ const ExpenseList = () => {
       startDate: startDate || undefined,
       endDate: endDate || undefined,
       category_id: categoryFilter || undefined,
+      source: sourceFilter || undefined,
       sortBy,
       sortOrder,
     }),
@@ -119,8 +123,25 @@ const ExpenseList = () => {
         endDate={endDate}
         onEndDate={(v) => { setEndDate(v); setPage(1) }}
         onReset={handleReset}
-        filterCount={categoryFilter ? 1 : 0}
+        filterCount={(categoryFilter ? 1 : 0) + (sourceFilter ? 1 : 0)}
       >
+        {/* Pos Acara filter slot */}
+        <div>
+          <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">
+            Pos Acara
+          </label>
+          <select
+            className="input-field text-sm"
+            value={sourceFilter}
+            onChange={e => { setSourceFilter(e.target.value); setPage(1) }}
+          >
+            <option value="">Semua Pos Acara</option>
+            {DEFAULT_SUB_EVENTS.map(ev => (
+              <option key={ev} value={ev}>{ev}</option>
+            ))}
+          </select>
+        </div>
+
         {/* Category filter slot */}
         <div>
           <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">

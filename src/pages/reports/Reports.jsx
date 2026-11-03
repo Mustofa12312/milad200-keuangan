@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search } from 'lucide-react'
+import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search, Tag } from 'lucide-react'
 import { reportService } from '@/services/reports'
 import { categoryService } from '@/services/categories'
 import { userService } from '@/services/users'
+import { DEFAULT_SUB_EVENTS } from '@/constants/events'
 import { formatCurrency, formatDate } from '@/utils/format'
 import { EmptyState, Spinner } from '@/components/ui'
 import { useAuth } from '@/contexts/auth'
@@ -11,7 +12,7 @@ import { useAuth } from '@/contexts/auth'
 const Reports = () => {
   const { isAdmin } = useAuth()
   const [reportType, setReportType] = useState('income')
-  const [filters, setFilters] = useState({ startDate: '', endDate: '', category_id: '', created_by: '' })
+  const [filters, setFilters] = useState({ startDate: '', endDate: '', category_id: '', source: '', created_by: '' })
   const [reportData, setReportData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -36,6 +37,7 @@ const Reports = () => {
         startDate: filters.startDate || undefined,
         endDate: filters.endDate || undefined,
         category_id: filters.category_id || undefined,
+        source: filters.source || undefined,
         created_by: filters.created_by || undefined,
       }
 
@@ -59,7 +61,8 @@ const Reports = () => {
     const rows = reportData.data.map(t => ({
       Tanggal: t.transaction_date ? formatDate(t.transaction_date) : formatDate(t.due_date),
       Jenis: reportType === 'debt' ? 'Hutang' : (t.type === 'INCOME' ? 'Pemasukan' : 'Pengeluaran'),
-      'Sumber/Kategori/Pihak': t.party_name || t.source || t.categories?.name || '-',
+      'Pos Acara': reportType === 'expense' ? (t.source || 'Umum') : '-',
+      'Sumber/Kategori/Pihak': t.party_name || (reportType === 'income' ? t.source : t.categories?.name) || '-',
       Keterangan: t.description || '-',
       Nominal: reportType === 'debt' ? t.original_amount : t.amount,
       Petugas: t.creator?.full_name || '-',
@@ -172,6 +175,20 @@ const Reports = () => {
               value={filters.endDate}
               onChange={e => setFilters(p => ({ ...p, endDate: e.target.value }))} />
           </div>
+          {reportType === 'expense' && (
+            <div>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Pos Acara</label>
+              <div className="relative">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><Tag size={14} /></span>
+                <select className="input-field !pl-10"
+                  value={filters.source}
+                  onChange={e => setFilters(p => ({ ...p, source: e.target.value }))}>
+                  <option value="">Semua Pos Acara</option>
+                  {DEFAULT_SUB_EVENTS.map(ev => <option key={ev} value={ev}>{ev}</option>)}
+                </select>
+              </div>
+            </div>
+          )}
           {reportType === 'expense' && (
             <div>
               <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Kategori</label>
@@ -292,32 +309,70 @@ const Reports = () => {
               </div>
             )}
 
-            {/* Category breakdown for expense */}
-            {reportType === 'expense' && reportData.byCategory && (
-              <div className="mt-4">
-                <h4 className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">Rincian per Kategori</h4>
-                <div className="space-y-2">
-                  {Object.entries(reportData.byCategory)
-                    .sort(([, a], [, b]) => b - a)
-                    .map(([name, amount]) => {
-                      const pct = Math.round((amount / reportData.total) * 100)
-                      return (
-                        <div key={name}>
-                          <div className="flex items-center justify-between text-xs mb-1">
-                            <span className="text-slate-700 dark:text-slate-300">{name}</span>
-                            <div className="flex items-center gap-3">
-                              <span className="text-slate-600 dark:text-slate-400">{pct}%</span>
-                              <span className="font-semibold text-slate-800 dark:text-slate-200 currency">{formatCurrency(amount)}</span>
+            {/* Breakdowns for expense */}
+            {reportType === 'expense' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                {/* Pos Acara Breakdown */}
+                {reportData.bySource && Object.keys(reportData.bySource).length > 0 && (
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-white/5">
+                    <h4 className="text-xs font-bold text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-1.5">
+                      <Tag size={13} /> Rincian per Pos Acara
+                    </h4>
+                    <div className="space-y-2.5">
+                      {Object.entries(reportData.bySource)
+                        .sort(([, a], [, b]) => b - a)
+                        .map(([name, amount]) => {
+                          const pct = reportData.total > 0 ? Math.round((amount / reportData.total) * 100) : 0
+                          return (
+                            <div key={name}>
+                              <div className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-slate-700 dark:text-slate-300 font-medium">{name}</span>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-slate-500">{pct}%</span>
+                                  <span className="font-semibold text-slate-800 dark:text-slate-200 currency">{formatCurrency(amount)}</span>
+                                </div>
+                              </div>
+                              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
+                                <div className="h-1.5 rounded-full bg-blue-500" style={{ width: `${pct}%` }} />
+                              </div>
                             </div>
-                          </div>
-                          <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1">
-                            <div className="h-1 rounded-full bg-red-400" style={{ width: `${pct}%` }} />
-                          </div>
-                        </div>
-                      )
-                    })
-                  }
-                </div>
+                          )
+                        })
+                      }
+                    </div>
+                  </div>
+                )}
+
+                {/* Category breakdown */}
+                {reportData.byCategory && Object.keys(reportData.byCategory).length > 0 && (
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-white/5">
+                    <h4 className="text-xs font-bold text-red-600 dark:text-red-400 mb-3 flex items-center gap-1.5">
+                      <Folder size={13} /> Rincian per Kategori
+                    </h4>
+                    <div className="space-y-2.5">
+                      {Object.entries(reportData.byCategory)
+                        .sort(([, a], [, b]) => b - a)
+                        .map(([name, amount]) => {
+                          const pct = reportData.total > 0 ? Math.round((amount / reportData.total) * 100) : 0
+                          return (
+                            <div key={name}>
+                              <div className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-slate-700 dark:text-slate-300 font-medium">{name}</span>
+                                <div className="flex items-center gap-3">
+                                  <span className="text-slate-500">{pct}%</span>
+                                  <span className="font-semibold text-slate-800 dark:text-slate-200 currency">{formatCurrency(amount)}</span>
+                                </div>
+                              </div>
+                              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-1.5">
+                                <div className="h-1.5 rounded-full bg-red-400" style={{ width: `${pct}%` }} />
+                              </div>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -336,6 +391,9 @@ const Reports = () => {
                   <thead>
                     <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-white/5">
                       <th className="text-left px-6 py-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Tanggal</th>
+                      {reportType === 'expense' && (
+                        <th className="text-left px-6 py-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Pos Acara</th>
+                      )}
                       <th className="text-left px-6 py-3.5 text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                         {reportType === 'income' ? 'Sumber' : reportType === 'expense' ? 'Kategori' : 'Pihak Terkait'}
                       </th>
@@ -354,8 +412,13 @@ const Reports = () => {
                         <td className="px-6 py-4 text-sm font-medium text-slate-700 dark:text-slate-300">
                           {formatDate(reportType === 'debt' ? tx.due_date : tx.transaction_date)}
                         </td>
+                        {reportType === 'expense' && (
+                          <td className="px-6 py-4 text-sm font-medium text-blue-600 dark:text-blue-400">
+                            {tx.source || 'Umum'}
+                          </td>
+                        )}
                         <td className="px-6 py-4 text-sm text-slate-800 dark:text-slate-200">
-                          {reportType === 'debt' ? tx.party_name : (tx.source || tx.categories?.name || '-')}
+                          {reportType === 'debt' ? tx.party_name : (reportType === 'expense' ? tx.categories?.name || '-' : tx.source || '-')}
                         </td>
                         <td className="px-6 py-4 text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">{tx.description || '-'}</td>
                         <td className="px-6 py-4 text-xs font-medium text-slate-600 dark:text-slate-400 hidden lg:table-cell">
@@ -377,7 +440,7 @@ const Reports = () => {
                   </tbody>
                   <tfoot>
                     <tr className="bg-slate-100/50 dark:bg-slate-800/40 border-t border-slate-300 dark:border-white/10">
-                      <td colSpan={4} className="px-6 py-4 text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Total {reportType === 'debt' ? 'Sisa' : ''}</td>
+                      <td colSpan={reportType === 'expense' ? 5 : 4} className="px-6 py-4 text-sm font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wide">Total {reportType === 'debt' ? 'Sisa' : ''}</td>
                       <td className={`px-6 py-4 text-base font-black text-right currency ${reportType === 'income' ? 'text-emerald-600 dark:text-emerald-400' : reportType === 'expense' ? 'text-red-600 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'}`}>
                         {formatCurrency(reportType === 'debt' ? reportData.totalRemaining : reportData.total)}
                       </td>

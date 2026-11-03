@@ -24,7 +24,7 @@ export const reportService = {
     return { data, total }
   },
 
-  async getExpenseReport({ startDate, endDate, category_id, created_by } = {}) {
+  async getExpenseReport({ startDate, endDate, category_id, source, created_by } = {}) {
     let query = supabase
       .from('transactions')
       .select(`
@@ -39,6 +39,7 @@ export const reportService = {
     if (startDate) query = query.gte('transaction_date', startDate)
     if (endDate) query = query.lte('transaction_date', endDate)
     if (category_id) query = query.eq('category_id', category_id)
+    if (source) query = query.eq('source', source)
     if (created_by) query = query.eq('created_by', created_by)
 
     const { data, error } = await query.order('transaction_date', { ascending: false })
@@ -52,8 +53,16 @@ export const reportService = {
       byCategory[catName] += Number(t.amount)
     })
 
+    // Group by Pos Acara (source)
+    const bySource = {}
+    data.forEach(t => {
+      const posName = t.source || 'Umum / Non-Pos'
+      if (!bySource[posName]) bySource[posName] = 0
+      bySource[posName] += Number(t.amount)
+    })
+
     const total = data.reduce((sum, t) => sum + Number(t.amount), 0)
-    return { data, total, byCategory }
+    return { data, total, byCategory, bySource }
   },
 
   async getDebtReport({ status } = {}) {
@@ -99,7 +108,7 @@ export const reportService = {
     XLSX.writeFile(wb, `${filename}.xlsx`)
   },
 
-  // Export Special Expense Excel
+  // Export Special Expense Excel with Pos Acara and Categories
   exportExpenseExcelCustom(transactions, filename = 'laporan_pengeluaran') {
     const wb = XLSX.utils.book_new()
 
@@ -117,46 +126,154 @@ export const reportService = {
       return { volume: 1, unit: 'Paket', price: 0, text: desc }
     }
 
+    const bySource = {}
     const byCategory = {}
     let grandTotal = 0
 
     transactions.forEach(t => {
+      const pos = t.source || 'Umum'
       const cat = t.categories?.name || 'Lain-lain'
+
+      if (!bySource[pos]) bySource[pos] = []
+      bySource[pos].push(t)
+
       if (!byCategory[cat]) byCategory[cat] = []
       byCategory[cat].push(t)
+
       grandTotal += Number(t.amount)
     })
 
-    // Rekap Sheet
-    const rekapData = Object.keys(byCategory).map(cat => {
-      const sum = byCategory[cat].reduce((acc, curr) => acc + Number(curr.amount), 0)
-      return {
-        'Uraian': cat,
-        'Jumlah': sum
-      }
+    // 1. Rekap Sheet (Executive Summary)
+    const rekapData = []
+
+    // Header Rekap Per Pos Acara
+    rekapData.push({ 'Kelompok': '=== REKAP PER POS ACARA ===', 'Keterangan': '', 'Jumlah Transaksi': '', 'Total (Rp)': '' })
+    Object.keys(bySource).forEach(pos => {
+      const list = bySource[pos]
+      const sum = list.reduce((acc, curr) => acc + Number(curr.amount), 0)
+      rekapData.push({
+        'Kelompok': 'Pos Acara',
+        'Keterangan': pos,
+        'Jumlah Transaksi': list.length,
+        'Total (Rp)': sum,
+      })
     })
-    rekapData.push({ 'Uraian': 'TOTAL', 'Jumlah': grandTotal })
+
+    // Spacer
+    rekapData.push({ 'Kelompok': '', 'Keterangan': '', 'Jumlah Transaksi': '', 'Total (Rp)': '' })
+
+    // Header Rekap Per Kategori
+    rekapData.push({ 'Kelompok': '=== REKAP PER KATEGORI BIAYA ===', 'Keterangan': '', 'Jumlah Transaksi': '', 'Total (Rp)': '' })
+    Object.keys(byCategory).forEach(cat => {
+      const list = byCategory[cat]
+      const sum = list.reduce((acc, curr) => acc + Number(curr.amount), 0)
+      rekapData.push({
+        'Kelompok': 'Kategori Biaya',
+        'Keterangan': cat,
+        'Jumlah Transaksi': list.length,
+        'Total (Rp)': sum,
+      })
+    })
+
+    // Grand Total Row
+    rekapData.push({ 'Kelompok': '', 'Keterangan': '', 'Jumlah Transaksi': '', 'Total (Rp)': '' })
+    rekapData.push({
+      'Kelompok': 'TOTAL SELURUH PENGELUARAN',
+      'Keterangan': '',
+      'Jumlah Transaksi': transactions.length,
+      'Total (Rp)': grandTotal,
+    })
 
     const wsRekap = XLSX.utils.json_to_sheet(rekapData)
-    XLSX.utils.book_append_sheet(wb, wsRekap, 'Rekap')
+    XLSX.utils.book_append_sheet(wb, wsRekap, 'Rekap Eksekutif')
 
-    // Category Sheets
-    Object.keys(byCategory).forEach(cat => {
-      const rows = byCategory[cat].map(t => {
+    // Safe Sheet Name Helper
+    const usedSheetNames = new Set(['rekap eksekutif'])
+    const getSafeSheetName = (name) => {
+      let clean = (name || 'Umum').replace(/[:\\/?*\][]/g, '').trim().substring(0, 26)
+      if (!clean) clean = 'Sheet'
+      let candidate = clean
+      let count = 1
+      while (usedSheetNames.has(candidate.toLowerCase())) {
+        candidate = `${clean.substring(0, 22)} (${count})`
+        count++
+      }
+      usedSheetNames.add(candidate.toLowerCase())
+      return candidate
+    }
+
+    // 2. Sheets Per Pos Acara (Sub-Acara)
+    Object.keys(bySource).forEach(pos => {
+      let subTotal = 0
+      const rows = bySource[pos].map((t, idx) => {
         const parsed = parseDescription(t.description)
+        subTotal += Number(t.amount)
         return {
+          'No': idx + 1,
           'Tanggal': t.transaction_date,
+          'Pos Acara': pos,
+          'Kategori': t.categories?.name || '-',
           'Uraian': parsed.text,
           'Volume': parsed.volume,
           'Satuan': parsed.unit,
           'Harga Satuan': parsed.price || (Number(t.amount) / parsed.volume),
-          'Jumlah': Number(t.amount),
-          'Nota': t.receipts && t.receipts.length > 0 ? 'Ada' : '-'
+          'Jumlah (Rp)': Number(t.amount),
+          'Nota': t.receipts && t.receipts.length > 0 ? 'Ada' : '-',
+          'Petugas': t.creator?.full_name || '-'
         }
       })
+
+      // Add subtotal row at end of each sub-event sheet
+      rows.push({
+        'No': '',
+        'Tanggal': '',
+        'Pos Acara': '',
+        'Kategori': '',
+        'Uraian': `TOTAL ${pos.toUpperCase()}`,
+        'Volume': '',
+        'Satuan': '',
+        'Harga Satuan': '',
+        'Jumlah (Rp)': subTotal,
+        'Nota': '',
+        'Petugas': ''
+      })
+
       const ws = XLSX.utils.json_to_sheet(rows)
-      XLSX.utils.book_append_sheet(wb, ws, cat.substring(0, 31))
+      XLSX.utils.book_append_sheet(wb, ws, getSafeSheetName(pos))
     })
+
+    // 3. Sheet Semua Transaksi Pengeluaran
+    const allRows = transactions.map((t, idx) => {
+      const parsed = parseDescription(t.description)
+      return {
+        'No': idx + 1,
+        'Tanggal': t.transaction_date,
+        'Pos Acara': t.source || 'Umum',
+        'Kategori': t.categories?.name || '-',
+        'Uraian': parsed.text,
+        'Volume': parsed.volume,
+        'Satuan': parsed.unit,
+        'Harga Satuan': parsed.price || (Number(t.amount) / parsed.volume),
+        'Jumlah (Rp)': Number(t.amount),
+        'Nota': t.receipts && t.receipts.length > 0 ? 'Ada' : '-',
+        'Petugas': t.creator?.full_name || '-'
+      }
+    })
+    allRows.push({
+      'No': '',
+      'Tanggal': '',
+      'Pos Acara': '',
+      'Kategori': '',
+      'Uraian': 'TOTAL SELURUH PENGELUARAN',
+      'Volume': '',
+      'Satuan': '',
+      'Harga Satuan': '',
+      'Jumlah (Rp)': grandTotal,
+      'Nota': '',
+      'Petugas': ''
+    })
+    const wsAll = XLSX.utils.json_to_sheet(allRows)
+    XLSX.utils.book_append_sheet(wb, wsAll, getSafeSheetName('Semua Transaksi'))
 
     XLSX.writeFile(wb, `${filename}.xlsx`)
   },
@@ -223,6 +340,15 @@ export const reportService = {
           t.status,
           formatCurrency(t.remaining_amount),
         ])
+      } else if (reportType === 'expense') {
+        head = [['Tanggal', 'Pos Acara', 'Kategori', 'Keterangan', 'Nominal']]
+        body = transactions.map(t => [
+          formatDate(t.transaction_date),
+          t.source || 'Umum',
+          t.categories?.name || '-',
+          t.description || '-',
+          formatCurrency(t.amount),
+        ])
       } else {
         head = [['Tanggal', 'Jenis', 'Keterangan', 'Nominal']]
         body = transactions.map(t => [
@@ -240,7 +366,7 @@ export const reportService = {
         theme: 'striped',
         styles: { fontSize: 9 },
         headStyles: { fillColor: [30, 64, 175] },
-        columnStyles: { 3: { halign: 'right' } },
+        columnStyles: { [reportType === 'expense' ? 4 : 3]: { halign: 'right' } },
       })
     }
 

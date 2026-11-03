@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
+import { DEFAULT_SUB_EVENTS } from '@/constants/events'
 import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import toast from 'react-hot-toast'
@@ -24,14 +25,24 @@ const ExpenseEdit = () => {
     queryFn: () => categoryService.getCategories(),
   })
 
-  const [form, setForm] = useState({ transaction_date: '', category_id: '', amount: '', description: '' })
+  const [form, setForm] = useState({
+    transaction_date: '',
+    source: '',
+    customSource: '',
+    category_id: '',
+    amount: '',
+    description: '',
+  })
   const [errors, setErrors] = useState({})
   const [loadedId, setLoadedId] = useState(null)
 
   if (tx && tx.id !== loadedId) {
     setLoadedId(tx.id)
+    const isDefaultEvent = DEFAULT_SUB_EVENTS.includes(tx.source)
     setForm({
       transaction_date: tx.transaction_date,
+      source: tx.source ? (isDefaultEvent ? tx.source : 'Lainnya') : '',
+      customSource: tx.source && !isDefaultEvent ? tx.source : '',
       category_id: tx.category_id || '',
       amount: tx.amount?.toString() || '',
       description: tx.description || '',
@@ -52,6 +63,11 @@ const ExpenseEdit = () => {
   const validate = () => {
     const e = {}
     if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
+    if (!form.source) {
+      e.source = 'Pos acara wajib dipilih'
+    } else if (form.source === 'Lainnya' && (!form.customSource || !form.customSource.trim())) {
+      e.customSource = 'Nama pos acara wajib diisi'
+    }
     if (!form.category_id) e.category_id = 'Kategori wajib dipilih'
     if (!form.amount || Number(form.amount) <= 0) e.amount = 'Nominal harus lebih dari 0'
     setErrors(e)
@@ -61,12 +77,24 @@ const ExpenseEdit = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (!validate()) return
+    const resolvedSource = form.source === 'Lainnya' ? form.customSource.trim() : form.source
     mutation.mutate({
       transaction_date: form.transaction_date,
       category_id: form.category_id,
+      source: resolvedSource || null,
       amount: Number(form.amount),
       description: form.description.trim() || null,
     })
+  }
+
+  const handleChange = (field, value) => {
+    setForm(p => {
+      const next = { ...p, [field]: value }
+      if (field === 'source' && value !== 'Lainnya') next.customSource = ''
+      return next
+    })
+    if (errors[field]) setErrors(p => ({ ...p, [field]: undefined }))
+    if (field === 'source' && errors.customSource) setErrors(p => ({ ...p, customSource: undefined }))
   }
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner size={24} /></div>
@@ -90,14 +118,47 @@ const ExpenseEdit = () => {
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Tanggal *</label>
             <input type="date" className={`input-field ${errors.transaction_date ? 'border-red-500/50' : ''}`}
-              value={form.transaction_date} onChange={e => setForm(p => ({ ...p, transaction_date: e.target.value }))} />
+              value={form.transaction_date} onChange={e => handleChange('transaction_date', e.target.value)} />
             {errors.transaction_date && <p className="text-xs text-red-400 mt-1">{errors.transaction_date}</p>}
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Pos Acara / Kegiatan *</label>
+            <select
+              className={`input-field ${errors.source ? 'border-red-500/50' : ''}`}
+              value={form.source}
+              onChange={e => handleChange('source', e.target.value)}
+            >
+              <option value="">-- Pilih Pos Acara --</option>
+              {DEFAULT_SUB_EVENTS.map(ev => (
+                <option key={ev} value={ev}>{ev}</option>
+              ))}
+              <option value="Lainnya">Lainnya...</option>
+            </select>
+            {errors.source && <p className="text-xs text-red-400 mt-1">{errors.source}</p>}
+
+            {form.source === 'Lainnya' && (
+              <div className="mt-2 p-2.5 rounded-lg bg-blue-50/60 dark:bg-blue-900/15 border border-blue-200 dark:border-blue-900/30">
+                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                  Nama Pos Acara Kustom <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  className={`input-field !py-1.5 !text-xs ${errors.customSource ? 'border-red-500/50' : ''}`}
+                  placeholder="Ketik nama sub-acara..."
+                  value={form.customSource}
+                  onChange={e => handleChange('customSource', e.target.value)}
+                  autoFocus
+                />
+                {errors.customSource && <p className="text-[10px] text-red-400 mt-1">{errors.customSource}</p>}
+              </div>
+            )}
           </div>
 
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Kategori *</label>
             <select className={`input-field ${errors.category_id ? 'border-red-500/50' : ''}`}
-              value={form.category_id} onChange={e => setForm(p => ({ ...p, category_id: e.target.value }))}>
+              value={form.category_id} onChange={e => handleChange('category_id', e.target.value)}>
               <option value="">-- Pilih Kategori --</option>
               {categories?.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
             </select>
@@ -113,7 +174,7 @@ const ExpenseEdit = () => {
                 value={form.amount ? Number(form.amount).toLocaleString('id-ID') : ''}
                 onChange={e => {
                   const raw = e.target.value.replace(/\D/g, '')
-                  setForm(p => ({ ...p, amount: raw }))
+                  handleChange('amount', raw)
                 }} />
             </div>
             {errors.amount && <p className="text-xs text-red-400 mt-1">{errors.amount}</p>}
@@ -122,7 +183,7 @@ const ExpenseEdit = () => {
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Keterangan</label>
             <textarea className="input-field resize-none" rows={3}
-              value={form.description} onChange={e => setForm(p => ({ ...p, description: e.target.value }))} />
+              value={form.description} onChange={e => handleChange('description', e.target.value)} />
           </div>
         </div>
 

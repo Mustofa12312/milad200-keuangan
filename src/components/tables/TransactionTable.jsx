@@ -84,9 +84,22 @@ const TransactionTable = ({
                     <div className={`w-7 h-7 rounded-lg ${iconBg} flex items-center justify-center flex-shrink-0`}>
                       <Icon size={13} className={iconColor} />
                     </div>
-                    <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate max-w-36">
-                      {isIncome ? tx.source : tx.categories?.name || '-'}
-                    </span>
+                    {isIncome ? (
+                      <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate max-w-36">
+                        {tx.source || '-'}
+                      </span>
+                    ) : (
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate max-w-36">
+                          {tx.categories?.name || '-'}
+                        </span>
+                        {tx.source && (
+                          <span className="text-[10px] text-blue-500 dark:text-blue-400 font-medium truncate max-w-36">
+                            📍 {tx.source}
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </td>
                 <td className="px-5 py-3.5 text-sm text-slate-600 dark:text-slate-400 hidden md:table-cell">
@@ -143,7 +156,16 @@ const TransactionTable = ({
             <div className="flex items-start justify-between mb-2">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
-                  {isIncome ? tx.source : tx.categories?.name || 'Pengeluaran'}
+                  {isIncome ? tx.source : (
+                    <>
+                      {tx.categories?.name || 'Pengeluaran'}
+                      {tx.source && (
+                        <span className="ml-1.5 text-xs text-blue-500 font-normal">
+                          · {tx.source}
+                        </span>
+                      )}
+                    </>
+                  )}
                 </p>
                 <p className="text-xs text-slate-500 mt-0.5">
                   {formatDate(tx.transaction_date)} · {tx.creator?.full_name || '-'}
