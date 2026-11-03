@@ -4,6 +4,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { ArrowLeft, Save } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
+import { DEFAULT_SUB_EVENTS } from '@/constants/events'
 import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import ReceiptUploader from '@/components/receipt/ReceiptUploader'
@@ -16,6 +17,8 @@ const ExpenseCreate = () => {
 
   const [form, setForm] = useState({
     transaction_date: new Date().toISOString().split('T')[0],
+    source: '',
+    customSource: '',
     category_id: '',
     description: '',
     volume: '',
@@ -48,6 +51,11 @@ const ExpenseCreate = () => {
   const validate = () => {
     const e = {}
     if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
+    if (!form.source) {
+      e.source = 'Pos acara wajib dipilih'
+    } else if (form.source === 'Lainnya' && (!form.customSource || !form.customSource.trim())) {
+      e.customSource = 'Nama pos acara wajib diisi'
+    }
     if (!form.category_id) e.category_id = 'Kategori wajib dipilih'
     if (!form.volume || Number(form.volume) <= 0) e.volume = 'Volume wajib diisi'
     if (!form.unit) {
@@ -68,6 +76,7 @@ const ExpenseCreate = () => {
     if (!validate()) return
     let finalDescription = form.description.trim() || null
     const resolvedUnit = form.unit === 'Lainnya' ? form.customUnit.trim() : form.unit
+    const resolvedSource = form.source === 'Lainnya' ? form.customSource.trim() : form.source
     if (form.volume && form.unitPrice) {
       const detailStr = `[${form.volume} ${resolvedUnit || 'Item'} x Rp ${Number(form.unitPrice).toLocaleString('id-ID')}]`
       finalDescription = finalDescription ? `${detailStr} ${finalDescription}` : detailStr
@@ -78,7 +87,7 @@ const ExpenseCreate = () => {
         type: 'EXPENSE',
         transaction_date: form.transaction_date,
         category_id: form.category_id,
-        source: null,
+        source: resolvedSource,
         amount: totalAmount,
         description: finalDescription,
       },
@@ -92,10 +101,14 @@ const ExpenseCreate = () => {
       if (field === 'unit' && value !== 'Lainnya') {
         next.customUnit = ''
       }
+      if (field === 'source' && value !== 'Lainnya') {
+        next.customSource = ''
+      }
       return next
     })
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }))
     if (field === 'unit' && errors.customUnit) setErrors(prev => ({ ...prev, customUnit: undefined }))
+    if (field === 'source' && errors.customSource) setErrors(prev => ({ ...prev, customSource: undefined }))
   }
 
   return (
@@ -117,6 +130,39 @@ const ExpenseCreate = () => {
               onChange={e => handleChange('transaction_date', e.target.value)}
               max={new Date().toISOString().split('T')[0]} />
             {errors.transaction_date && <p className="text-xs text-red-400 mt-1">{errors.transaction_date}</p>}
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Pos Acara / Kegiatan *</label>
+            <select
+              className={`input-field ${errors.source ? 'border-red-500/50' : ''}`}
+              value={form.source}
+              onChange={e => handleChange('source', e.target.value)}
+            >
+              <option value="">-- Pilih Pos Acara --</option>
+              {DEFAULT_SUB_EVENTS.map(ev => (
+                <option key={ev} value={ev}>{ev}</option>
+              ))}
+              <option value="Lainnya">Lainnya...</option>
+            </select>
+            {errors.source && <p className="text-xs text-red-400 mt-1">{errors.source}</p>}
+
+            {form.source === 'Lainnya' && (
+              <div className="mt-2 p-2.5 rounded-lg bg-blue-50/60 dark:bg-blue-900/15 border border-blue-200 dark:border-blue-900/30">
+                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1">
+                  Nama Pos Acara Kustom <span className="text-red-400">*</span>
+                </label>
+                <input
+                  type="text"
+                  className={`input-field !py-1.5 !text-xs ${errors.customSource ? 'border-red-500/50' : ''}`}
+                  placeholder="Ketik nama sub-acara..."
+                  value={form.customSource}
+                  onChange={e => handleChange('customSource', e.target.value)}
+                  autoFocus
+                />
+                {errors.customSource && <p className="text-[10px] text-red-400 mt-1">{errors.customSource}</p>}
+              </div>
+            )}
           </div>
 
           <div>

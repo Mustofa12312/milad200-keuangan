@@ -3,7 +3,7 @@ import { logAudit } from './auditLog'
 
 export const transactionService = {
   // Fetch transactions with pagination, filtering, sorting
-  async getTransactions({ type, page = 1, pageSize = 20, search = '', category_id, created_by, startDate, endDate, sortBy = 'transaction_date', sortOrder = 'desc' } = {}) {
+  async getTransactions({ type, page = 1, pageSize = 20, search = '', category_id, source, created_by, startDate, endDate, sortBy = 'transaction_date', sortOrder = 'desc' } = {}) {
     let query = supabase
       .from('transactions')
       .select(`
@@ -16,6 +16,7 @@ export const transactionService = {
 
     if (type) query = query.eq('type', type)
     if (category_id) query = query.eq('category_id', category_id)
+    if (source) query = query.eq('source', source)
     if (created_by) query = query.eq('created_by', created_by)
     if (startDate) query = query.gte('transaction_date', startDate)
     if (endDate) query = query.lte('transaction_date', endDate)
