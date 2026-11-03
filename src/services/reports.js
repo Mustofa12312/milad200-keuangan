@@ -105,13 +105,13 @@ export const reportService = {
 
     const parseDescription = (desc) => {
       if (!desc) return { volume: 1, unit: 'Paket', price: 0, text: '-' }
-      const match = desc.match(/^\[([\d.]+) ([\w/\\\s]+) x Rp ([\d,.]+)\]\s*(.*)/i)
+      const match = desc.match(/^\[([\d.,]+)\s+(.+?)\s+x\s+Rp\s+([\d,.]+?)\]\s*(.*)/i)
       if (match) {
         return {
-          volume: parseFloat(match[1]),
-          unit: match[2],
-          price: parseFloat(match[3].replace(/\./g, '')),
-          text: match[4] || desc
+          volume: parseFloat(match[1].replace(/,/g, '.')),
+          unit: match[2].trim(),
+          price: parseFloat(match[3].replace(/\./g, '').replace(/,/g, '.')),
+          text: match[4]?.trim() || desc
         }
       }
       return { volume: 1, unit: 'Paket', price: 0, text: desc }

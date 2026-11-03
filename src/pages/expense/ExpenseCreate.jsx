@@ -20,6 +20,7 @@ const ExpenseCreate = () => {
     description: '',
     volume: '',
     unit: '',
+    customUnit: '',
     unitPrice: '',
   })
   const [receiptFile, setReceiptFile] = useState(null)
@@ -49,7 +50,11 @@ const ExpenseCreate = () => {
     if (!form.transaction_date) e.transaction_date = 'Tanggal wajib diisi'
     if (!form.category_id) e.category_id = 'Kategori wajib dipilih'
     if (!form.volume || Number(form.volume) <= 0) e.volume = 'Volume wajib diisi'
-    if (!form.unit) e.unit = 'Satuan wajib dipilih'
+    if (!form.unit) {
+      e.unit = 'Satuan wajib dipilih'
+    } else if (form.unit === 'Lainnya' && (!form.customUnit || !form.customUnit.trim())) {
+      e.customUnit = 'Satuan tambahan wajib diisi'
+    }
     if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Harga satuan wajib diisi'
     if (totalAmount <= 0) e.volume = 'Total nominal harus lebih dari 0'
     if (!receiptFile) e.receipt = 'Foto nota wajib dilampirkan'
@@ -62,8 +67,9 @@ const ExpenseCreate = () => {
     e.preventDefault()
     if (!validate()) return
     let finalDescription = form.description.trim() || null
+    const resolvedUnit = form.unit === 'Lainnya' ? form.customUnit.trim() : form.unit
     if (form.volume && form.unitPrice) {
-      const detailStr = `[${form.volume} ${form.unit || 'Item'} x Rp ${Number(form.unitPrice).toLocaleString('id-ID')}]`
+      const detailStr = `[${form.volume} ${resolvedUnit || 'Item'} x Rp ${Number(form.unitPrice).toLocaleString('id-ID')}]`
       finalDescription = finalDescription ? `${detailStr} ${finalDescription}` : detailStr
     }
 
@@ -81,8 +87,15 @@ const ExpenseCreate = () => {
   }
 
   const handleChange = (field, value) => {
-    setForm(prev => ({ ...prev, [field]: value }))
+    setForm(prev => {
+      const next = { ...prev, [field]: value }
+      if (field === 'unit' && value !== 'Lainnya') {
+        next.customUnit = ''
+      }
+      return next
+    })
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: undefined }))
+    if (field === 'unit' && errors.customUnit) setErrors(prev => ({ ...prev, customUnit: undefined }))
   }
 
   return (
@@ -124,56 +137,76 @@ const ExpenseCreate = () => {
           <div className="grid grid-cols-3 gap-3 p-3 rounded-lg bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-900/30">
             <div>
               <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Volume *</label>
-              <input type="number" min="1" step="any"
+              <input type="number" min="0.001" step="any"
                   className={`input-field !py-1.5 !text-xs ${errors.volume ? 'border-red-500/50' : ''}`}
                   placeholder="0"
                   value={form.volume}
                   onChange={e => handleChange('volume', e.target.value)} />
-              </div>
-              <div>
-                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Satuan *</label>
-                <select
-                  className={`input-field !py-1.5 !text-xs ${errors.unit ? 'border-red-500/50' : ''}`}
-                  value={form.unit}
-                  onChange={e => handleChange('unit', e.target.value)}
-                >
-                  <option value="">-- Pilih --</option> 
-                  <option value="Orang">Orang</option>
-                  <option value="Pcs">Pcs</option>
-                  <option value="Set">Set</option>
-                  <option value="Paket">Paket</option>
-                  <option value="Buah">Buah</option>
-                  <option value="Lembar">Lembar</option>
-                  <option value="Liter">Liter</option>
-                  <option value="Kg">Kg</option>
-                  <option value="Gram">Gram</option>
-                  <option value="Meter">Meter</option>
-                  <option value="Karton">Karton/Dus</option>
-                  <option value="Rim">Rim</option>
-                  <option value="Bungkus">Bungkus</option>
-                  <option value="Kegiatan">Kegiatan</option>
-                  <option value="Hari">Hari</option>
-                  <option value="Bulan">Bulan</option>
-                  <option value="1 Nota">1 Nota </option>
-                  <option value="Tahun">Tahun</option>
-                  <option value="Lainnya">Lainnya...</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Harga Satuan *</label>
-                <div className="relative">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-medium">Rp</span>
-                  <input type="text" inputMode="numeric"
-                    className={`input-field !py-1.5 !pl-7 !text-xs currency ${errors.unitPrice ? 'border-red-500/50' : ''}`}
-                    placeholder="0"
-                    value={form.unitPrice ? Number(form.unitPrice).toLocaleString('id-ID') : ''}
-                    onChange={e => {
-                      const raw = e.target.value.replace(/\D/g, '')
-                      handleChange('unitPrice', raw)
-                    }} />
-                </div>
-              </div>
+              {errors.volume && <p className="text-[10px] text-red-400 mt-1">{errors.volume}</p>}
             </div>
+            <div>
+              <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Satuan *</label>
+              <select
+                className={`input-field !py-1.5 !text-xs ${errors.unit ? 'border-red-500/50' : ''}`}
+                value={form.unit}
+                onChange={e => handleChange('unit', e.target.value)}
+              >
+                <option value="">-- Pilih --</option> 
+                <option value="Orang">Orang</option>
+                <option value="Pcs">Pcs</option>
+                <option value="Set">Set</option>
+                <option value="Paket">Paket</option>
+                <option value="Buah">Buah</option>
+                <option value="Lembar">Lembar</option>
+                <option value="Liter">Liter</option>
+                <option value="Kg">Kg</option>
+                <option value="Gram">Gram</option>
+                <option value="Meter">Meter</option>
+                <option value="Karton/Dus">Karton/Dus</option>
+                <option value="Rim">Rim</option>
+                <option value="Bungkus">Bungkus</option>
+                <option value="Kegiatan">Kegiatan</option>
+                <option value="Hari">Hari</option>
+                <option value="Bulan">Bulan</option>
+                <option value="1 Nota">1 Nota</option>
+                <option value="Tahun">Tahun</option>
+                <option value="Lainnya">Lainnya...</option>
+              </select>
+              {errors.unit && <p className="text-[10px] text-red-400 mt-1">{errors.unit}</p>}
+            </div>
+            <div>
+              <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">Harga Satuan *</label>
+              <div className="relative">
+                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-500 text-[10px] font-medium">Rp</span>
+                <input type="text" inputMode="numeric"
+                  className={`input-field !py-1.5 !pl-7 !text-xs currency ${errors.unitPrice ? 'border-red-500/50' : ''}`}
+                  placeholder="0"
+                  value={form.unitPrice ? Number(form.unitPrice).toLocaleString('id-ID') : ''}
+                  onChange={e => {
+                    const raw = e.target.value.replace(/\D/g, '')
+                    handleChange('unitPrice', raw)
+                  }} />
+              </div>
+              {errors.unitPrice && <p className="text-[10px] text-red-400 mt-1">{errors.unitPrice}</p>}
+            </div>
+          </div>
+
+          {form.unit === 'Lainnya' && (
+            <div className="p-3 rounded-lg bg-blue-50/70 dark:bg-blue-900/15 border border-blue-200 dark:border-blue-900/40">
+              <label className="block text-[10px] font-medium text-slate-600 dark:text-slate-400 mb-1.5">
+                Satuan Tambahan / Kustom <span className="text-red-400">*</span>
+              </label>
+              <input
+                type="text"
+                className={`input-field !py-1.5 !text-xs ${errors.customUnit ? 'border-red-500/50' : ''}`}
+                placeholder="Contoh: Botol, Porsi, Box, Galon, Kotak, Cup, dll..."
+                value={form.customUnit}
+                onChange={e => handleChange('customUnit', e.target.value)}
+                autoFocus
+              />
+              {errors.customUnit && <p className="text-[10px] text-red-400 mt-1">{errors.customUnit}</p>}
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Total Nominal</label>
