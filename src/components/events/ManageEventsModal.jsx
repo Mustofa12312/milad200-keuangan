@@ -211,11 +211,10 @@ const ManageEventsModal = ({ isOpen, onClose, onSelect }) => {
 
       {/* Delete confirmation dialog */}
       <ConfirmDialog
-        isOpen={Boolean(deleteTarget)}
+        open={Boolean(deleteTarget)}
         title="Hapus Pos Acara?"
         message={`Apakah Anda yakin ingin menghapus pos acara "${deleteTarget?.name}"? Transaksi yang sudah menggunakan pos acara ini tidak akan terhapus, namun pos acara ini tidak akan muncul lagi di pilihan.`}
-        confirmText="Ya, Hapus"
-        confirmType="danger"
+        danger
         loading={deleteMutation.isPending}
         onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget)}
         onCancel={() => setDeleteTarget(null)}

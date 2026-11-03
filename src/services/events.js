@@ -92,3 +92,4 @@ export const eventService = {
     return true
   }
 }
+
