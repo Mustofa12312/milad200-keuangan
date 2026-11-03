@@ -3,8 +3,8 @@ import { useQuery } from '@tanstack/react-query'
 import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search, Tag } from 'lucide-react'
 import { reportService } from '@/services/reports'
 import { categoryService } from '@/services/categories'
+import { eventService } from '@/services/events'
 import { userService } from '@/services/users'
-import { DEFAULT_SUB_EVENTS } from '@/constants/events'
 import { formatCurrency, formatDate } from '@/utils/format'
 import { EmptyState, Spinner } from '@/components/ui'
 import { useAuth } from '@/contexts/auth'
@@ -20,6 +20,11 @@ const Reports = () => {
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryService.getCategories(),
+  })
+
+  const { data: events } = useQuery({
+    queryKey: ['events'],
+    queryFn: eventService.getEvents,
   })
 
   const { data: users } = useQuery({
@@ -184,7 +189,7 @@ const Reports = () => {
                   value={filters.source}
                   onChange={e => setFilters(p => ({ ...p, source: e.target.value }))}>
                   <option value="">Semua Pos Acara</option>
-                  {DEFAULT_SUB_EVENTS.map(ev => <option key={ev} value={ev}>{ev}</option>)}
+                  {events?.map(ev => <option key={ev.id} value={ev.name}>{ev.name}</option>)}
                 </select>
               </div>
             </div>

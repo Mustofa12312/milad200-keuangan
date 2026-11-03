@@ -4,7 +4,7 @@ import { Plus, TrendingDown } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
-import { DEFAULT_SUB_EVENTS } from '@/constants/events'
+import { eventService } from '@/services/events'
 import { formatCurrency } from '@/utils/format'
 import { useAuth } from '@/contexts/auth'
 import { ConfirmDialog, StatCard } from '@/components/ui'
@@ -65,6 +65,11 @@ const ExpenseList = () => {
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryService.getCategories(true),
+  })
+
+  const { data: events } = useQuery({
+    queryKey: ['events'],
+    queryFn: eventService.getEvents,
   })
 
   const { data: summary } = useQuery({
@@ -136,8 +141,8 @@ const ExpenseList = () => {
             onChange={e => { setSourceFilter(e.target.value); setPage(1) }}
           >
             <option value="">Semua Pos Acara</option>
-            {DEFAULT_SUB_EVENTS.map(ev => (
-              <option key={ev} value={ev}>{ev}</option>
+            {events?.map(ev => (
+              <option key={ev.id} value={ev.name}>{ev.name}</option>
             ))}
           </select>
         </div>

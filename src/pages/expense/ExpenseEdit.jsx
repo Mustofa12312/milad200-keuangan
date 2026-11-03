@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Save } from 'lucide-react'
+import { ArrowLeft, Save, Settings2 } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
+import { eventService } from '@/services/events'
 import { DEFAULT_SUB_EVENTS } from '@/constants/events'
 import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
+import ManageEventsModal from '@/components/events/ManageEventsModal'
 import toast from 'react-hot-toast'
 
 const ExpenseEdit = () => {
@@ -14,6 +16,8 @@ const ExpenseEdit = () => {
   const { user } = useAuth()
   const navigate = useNavigate()
   const qc = useQueryClient()
+
+  const [showManageEvents, setShowManageEvents] = useState(false)
 
   const { data: tx, isLoading } = useQuery({
     queryKey: ['transaction', id],
@@ -23,6 +27,11 @@ const ExpenseEdit = () => {
   const { data: categories } = useQuery({
     queryKey: ['categories'],
     queryFn: () => categoryService.getCategories(),
+  })
+
+  const { data: events } = useQuery({
+    queryKey: ['events'],
+    queryFn: eventService.getEvents,
   })
 
   const [form, setForm] = useState({
@@ -38,11 +47,11 @@ const ExpenseEdit = () => {
 
   if (tx && tx.id !== loadedId) {
     setLoadedId(tx.id)
-    const isDefaultEvent = DEFAULT_SUB_EVENTS.includes(tx.source)
+    const isKnownEvent = events?.some(e => e.name === tx.source) || DEFAULT_SUB_EVENTS.includes(tx.source)
     setForm({
       transaction_date: tx.transaction_date,
-      source: tx.source ? (isDefaultEvent ? tx.source : 'Lainnya') : '',
-      customSource: tx.source && !isDefaultEvent ? tx.source : '',
+      source: tx.source ? (isKnownEvent ? tx.source : 'Lainnya') : '',
+      customSource: tx.source && !isKnownEvent ? tx.source : '',
       category_id: tx.category_id || '',
       amount: tx.amount?.toString() || '',
       description: tx.description || '',
@@ -123,15 +132,27 @@ const ExpenseEdit = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Pos Acara / Kegiatan *</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400">
+                Pos Acara / Kegiatan <span className="text-red-400">*</span>
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowManageEvents(true)}
+                className="text-[11px] text-blue-500 hover:text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1 transition-colors"
+              >
+                <Settings2 size={12} />
+                Kelola Pos Acara
+              </button>
+            </div>
             <select
               className={`input-field ${errors.source ? 'border-red-500/50' : ''}`}
               value={form.source}
               onChange={e => handleChange('source', e.target.value)}
             >
               <option value="">-- Pilih Pos Acara --</option>
-              {DEFAULT_SUB_EVENTS.map(ev => (
-                <option key={ev} value={ev}>{ev}</option>
+              {events?.map(ev => (
+                <option key={ev.id} value={ev.name}>{ev.name}</option>
               ))}
               <option value="Lainnya">Lainnya...</option>
             </select>
@@ -192,6 +213,12 @@ const ExpenseEdit = () => {
           {mutation.isPending ? 'Menyimpan...' : 'Simpan Perubahan'}
         </button>
       </form>
+
+      <ManageEventsModal
+        isOpen={showManageEvents}
+        onClose={() => setShowManageEvents(false)}
+        onSelect={(name) => handleChange('source', name)}
+      />
     </div>
   )
 }

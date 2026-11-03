@@ -5,6 +5,7 @@ export const categoryService = {
   async getCategories(includeInactive = false) {
     let query = supabase.from('categories').select('*, creator:profiles!categories_created_by_fkey(full_name)')
     if (!includeInactive) query = query.eq('is_active', true)
+    query = query.or('description.neq.POS_ACARA,description.is.null')
     const { data, error } = await query.order('name')
     if (error) throw error
     return data
