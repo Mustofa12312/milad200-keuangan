@@ -182,7 +182,7 @@ const Reports = () => {
           </div>
           {reportType === 'expense' && (
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Pos Acara</label>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Pos Acara / Kegiatan</label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><Tag size={14} /></span>
                 <select className="input-field !pl-10"
@@ -196,13 +196,13 @@ const Reports = () => {
           )}
           {reportType === 'expense' && (
             <div>
-              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Kategori</label>
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Kategori Biaya</label>
               <div className="relative">
                 <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"><Folder size={14} /></span>
                 <select className="input-field !pl-10"
                   value={filters.category_id}
                   onChange={e => setFilters(p => ({ ...p, category_id: e.target.value }))}>
-                  <option value="">Semua Kategori</option>
+                  <option value="">Semua Kategori Biaya</option>
                   {categories?.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>

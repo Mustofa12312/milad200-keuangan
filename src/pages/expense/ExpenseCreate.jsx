@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import ReceiptUploader from '@/components/receipt/ReceiptUploader'
 import ManageEventsModal from '@/components/events/ManageEventsModal'
+import ManageCategoriesModal from '@/components/categories/ManageCategoriesModal'
 import toast from 'react-hot-toast'
 
 const ExpenseCreate = () => {
@@ -17,6 +18,7 @@ const ExpenseCreate = () => {
   const qc = useQueryClient()
 
   const [showManageEvents, setShowManageEvents] = useState(false)
+  const [showManageCategories, setShowManageCategories] = useState(false)
   const [form, setForm] = useState({
     transaction_date: new Date().toISOString().split('T')[0],
     source: '',
@@ -141,9 +143,14 @@ const ExpenseCreate = () => {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400">
-                Pos Acara / Kegiatan <span className="text-red-400">*</span>
-              </label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Pos Acara / Kegiatan <span className="text-red-400">*</span>
+                </label>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                  Sub-kegiatan Milad (Haul, Lomba, Bahsul Masail, Halaqoh, Wisuda, dll.)
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => setShowManageEvents(true)}
@@ -158,7 +165,7 @@ const ExpenseCreate = () => {
               value={form.source}
               onChange={e => handleChange('source', e.target.value)}
             >
-              <option value="">-- Pilih Pos Acara --</option>
+              <option value="">-- Pilih Pos Acara / Kegiatan --</option>
               {events?.map(ev => (
                 <option key={ev.id} value={ev.name}>{ev.name}</option>
               ))}
@@ -185,15 +192,34 @@ const ExpenseCreate = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Kategori *</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Kategori Biaya <span className="text-red-400">*</span>
+                </label>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                  Jenis belanja/kebutuhan (Konsumsi, ATK, Transportasi, Operasional, dll.)
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowManageCategories(true)}
+                className="text-[11px] text-blue-500 hover:text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1 transition-colors"
+              >
+                <Settings2 size={12} />
+                Kelola Kategori
+              </button>
+            </div>
             <select
               className={`input-field ${errors.category_id ? 'border-red-500/50' : ''}`}
               value={form.category_id}
               onChange={e => handleChange('category_id', e.target.value)}
             >
-              <option value="">-- Pilih Kategori --</option>
+              <option value="">-- Pilih Kategori Biaya --</option>
               {categories?.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
               ))}
             </select>
             {errors.category_id && <p className="text-xs text-red-400 mt-1">{errors.category_id}</p>}
@@ -326,6 +352,12 @@ const ExpenseCreate = () => {
         isOpen={showManageEvents}
         onClose={() => setShowManageEvents(false)}
         onSelect={(name) => handleChange('source', name)}
+      />
+
+      <ManageCategoriesModal
+        isOpen={showManageCategories}
+        onClose={() => setShowManageCategories(false)}
+        onSelect={(id) => handleChange('category_id', id)}
       />
     </div>
   )

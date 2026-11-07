@@ -133,7 +133,7 @@ const ExpenseList = () => {
         {/* Pos Acara filter slot */}
         <div>
           <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">
-            Pos Acara
+            Pos Acara / Kegiatan
           </label>
           <select
             className="input-field text-sm"
@@ -150,14 +150,14 @@ const ExpenseList = () => {
         {/* Category filter slot */}
         <div>
           <label className="block text-[10px] font-medium text-slate-500 uppercase tracking-wider mb-1.5">
-            Kategori
+            Kategori Biaya
           </label>
           <select
             className="input-field text-sm"
             value={categoryFilter}
             onChange={e => { setCategoryFilter(e.target.value); setPage(1) }}
           >
-            <option value="">Semua Kategori</option>
+            <option value="">Semua Kategori Biaya</option>
             {categories?.map(c => (
               <option key={c.id} value={c.id}>{c.name}</option>
             ))}

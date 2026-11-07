@@ -5,10 +5,10 @@ import { ArrowLeft, Save, Settings2 } from 'lucide-react'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
 import { eventService } from '@/services/events'
-import { DEFAULT_SUB_EVENTS } from '@/constants/events'
 import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import ManageEventsModal from '@/components/events/ManageEventsModal'
+import ManageCategoriesModal from '@/components/categories/ManageCategoriesModal'
 import toast from 'react-hot-toast'
 
 const ExpenseEdit = () => {
@@ -18,6 +18,7 @@ const ExpenseEdit = () => {
   const qc = useQueryClient()
 
   const [showManageEvents, setShowManageEvents] = useState(false)
+  const [showManageCategories, setShowManageCategories] = useState(false)
 
   const { data: tx, isLoading } = useQuery({
     queryKey: ['transaction', id],
@@ -43,13 +44,14 @@ const ExpenseEdit = () => {
     description: '',
   })
   const [errors, setErrors] = useState({})
-  const [loadedId, setLoadedId] = useState(null)
+  const [loadedKey, setLoadedKey] = useState(null)
 
-  if (tx && tx.id !== loadedId) {
-    setLoadedId(tx.id)
-    const isKnownEvent = events?.some(e => e.name === tx.source) || DEFAULT_SUB_EVENTS.includes(tx.source)
+  const currentKey = tx && events ? `${tx.id}-${events.length}` : null
+  if (currentKey && currentKey !== loadedKey) {
+    setLoadedKey(currentKey)
+    const isKnownEvent = events.some(e => e.name === tx.source)
     setForm({
-      transaction_date: tx.transaction_date,
+      transaction_date: tx.transaction_date || '',
       source: tx.source ? (isKnownEvent ? tx.source : 'Lainnya') : '',
       customSource: tx.source && !isKnownEvent ? tx.source : '',
       category_id: tx.category_id || '',
@@ -133,9 +135,14 @@ const ExpenseEdit = () => {
 
           <div>
             <div className="flex items-center justify-between mb-1.5">
-              <label className="block text-xs font-medium text-slate-600 dark:text-slate-400">
-                Pos Acara / Kegiatan <span className="text-red-400">*</span>
-              </label>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Pos Acara / Kegiatan <span className="text-red-400">*</span>
+                </label>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                  Sub-kegiatan Milad (Haul, Lomba, Bahsul Masail, Halaqoh, Wisuda, dll.)
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => setShowManageEvents(true)}
@@ -150,7 +157,7 @@ const ExpenseEdit = () => {
               value={form.source}
               onChange={e => handleChange('source', e.target.value)}
             >
-              <option value="">-- Pilih Pos Acara --</option>
+              <option value="">-- Pilih Pos Acara / Kegiatan --</option>
               {events?.map(ev => (
                 <option key={ev.id} value={ev.name}>{ev.name}</option>
               ))}
@@ -177,10 +184,27 @@ const ExpenseEdit = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">Kategori *</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300">
+                  Kategori Biaya <span className="text-red-400">*</span>
+                </label>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">
+                  Jenis belanja/kebutuhan (Konsumsi, ATK, Transportasi, Operasional, dll.)
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowManageCategories(true)}
+                className="text-[11px] text-blue-500 hover:text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1 transition-colors"
+              >
+                <Settings2 size={12} />
+                Kelola Kategori
+              </button>
+            </div>
             <select className={`input-field ${errors.category_id ? 'border-red-500/50' : ''}`}
               value={form.category_id} onChange={e => handleChange('category_id', e.target.value)}>
-              <option value="">-- Pilih Kategori --</option>
+              <option value="">-- Pilih Kategori Biaya --</option>
               {categories?.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
             </select>
             {errors.category_id && <p className="text-xs text-red-400 mt-1">{errors.category_id}</p>}
@@ -218,6 +242,12 @@ const ExpenseEdit = () => {
         isOpen={showManageEvents}
         onClose={() => setShowManageEvents(false)}
         onSelect={(name) => handleChange('source', name)}
+      />
+
+      <ManageCategoriesModal
+        isOpen={showManageCategories}
+        onClose={() => setShowManageCategories(false)}
+        onSelect={(id) => handleChange('category_id', id)}
       />
     </div>
   )

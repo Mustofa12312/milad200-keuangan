@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   { to: '/expense', icon: TrendingDown, label: 'Pengeluaran', roles: ['ADMIN', 'USER'] },
   { to: '/debt', icon: CreditCard, label: 'Hutang', roles: ['ADMIN', 'USER'] },
   { to: '/reports', icon: FileText, label: 'Laporan', roles: ['ADMIN', 'USER'] },
-  { to: '/categories', icon: Tags, label: 'Kategori', roles: ['ADMIN'] },
+  { to: '/categories', icon: Tags, label: 'Kategori & Pos Acara', roles: ['ADMIN'] },
   { to: '/users', icon: Users, label: 'Pengguna', roles: ['ADMIN'] },
   { to: '/audit', icon: ClipboardList, label: 'Audit Log', roles: ['ADMIN'] },
   { to: '/cancelled', icon: Trash2, label: 'Dibatalkan', roles: ['ADMIN'] },
