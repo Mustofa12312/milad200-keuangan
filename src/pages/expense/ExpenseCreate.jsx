@@ -10,6 +10,7 @@ import { Spinner } from '@/components/ui'
 import ReceiptUploader from '@/components/receipt/ReceiptUploader'
 import ManageEventsModal from '@/components/events/ManageEventsModal'
 import ManageCategoriesModal from '@/components/categories/ManageCategoriesModal'
+import EventBudgetAlert from '@/components/budget/EventBudgetAlert'
 import toast from 'react-hot-toast'
 
 const ExpenseCreate = () => {
@@ -188,6 +189,12 @@ const ExpenseCreate = () => {
                 {errors.customSource && <p className="text-[10px] text-red-400 mt-1">{errors.customSource}</p>}
               </div>
             )}
+
+            {/* Kontrol Anggaran (RAB) Alert */}
+            <EventBudgetAlert
+              eventName={form.source === 'Lainnya' ? form.customSource : form.source}
+              currentAmount={totalAmount}
+            />
           </div>
 
           <div>

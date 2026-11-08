@@ -9,6 +9,7 @@ import { useAuth } from '@/contexts/auth'
 import { Spinner } from '@/components/ui'
 import ManageEventsModal from '@/components/events/ManageEventsModal'
 import ManageCategoriesModal from '@/components/categories/ManageCategoriesModal'
+import EventBudgetAlert from '@/components/budget/EventBudgetAlert'
 import toast from 'react-hot-toast'
 
 const ExpenseEdit = () => {
@@ -181,6 +182,13 @@ const ExpenseEdit = () => {
                 {errors.customSource && <p className="text-[10px] text-red-400 mt-1">{errors.customSource}</p>}
               </div>
             )}
+
+            {/* Kontrol Anggaran (RAB) Alert */}
+            <EventBudgetAlert
+              eventName={form.source === 'Lainnya' ? form.customSource : form.source}
+              currentAmount={Number(form.amount) || 0}
+              initialAmount={tx?.source === (form.source === 'Lainnya' ? form.customSource : form.source) ? (Number(tx?.amount) || 0) : 0}
+            />
           </div>
 
           <div>

@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import {
   TrendingUp, TrendingDown, CreditCard, Wallet,
   ArrowUpRight, ArrowDownRight, Plus, RefreshCw,
-  AlertTriangle, ChevronRight, Calendar,
+  AlertTriangle, ChevronRight, Calendar, Calculator,
 } from 'lucide-react'
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -14,6 +14,7 @@ import { id } from 'date-fns/locale'
 import { Link } from 'react-router-dom'
 import { transactionService } from '@/services/transactions'
 import { debtService } from '@/services/debts'
+import { budgetService } from '@/services/budget'
 import { StatCard, EmptyState } from '@/components/ui'
 import { formatCurrency, formatDate, formatRelative } from '@/utils/format'
 import { useAuth } from '@/contexts/auth'
@@ -79,6 +80,12 @@ const Dashboard = () => {
     queryFn: debtService.getOverdueDebts,
     staleTime: 60000,
     enabled: isAdmin,
+  })
+
+  const { data: budgetData } = useQuery({
+    queryKey: ['budget-summary'],
+    queryFn: () => budgetService.getBudgetSummary(),
+    staleTime: 30000,
   })
 
   // Process chart data
@@ -174,6 +181,84 @@ const Dashboard = () => {
         <Link to="/expense/create" className="btn btn-danger btn-sm w-full py-3 shadow-lg shadow-red-500/20">
           <Plus size={14} /> Catat Pengeluaran
         </Link>
+      </div>
+
+      {/* Kontrol Anggaran (RAB) Widget */}
+      <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-4 sm:p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-500 flex items-center justify-center flex-shrink-0">
+              <Calculator size={16} />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+                  Kontrol Anggaran & RAB Pos Acara
+                </h3>
+                {budgetData?.totals?.overBudgetCount > 0 && (
+                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20 flex items-center gap-1">
+                    <AlertTriangle size={10} /> {budgetData.totals.overBudgetCount} Over-Budget
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Monitoring serapan pagu anggaran per sub-kegiatan Milad 200
+              </p>
+            </div>
+          </div>
+          <Link
+            to="/budget"
+            className="text-xs font-semibold text-blue-500 hover:text-blue-600 dark:text-blue-400 flex items-center gap-1 self-start sm:self-auto"
+          >
+            Buka Menu RAB <ChevronRight size={14} />
+          </Link>
+        </div>
+
+        {budgetData?.totals?.totalBudget > 0 ? (
+          <div className="space-y-2.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+              <span className="text-slate-600 dark:text-slate-400">
+                Realisasi Belanja: <strong className="text-slate-900 dark:text-slate-100">{formatCurrency(budgetData.totals.totalSpent)}</strong> dari Pagu <span className="font-semibold">{formatCurrency(budgetData.totals.totalBudget)}</span>
+              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-slate-500 text-[11px]">
+                  Sisa: <strong className={budgetData.totals.totalRemaining < 0 ? 'text-red-500' : 'text-emerald-500'}>{formatCurrency(budgetData.totals.totalRemaining)}</strong>
+                </span>
+                <span className={`font-bold px-2 py-0.5 rounded-full text-[10px] ${
+                  budgetData.totals.totalPercent > 100
+                    ? 'bg-red-500/10 text-red-500'
+                    : budgetData.totals.totalPercent >= 75
+                    ? 'bg-amber-500/10 text-amber-500'
+                    : 'bg-emerald-500/10 text-emerald-500'
+                }`}>
+                  {budgetData.totals.totalPercent.toFixed(1)}% Terpakai
+                </span>
+              </div>
+            </div>
+
+            <div className="w-full bg-slate-200 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${
+                  budgetData.totals.totalPercent > 100
+                    ? 'bg-red-500'
+                    : budgetData.totals.totalPercent >= 75
+                    ? 'bg-amber-500'
+                    : 'bg-blue-500'
+                }`}
+                style={{ width: `${Math.min(budgetData.totals.totalPercent, 100)}%` }}
+              />
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-dashed border-slate-300 dark:border-white/10 text-xs">
+            <span className="text-slate-500">
+              Pagu anggaran (RAB) belum dikonfigurasi. Atur plafon dana per pos acara untuk memantau serapan anggaran.
+            </span>
+            <Link to="/budget" className="btn btn-primary btn-xs flex-shrink-0 ml-3">
+              Atur Sekarang
+            </Link>
+          </div>
+        )}
       </div>
 
       {/* Charts */}

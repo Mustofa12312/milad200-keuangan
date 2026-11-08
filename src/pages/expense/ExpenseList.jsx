@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { Plus, TrendingDown } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { transactionService } from '@/services/transactions'
 import { categoryService } from '@/services/categories'
 import { eventService } from '@/services/events'
@@ -15,6 +15,8 @@ import toast from 'react-hot-toast'
 const ExpenseList = () => {
   const { user, isAdmin } = useAuth()
   const qc = useQueryClient()
+  const [searchParams] = useSearchParams()
+  const sourceParam = searchParams.get('source') || ''
 
   const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
@@ -22,7 +24,7 @@ const ExpenseList = () => {
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('')
-  const [sourceFilter, setSourceFilter] = useState('')
+  const [sourceFilter, setSourceFilter] = useState(sourceParam)
   const [sortBy, setSortBy] = useState('transaction_date')
   const [sortOrder, setSortOrder] = useState('desc')
   const [deleteId, setDeleteId] = useState(null)

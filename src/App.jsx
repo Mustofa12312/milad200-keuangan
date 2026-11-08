@@ -19,6 +19,7 @@ import ExpenseEdit from '@/pages/expense/ExpenseEdit'
 import DebtList from '@/pages/debt/DebtList'
 import DebtCreate from '@/pages/debt/DebtCreate'
 import DebtDetail from '@/pages/debt/DebtDetail'
+import BudgetList from '@/pages/budget/BudgetList'
 
 // Pages — Admin
 import CategoryList from '@/pages/categories/CategoryList'
@@ -80,6 +81,9 @@ const App = () => {
             <Route path="/debt" element={<Page><DebtList /></Page>} />
             <Route path="/debt/create" element={<Page><DebtCreate /></Page>} />
             <Route path="/debt/:id" element={<Page><DebtDetail /></Page>} />
+
+            {/* Budget / RAB */}
+            <Route path="/budget" element={<Page><BudgetList /></Page>} />
 
             {/* Reports (all users) */}
             <Route path="/reports" element={<Page><Reports /></Page>} />
