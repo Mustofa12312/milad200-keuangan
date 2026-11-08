@@ -74,7 +74,6 @@ const ExpenseCreate = () => {
     }
     if (!form.unitPrice || Number(form.unitPrice) <= 0) e.unitPrice = 'Harga satuan wajib diisi'
     if (totalAmount <= 0) e.volume = 'Total nominal harus lebih dari 0'
-    if (!receiptFile) e.receipt = 'Foto nota wajib dilampirkan'
     
     setErrors(e)
     return Object.keys(e).length === 0
@@ -329,7 +328,7 @@ const ExpenseCreate = () => {
 
         <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
           <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">
-            Foto Nota <span className="text-red-400">*</span>
+            Foto Nota <span className="text-slate-400 font-normal">(Opsional)</span>
           </label>
           <ReceiptUploader
             value={receiptFile}
@@ -337,7 +336,6 @@ const ExpenseCreate = () => {
               setReceiptFile(file)
               if (errors.receipt) setErrors(prev => ({ ...prev, receipt: undefined }))
             }}
-            required
             error={errors.receipt}
           />
         </div>
