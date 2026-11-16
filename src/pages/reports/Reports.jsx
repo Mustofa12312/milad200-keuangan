@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search, Tag } from 'lucide-react'
+import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search, Tag, Calendar, RotateCcw } from 'lucide-react'
 import { reportService } from '@/services/reports'
 import { categoryService } from '@/services/categories'
 import { eventService } from '@/services/events'
@@ -13,9 +13,52 @@ const Reports = () => {
   const { isAdmin } = useAuth()
   const [reportType, setReportType] = useState('income')
   const [filters, setFilters] = useState({ startDate: '', endDate: '', category_id: '', source: '', created_by: '' })
+  const [datePreset, setDatePreset] = useState('all') // 'all' | 'today' | '7days' | 'this_month' | 'custom'
   const [reportData, setReportData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+
+  const handleDatePreset = (preset) => {
+    setDatePreset(preset)
+    const today = new Date()
+    const formatDateStr = (d) => {
+      const year = d.getFullYear()
+      const month = String(d.getMonth() + 1).padStart(2, '0')
+      const day = String(d.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    }
+
+    if (preset === 'all') {
+      setFilters(p => ({ ...p, startDate: '', endDate: '' }))
+    } else if (preset === 'today') {
+      const todayStr = formatDateStr(today)
+      setFilters(p => ({ ...p, startDate: todayStr, endDate: todayStr }))
+    } else if (preset === '7days') {
+      const endStr = formatDateStr(today)
+      const sevenDaysAgo = new Date(today)
+      sevenDaysAgo.setDate(today.getDate() - 6)
+      const startStr = formatDateStr(sevenDaysAgo)
+      setFilters(p => ({ ...p, startDate: startStr, endDate: endStr }))
+    } else if (preset === 'this_month') {
+      const firstDay = new Date(today.getFullYear(), today.getMonth(), 1)
+      const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+      setFilters(p => ({ ...p, startDate: formatDateStr(firstDay), endDate: formatDateStr(lastDay) }))
+    } else if (preset === 'custom') {
+      // Keep current dates
+    }
+  }
+
+  const handleCustomDateChange = (field, value) => {
+    setFilters(p => {
+      const updated = { ...p, [field]: value }
+      if (!updated.startDate && !updated.endDate) {
+        setDatePreset('all')
+      } else {
+        setDatePreset('custom')
+      }
+      return updated
+    })
+  }
 
   const { data: categories } = useQuery({
     queryKey: ['categories'],
@@ -150,7 +193,18 @@ const Reports = () => {
               return (
                 <button
                   key={key}
-                  onClick={() => { setReportType(key); setReportData(null); setFilters({ startDate: '', endDate: '', category_id: '', created_by: '', status: '' }) }}
+                  onClick={() => {
+                    setReportType(key)
+                    setReportData(null)
+                    setFilters(p => ({
+                      startDate: datePreset === 'all' ? '' : p.startDate,
+                      endDate: datePreset === 'all' ? '' : p.endDate,
+                      category_id: '',
+                      source: '',
+                      created_by: '',
+                      status: '',
+                    }))
+                  }}
                   className={`flex flex-col items-center justify-center py-4 px-2 sm:p-5 rounded-2xl border transition-all duration-300 relative overflow-hidden group outline-none
                     ${isActive ? `${border} ${bg} ${glow}` : 'border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-800'}
                   `}
@@ -166,19 +220,102 @@ const Reports = () => {
 
         <div className="h-px w-full bg-slate-200 dark:bg-white/10" />
 
+        {/* Date Preset Selector */}
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+              <Calendar size={15} className="text-blue-500" />
+              Pilihan Cepat Periode Tanggal
+            </span>
+
+            {/* Quick Preset Buttons */}
+            <div className="inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-white/5 text-xs">
+              {[
+                { id: 'all', label: 'Semua Waktu' },
+                { id: 'today', label: 'Hari Ini' },
+                { id: '7days', label: '7 Hari Terakhir' },
+                { id: 'this_month', label: 'Bulan Ini' },
+                { id: 'custom', label: 'Kustom Tanggal' },
+              ].map(p => {
+                const isActive = datePreset === p.id
+                return (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => handleDatePreset(p.id)}
+                    className={`px-3 py-1.5 rounded-lg font-medium transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-sm font-semibold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-700/50'
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Active Preset Status Indicator */}
+          {datePreset === 'all' ? (
+            <div className="flex items-center gap-2 text-xs text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-2 rounded-xl border border-emerald-200/60 dark:border-emerald-800/30">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse"></span>
+              <span>
+                <strong>Mode Semua Waktu Aktif:</strong> Seluruh transaksi yang tercatat sejak awal kegiatan akan otomatis dimuat tanpa batasan tanggal.
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/40 px-3 py-2 rounded-xl border border-slate-200 dark:border-white/5">
+              <span>
+                Rentang aktif: <strong className="text-slate-800 dark:text-slate-200">{periodLabel}</strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => handleDatePreset('all')}
+                className="text-blue-500 hover:text-blue-600 dark:text-blue-400 text-xs font-semibold flex items-center gap-1 cursor-pointer"
+              >
+                <RotateCcw size={12} />
+                Kembali ke Semua Waktu
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Filters */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Dari Tanggal</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400">Dari Tanggal</label>
+              {filters.startDate && (
+                <button
+                  type="button"
+                  onClick={() => handleCustomDateChange('startDate', '')}
+                  className="text-[10px] text-slate-400 hover:text-red-500 cursor-pointer"
+                >
+                  Hapus
+                </button>
+              )}
+            </div>
             <input type="date" className="input-field"
               value={filters.startDate}
-              onChange={e => setFilters(p => ({ ...p, startDate: e.target.value }))} />
+              onChange={e => handleCustomDateChange('startDate', e.target.value)} />
           </div>
           <div>
-            <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5">Sampai Tanggal</label>
+            <div className="flex items-center justify-between mb-1.5">
+              <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400">Sampai Tanggal</label>
+              {filters.endDate && (
+                <button
+                  type="button"
+                  onClick={() => handleCustomDateChange('endDate', '')}
+                  className="text-[10px] text-slate-400 hover:text-red-500 cursor-pointer"
+                >
+                  Hapus
+                </button>
+              )}
+            </div>
             <input type="date" className="input-field"
               value={filters.endDate}
-              onChange={e => setFilters(p => ({ ...p, endDate: e.target.value }))} />
+              onChange={e => handleCustomDateChange('endDate', e.target.value)} />
           </div>
           {reportType === 'expense' && (
             <div>
