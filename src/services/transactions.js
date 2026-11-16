@@ -104,8 +104,68 @@ export const transactionService = {
     return transaction
   },
 
-  async updateTransaction(id, updates, userId) {
+  async updateTransaction(id, updates, receiptFileOrUserId, maybeUserId) {
+    let receiptFile = undefined
+    let userId = receiptFileOrUserId
+
+    if (maybeUserId !== undefined) {
+      receiptFile = receiptFileOrUserId
+      userId = maybeUserId
+    } else if (typeof receiptFileOrUserId !== 'string') {
+      receiptFile = receiptFileOrUserId
+    }
+
     const old = await this.getTransactionById(id)
+
+    // 1. Handle receipt changes if receiptFile is explicitly provided
+    if (receiptFile !== undefined) {
+      // If there's a new file or explicit removal, remove old receipts
+      if (old.receipts && old.receipts.length > 0) {
+        for (const r of old.receipts) {
+          if (r.storage_path) {
+            try {
+              await supabase.storage.from('transaction-receipts').remove([r.storage_path])
+            } catch (err) {
+              console.warn('Failed to remove old receipt file:', err)
+            }
+          }
+        }
+        const { error: delError } = await supabase
+          .from('transaction_receipts')
+          .delete()
+          .eq('transaction_id', id)
+        if (delError) console.warn('Failed to delete old receipt record:', delError)
+      }
+
+      // If a new file was uploaded, upload to storage and insert record
+      if (receiptFile) {
+        const fileName = `${crypto.randomUUID()}.webp`
+        const folder = (updates.type || old.type) === 'INCOME' ? 'income' : 'expense'
+        const year = new Date().getFullYear()
+        const month = String(new Date().getMonth() + 1).padStart(2, '0')
+        const storagePath = `${folder}/${year}/${month}/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+          .from('transaction-receipts')
+          .upload(storagePath, receiptFile, { contentType: receiptFile.type || 'image/webp' })
+        if (uploadError) throw uploadError
+
+        const { error: receiptError } = await supabase
+          .from('transaction_receipts')
+          .insert({
+            transaction_id: id,
+            storage_path: storagePath,
+            file_name: receiptFile.name || fileName,
+            file_size: receiptFile.size || 0,
+            mime_type: receiptFile.type || 'image/webp',
+            uploaded_by: userId,
+          })
+        if (receiptError) {
+          await supabase.storage.from('transaction-receipts').remove([storagePath])
+          throw receiptError
+        }
+      }
+    }
 
     const { data, error } = await supabase
       .from('transactions')
@@ -115,7 +175,10 @@ export const transactionService = {
       .single()
     if (error) throw error
 
-    await logAudit(userId, 'UPDATE', 'transaction', id, old, updates)
+    await logAudit(userId, 'UPDATE', 'transaction', id, old, {
+      ...updates,
+      receipt_changed: receiptFile !== undefined,
+    })
     return data
   },
 

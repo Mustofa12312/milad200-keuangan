@@ -10,6 +10,7 @@ import { Spinner } from '@/components/ui'
 import ManageEventsModal from '@/components/events/ManageEventsModal'
 import ManageCategoriesModal from '@/components/categories/ManageCategoriesModal'
 import EventBudgetAlert from '@/components/budget/EventBudgetAlert'
+import ReceiptUploader from '@/components/receipt/ReceiptUploader'
 import toast from 'react-hot-toast'
 
 const ExpenseEdit = () => {
@@ -36,6 +37,13 @@ const ExpenseEdit = () => {
     queryFn: eventService.getEvents,
   })
 
+  const { data: initialReceiptUrl } = useQuery({
+    queryKey: ['transaction-receipt-url', id, tx?.receipts?.[0]?.storage_path],
+    queryFn: () => transactionService.getSignedUrl(tx.receipts[0].storage_path),
+    enabled: !!tx?.receipts?.[0]?.storage_path,
+    staleTime: 60000,
+  })
+
   const [form, setForm] = useState({
     transaction_date: '',
     source: '',
@@ -44,6 +52,7 @@ const ExpenseEdit = () => {
     amount: '',
     description: '',
   })
+  const [receiptFile, setReceiptFile] = useState(undefined)
   const [errors, setErrors] = useState({})
   const [loadedKey, setLoadedKey] = useState(null)
 
@@ -62,11 +71,14 @@ const ExpenseEdit = () => {
   }
 
   const mutation = useMutation({
-    mutationFn: (updates) => transactionService.updateTransaction(id, updates, user.id),
+    mutationFn: ({ txData, file }) => transactionService.updateTransaction(id, txData, file, user.id),
     onSuccess: () => {
       toast.success('Pengeluaran berhasil diperbarui!')
+      qc.invalidateQueries({ queryKey: ['transaction', id] })
+      qc.invalidateQueries({ queryKey: ['transaction-receipt-url', id] })
       qc.invalidateQueries({ queryKey: ['transactions'] })
       qc.invalidateQueries({ queryKey: ['summary'] })
+      qc.invalidateQueries({ queryKey: ['budget-summary'] })
       navigate('/expense')
     },
     onError: (err) => toast.error(err.message || 'Gagal memperbarui'),
@@ -91,11 +103,14 @@ const ExpenseEdit = () => {
     if (!validate()) return
     const resolvedSource = form.source === 'Lainnya' ? form.customSource.trim() : form.source
     mutation.mutate({
-      transaction_date: form.transaction_date,
-      category_id: form.category_id,
-      source: resolvedSource || null,
-      amount: Number(form.amount),
-      description: form.description.trim() || null,
+      txData: {
+        transaction_date: form.transaction_date,
+        category_id: form.category_id,
+        source: resolvedSource || null,
+        amount: Number(form.amount),
+        description: form.description.trim() || null,
+      },
+      file: receiptFile,
     })
   }
 
@@ -238,6 +253,18 @@ const ExpenseEdit = () => {
             <textarea className="input-field resize-none" rows={3}
               value={form.description} onChange={e => handleChange('description', e.target.value)} />
           </div>
+        </div>
+
+        {/* Receipt Card */}
+        <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-3">
+            Foto Nota <span className="text-slate-400 font-normal">(Opsional)</span>
+          </label>
+          <ReceiptUploader
+            value={receiptFile}
+            initialUrl={initialReceiptUrl}
+            onChange={(file) => setReceiptFile(file)}
+          />
         </div>
 
         <button type="submit" className="btn btn-primary w-full btn-lg" disabled={mutation.isPending}>
