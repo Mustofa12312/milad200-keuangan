@@ -116,9 +116,11 @@ export const reportService = {
       if (!desc) return { volume: 1, unit: 'Paket', price: 0, text: '-' }
       const match = desc.match(/^\[([\d.,]+)\s+(.+?)\s+x\s+Rp\s+([\d,.]+?)\]\s*(.*)/i)
       if (match) {
+        let unit = match[2].trim()
+        if (unit.toLowerCase() === '1 nota') unit = 'Nota'
         return {
           volume: parseFloat(match[1].replace(/,/g, '.')),
-          unit: match[2].trim(),
+          unit: unit,
           price: parseFloat(match[3].replace(/\./g, '').replace(/,/g, '.')),
           text: match[4]?.trim() || desc
         }
@@ -185,6 +187,12 @@ export const reportService = {
     })
 
     const wsRekap = XLSX.utils.json_to_sheet(rekapData)
+    wsRekap['!cols'] = [
+      { wch: 32 },
+      { wch: 32 },
+      { wch: 18 },
+      { wch: 22 },
+    ]
     XLSX.utils.book_append_sheet(wb, wsRekap, 'Rekap Eksekutif')
 
     // Safe Sheet Name Helper
@@ -202,43 +210,137 @@ export const reportService = {
       return candidate
     }
 
-    // 2. Sheets Per Pos Acara (Sub-Acara)
+    const columnWidths = [
+      { wch: 6 },  // No
+      { wch: 13 }, // Tanggal
+      { wch: 22 }, // Pos Acara
+      { wch: 26 }, // Kategori
+      { wch: 42 }, // Uraian
+      { wch: 9 },  // Volume
+      { wch: 12 }, // Satuan
+      { wch: 15 }, // Harga Satuan
+      { wch: 16 }, // Jumlah (Rp)
+      { wch: 8 },  // Nota
+      { wch: 20 }, // Petugas
+    ]
+
+    const getCategoryCode = (index) => {
+      let code = ''
+      let n = index
+      while (n >= 0) {
+        code = String.fromCharCode((n % 26) + 65) + code
+        n = Math.floor(n / 26) - 1
+      }
+      return `${code}.`
+    }
+
+    // 2. Sheets Per Pos Acara (Dikelompokkan per Kategori)
     Object.keys(bySource).forEach(pos => {
-      let subTotal = 0
-      const rows = bySource[pos].map((t, idx) => {
-        const parsed = parseDescription(t.description)
-        subTotal += Number(t.amount)
-        return {
-          'No': idx + 1,
-          'Tanggal': t.transaction_date,
-          'Pos Acara': pos,
-          'Kategori': t.categories?.name || '-',
-          'Uraian': parsed.text,
-          'Volume': parsed.volume,
-          'Satuan': parsed.unit,
-          'Harga Satuan': parsed.price || (Number(t.amount) / parsed.volume),
-          'Jumlah (Rp)': Number(t.amount),
-          'Nota': t.receipts && t.receipts.length > 0 ? 'Ada' : '-',
-          'Petugas': t.creator?.full_name || '-'
-        }
+      const posTransactions = bySource[pos]
+
+      // Kelompokkan transaksi berdasarkan kategori biaya
+      const catGroups = {}
+      posTransactions.forEach(t => {
+        const cat = t.categories?.name || 'Lain-lain'
+        if (!catGroups[cat]) catGroups[cat] = []
+        catGroups[cat].push(t)
       })
 
-      // Add subtotal row at end of each sub-event sheet
+      const rows = []
+      let posTotal = 0
+      const categoryNames = Object.keys(catGroups).sort((a, b) => a.localeCompare(b))
+
+      categoryNames.forEach((catName, cIdx) => {
+        const list = catGroups[catName]
+        list.sort((a, b) => new Date(a.transaction_date || 0) - new Date(b.transaction_date || 0))
+
+        let catSubTotal = 0
+
+        // 2a. Header Kategori
+        rows.push({
+          'No': getCategoryCode(cIdx),
+          'Tanggal': '',
+          'Pos Acara': pos,
+          'Kategori': catName.toUpperCase(),
+          'Uraian': `KELOMPOK BIAYA: ${catName.toUpperCase()}`,
+          'Volume': '',
+          'Satuan': '',
+          'Harga Satuan': '',
+          'Jumlah (Rp)': '',
+          'Nota': '',
+          'Petugas': ''
+        })
+
+        // 2b. Rincian Item Transaksi
+        list.forEach((t, itemIdx) => {
+          const parsed = parseDescription(t.description)
+          const amount = Number(t.amount)
+          catSubTotal += amount
+          posTotal += amount
+
+          rows.push({
+            'No': itemIdx + 1,
+            'Tanggal': t.transaction_date,
+            'Pos Acara': pos,
+            'Kategori': catName,
+            'Uraian': parsed.text,
+            'Volume': parsed.volume,
+            'Satuan': parsed.unit,
+            'Harga Satuan': parsed.price || (amount / (parsed.volume || 1)),
+            'Jumlah (Rp)': amount,
+            'Nota': t.receipts && t.receipts.length > 0 ? 'Ada' : '-',
+            'Petugas': t.creator?.full_name || '-'
+          })
+        })
+
+        // 2c. Subtotal Kategori
+        rows.push({
+          'No': '',
+          'Tanggal': '',
+          'Pos Acara': '',
+          'Kategori': '',
+          'Uraian': `SUBTOTAL ${catName.toUpperCase()}`,
+          'Volume': '',
+          'Satuan': '',
+          'Harga Satuan': '',
+          'Jumlah (Rp)': catSubTotal,
+          'Nota': '',
+          'Petugas': ''
+        })
+
+        // 2d. Baris Pemisah Kosong
+        rows.push({
+          'No': '',
+          'Tanggal': '',
+          'Pos Acara': '',
+          'Kategori': '',
+          'Uraian': '',
+          'Volume': '',
+          'Satuan': '',
+          'Harga Satuan': '',
+          'Jumlah (Rp)': '',
+          'Nota': '',
+          'Petugas': ''
+        })
+      })
+
+      // 2e. Total Keseluruhan Pos Acara
       rows.push({
         'No': '',
         'Tanggal': '',
         'Pos Acara': '',
         'Kategori': '',
-        'Uraian': `TOTAL ${pos.toUpperCase()}`,
+        'Uraian': `TOTAL KESELURUHAN ${pos.toUpperCase()}`,
         'Volume': '',
         'Satuan': '',
         'Harga Satuan': '',
-        'Jumlah (Rp)': subTotal,
+        'Jumlah (Rp)': posTotal,
         'Nota': '',
         'Petugas': ''
       })
 
       const ws = XLSX.utils.json_to_sheet(rows)
+      ws['!cols'] = columnWidths
       XLSX.utils.book_append_sheet(wb, ws, getSafeSheetName(pos))
     })
 
@@ -253,7 +355,7 @@ export const reportService = {
         'Uraian': parsed.text,
         'Volume': parsed.volume,
         'Satuan': parsed.unit,
-        'Harga Satuan': parsed.price || (Number(t.amount) / parsed.volume),
+        'Harga Satuan': parsed.price || (Number(t.amount) / (parsed.volume || 1)),
         'Jumlah (Rp)': Number(t.amount),
         'Nota': t.receipts && t.receipts.length > 0 ? 'Ada' : '-',
         'Petugas': t.creator?.full_name || '-'
@@ -273,6 +375,7 @@ export const reportService = {
       'Petugas': ''
     })
     const wsAll = XLSX.utils.json_to_sheet(allRows)
+    wsAll['!cols'] = columnWidths
     XLSX.utils.book_append_sheet(wb, wsAll, getSafeSheetName('Semua Transaksi'))
 
     XLSX.writeFile(wb, `${filename}.xlsx`)

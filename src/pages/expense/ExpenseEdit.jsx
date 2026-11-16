@@ -15,14 +15,15 @@ import toast from 'react-hot-toast'
 
 const STANDARD_UNITS = [
   'Orang', 'Pcs', 'Set', 'Paket', 'Buah', 'Lembar', 'Liter', 'Kg', 'Gram',
-  'Meter', 'Karton/Dus', 'Rim', 'Bungkus', 'Kegiatan', 'Hari', 'Bulan', '1 Nota', 'Tahun'
+  'Meter', 'Karton/Dus', 'Rim', 'Bungkus', 'Kegiatan', 'Hari', 'Bulan', 'Nota', '1 Nota', 'Tahun'
 ]
 
 const parseExpenseDescription = (desc, amount) => {
   const match = desc?.match(/^\[([\d.,]+)\s+(.*?)\s+x\s+Rp\s*([\d.,]+)\]\s*([\s\S]*)$/)
   if (match) {
     const rawVolume = match[1].replace(',', '.')
-    const unitParsed = match[2].trim()
+    let unitParsed = match[2].trim()
+    if (unitParsed.toLowerCase() === '1 nota') unitParsed = 'Nota'
     const rawPrice = match[3].replace(/\D/g, '')
     const cleanDesc = match[4].trim()
 
@@ -36,7 +37,7 @@ const parseExpenseDescription = (desc, amount) => {
 
   return {
     volume: '1',
-    unit: '1 Nota',
+    unit: 'Nota',
     unitPrice: amount ? String(amount) : '',
     description: desc || '',
   }
