@@ -21,8 +21,19 @@ export const reportService = {
     if (source) query = query.ilike('source', `%${source}%`)
     if (created_by) query = query.eq('created_by', created_by)
 
-    const { data, error } = await query.order('transaction_date', { ascending: false })
-    if (error) throw error
+    let data = []
+    let from = 0
+    const step = 1000
+    while (true) {
+      const { data: pageData, error } = await query
+        .order('transaction_date', { ascending: false })
+        .range(from, from + step - 1)
+      if (error) throw error
+      if (!pageData || pageData.length === 0) break
+      data.push(...pageData)
+      if (pageData.length < step) break
+      from += step
+    }
 
     const total = data.reduce((sum, t) => sum + Number(t.amount), 0)
     return { data, total }
@@ -46,8 +57,19 @@ export const reportService = {
     if (source) query = query.eq('source', source)
     if (created_by) query = query.eq('created_by', created_by)
 
-    const { data, error } = await query.order('transaction_date', { ascending: false })
-    if (error) throw error
+    let data = []
+    let from = 0
+    const step = 1000
+    while (true) {
+      const { data: pageData, error } = await query
+        .order('transaction_date', { ascending: false })
+        .range(from, from + step - 1)
+      if (error) throw error
+      if (!pageData || pageData.length === 0) break
+      data.push(...pageData)
+      if (pageData.length < step) break
+      from += step
+    }
 
     // Group by category
     const byCategory = {}
