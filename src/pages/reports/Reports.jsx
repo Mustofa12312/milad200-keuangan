@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search, Tag, Calendar, RotateCcw } from 'lucide-react'
+import { FileText, Download, Filter, Printer, ArrowDownToLine, ArrowUpFromLine, CreditCard, Folder, Users, Search, Tag, Calendar, RotateCcw, Archive } from 'lucide-react'
 import { reportService } from '@/services/reports'
+import { backupService } from '@/services/backup'
 import { categoryService } from '@/services/categories'
 import { eventService } from '@/services/events'
 import { userService } from '@/services/users'
 import { formatCurrency, formatDate } from '@/utils/format'
 import { EmptyState, Spinner } from '@/components/ui'
 import { useAuth } from '@/contexts/auth'
+import toast from 'react-hot-toast'
 
 const Reports = () => {
   const { isAdmin } = useAuth()
@@ -162,6 +164,32 @@ const Reports = () => {
   }
 
   const handlePrint = () => window.print()
+
+  const [downloadingZip, setDownloadingZip] = useState(false)
+  const [zipProgress, setZipProgress] = useState(null)
+
+  const handleExportReceiptsZip = async () => {
+    if (!reportData?.data?.length) return
+    setDownloadingZip(true)
+    setZipProgress(null)
+
+    const cleanSource = filters.source ? filters.source.replace(/[/\\?%*:|"<>]/g, '_').trim() : 'semua_pos'
+    const zipName = `nota_${reportType}_${cleanSource}_${new Date().toISOString().split('T')[0]}`
+
+    try {
+      const res = await backupService.downloadReceiptsZip({
+        transactions: reportData.data,
+        zipFilename: zipName,
+        onProgress: (p) => setZipProgress(p),
+      })
+      toast.success(`Berhasil mengunduh ${res.downloadedCount} berkas nota (.ZIP)`)
+    } catch (err) {
+      toast.error(err.message || 'Gagal mengunduh berkas nota')
+    } finally {
+      setDownloadingZip(false)
+      setZipProgress(null)
+    }
+  }
 
   const periodLabel = [
     filters.startDate ? formatDate(filters.startDate) : null,
@@ -411,6 +439,17 @@ const Reports = () => {
                 <button onClick={handleExportCSV} className="btn btn-ghost btn-sm"><Download size={13} /> CSV</button>
                 <button onClick={handleExportExcel} className="btn btn-ghost btn-sm"><Download size={13} /> Excel</button>
                 <button onClick={handleExportPDF} className="btn btn-ghost btn-sm"><Download size={13} /> PDF</button>
+                {reportType !== 'debt' && (
+                  <button
+                    onClick={handleExportReceiptsZip}
+                    disabled={downloadingZip}
+                    className="btn btn-ghost btn-sm text-amber-600 dark:text-amber-400 border border-amber-500/20 hover:bg-amber-500/10 flex items-center gap-1.5 cursor-pointer"
+                    title="Unduh seluruh foto bukti nota dalam bentuk arsip ZIP"
+                  >
+                    {downloadingZip ? <Spinner size={12} /> : <Archive size={13} />}
+                    {downloadingZip ? (zipProgress ? `${zipProgress.percent}%` : 'Mengunduh...') : 'Unduh Nota (.ZIP)'}
+                  </button>
+                )}
                 <button onClick={handlePrint} className="btn btn-ghost btn-sm"><Printer size={13} /> Print</button>
               </div>
             </div>
