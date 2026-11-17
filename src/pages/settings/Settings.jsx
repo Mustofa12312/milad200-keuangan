@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import {
   User, Lock, LogOut, Shield, Save, Eye, EyeOff,
-  CheckCircle, AlertCircle,
+  CheckCircle, AlertCircle, Database,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/auth'
 import { authService } from '@/services/auth'
 import supabase from '@/services/supabase'
 import { getInitials, formatDateTime } from '@/utils/format'
 import { Spinner } from '@/components/ui'
+import BackupManager from '@/components/settings/BackupManager'
 import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
@@ -87,6 +88,7 @@ const Settings = () => {
   const TABS = [
     { key: 'profile', label: 'Profil', icon: User },
     { key: 'security', label: 'Keamanan', icon: Lock },
+    ...(isAdmin ? [{ key: 'backup', label: 'Backup & Data', icon: Database }] : []),
     { key: 'about', label: 'Tentang', icon: Shield },
   ]
 
@@ -271,6 +273,10 @@ const Settings = () => {
         </div>
       )}
 
+      {activeTab === 'backup' && isAdmin && (
+        <BackupManager user={user} />
+      )}
+
       {activeTab === 'about' && (
         <div className="space-y-4 animate-fade-in">
           <div className="glass rounded-xl border border-slate-200 dark:border-white/5 p-5">
@@ -320,6 +326,7 @@ const Settings = () => {
                 '✅ Notifikasi Hutang Jatuh Tempo',
                 '✅ Row Level Security (RLS)',
                 '✅ Soft Delete Transaksi',
+                '✅ Cadangan & Pemulihan Sistem (Backup & Restore)',
                 '✅ Responsive Mobile',
               ].map((f, i) => (
                 <p key={i} className="text-xs text-slate-700 dark:text-slate-300">{f}</p>

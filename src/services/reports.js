@@ -8,7 +8,11 @@ export const reportService = {
   async getIncomeReport({ startDate, endDate, source, created_by } = {}) {
     let query = supabase
       .from('transactions')
-      .select(`*, creator:profiles!transactions_created_by_fkey(full_name)`)
+      .select(`
+        *, 
+        creator:profiles!transactions_created_by_fkey(full_name),
+        receipts:transaction_receipts(id, storage_path, file_name)
+      `)
       .eq('type', 'INCOME')
       .eq('is_deleted', false)
 
@@ -31,7 +35,7 @@ export const reportService = {
         *, 
         categories(name), 
         creator:profiles!transactions_created_by_fkey(full_name),
-        receipts:transaction_receipts(id)
+        receipts:transaction_receipts(id, storage_path, file_name)
       `)
       .eq('type', 'EXPENSE')
       .eq('is_deleted', false)
