@@ -1,5 +1,5 @@
 -- ============================================================
--- LAPORAN KEUANGAN 200 TAHUN PANYEPPEN
+-- LAPORAN KEUANGAN 2 ABAD PANYEPPEN
 -- Migration Phase 3: Fix Foreign Keys for Profiles Join
 -- ============================================================
 -- By default, tables referenced auth.users(id) for tracking creator.

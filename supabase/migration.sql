@@ -1,5 +1,5 @@
 -- ============================================================
--- LAPORAN KEUANGAN 200 TAHUN PANYEPPEN
+-- LAPORAN KEUANGAN 2 ABAD PANYEPPEN
 -- Supabase Database Migration
 -- ============================================================
 

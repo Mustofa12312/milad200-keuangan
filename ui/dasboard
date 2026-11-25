@@ -87,7 +87,7 @@
         </div>
 <div class="flex flex-col">
 <span class="text-sm font-semibold tracking-tight text-apple-textPrimary">Laporan Keuangan</span>
-<span class="text-xs text-apple-textSecondary font-normal">200 Tahun Panyeppen</span>
+<span class="text-xs text-apple-textSecondary font-normal">2 Abad Panyeppen</span>
 </div>
 </div>
 <!-- Navigation Links -->
@@ -213,7 +213,7 @@
 <!-- Top Navigation Bar -->
 <header class="h-16 border-b border-apple-border/80 bg-apple-card/80 backdrop-blur-md sticky top-0 z-20 flex items-center justify-between px-8" data-purpose="top-header">
 <div class="flex items-center space-x-2 text-xs font-medium text-apple-textSecondary">
-<span class="hover:text-apple-textPrimary cursor-pointer apple-transition">200 Tahun Panyeppen</span>
+<span class="hover:text-apple-textPrimary cursor-pointer apple-transition">2 Abad Panyeppen</span>
 <svg class="w-3.5 h-3.5 text-apple-textSecondary" fill="none" stroke="currentColor" viewbox="0 0 24 24">
 <path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
 </svg>

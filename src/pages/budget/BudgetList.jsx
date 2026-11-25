@@ -117,7 +117,7 @@ const BudgetList = () => {
             Rencana Anggaran Biaya (RAB)
           </h1>
           <p className="text-xs text-slate-500">
-            Monitoring plafon anggaran vs realisasi belanja per kegiatan Milad 200 Tahun
+            Monitoring plafon anggaran vs realisasi belanja per kegiatan Milad 2 Abad
           </p>
         </div>
 

@@ -1,4 +1,4 @@
-# PRD — Laporan Keuangan 200 Tahun Panyeppen
+# PRD — Laporan Keuangan 2 Abad Panyeppen
 
 **Versi:** 1.0
 **Status:** Draft siap development
@@ -15,7 +15,7 @@
 
 # 1. Ringkasan Produk
 
-**Laporan Keuangan 200 Tahun Panyeppen** adalah aplikasi web untuk membantu organisasi mencatat, mengelola, memantau, dan melaporkan aktivitas keuangan secara terstruktur.
+**Laporan Keuangan 2 Abad Panyeppen** adalah aplikasi web untuk membantu organisasi mencatat, mengelola, memantau, dan melaporkan aktivitas keuangan secara terstruktur.
 
 Sistem berfokus pada:
 
@@ -167,7 +167,7 @@ tanpa membangun ulang sistem.
 # 5. Modul Sistem
 
 ```text
-Laporan Keuangan 200 Tahun Panyeppen
+Laporan Keuangan 2 Abad Panyeppen
 │
 ├── Authentication
 │
@@ -738,7 +738,7 @@ Contoh:
 
 ```text
 LAPORAN KEUANGAN
-200 TAHUN PANYEPPEN
+2 ABAD PANYEPPEN
 
 Periode:
 01 September 2026
@@ -1129,7 +1129,7 @@ Desktop:
 
 ```text
 ┌─────────────────────────────────────┐
-│ Laporan Keuangan 200 Tahun Panyeppen│
+│ Laporan Keuangan 2 Abad Panyeppen│
 ├──────────┬──────────────────────────┤
 │ Dashboard│                          │
 │ Pemasukan│                          │
@@ -1616,4 +1616,4 @@ Sistem dianggap siap untuk MVP apabila:
        └──────────────┘            └──────────────┘
 ```
 
-**Kesimpulan desain:** untuk kebutuhan **Laporan Keuangan 200 Tahun Panyeppen**, Supabase sangat cocok karena kita bisa menyatukan **Auth + PostgreSQL + Storage + RLS** tanpa harus membuat server backend terpisah. Arsitektur ini juga paling sederhana untuk menjaga target biaya awal **Rp0**, selama penggunaan tetap dalam batas free tier layanan.
+**Kesimpulan desain:** untuk kebutuhan **Laporan Keuangan 2 Abad Panyeppen**, Supabase sangat cocok karena kita bisa menyatukan **Auth + PostgreSQL + Storage + RLS** tanpa harus membuat server backend terpisah. Arsitektur ini juga paling sederhana untuk menjaga target biaya awal **Rp0**, selama penggunaan tetap dalam batas free tier layanan.
