@@ -202,7 +202,7 @@ const Dashboard = () => {
                 )}
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Monitoring serapan pagu anggaran per sub-kegiatan Milad 200
+                Monitoring serapan pagu anggaran per sub-kegiatan Milad 2 Abad
               </p>
             </div>
           </div>

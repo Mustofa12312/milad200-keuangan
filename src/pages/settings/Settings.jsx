@@ -286,7 +286,7 @@ const Settings = () => {
               </div>
               <div>
                 <h3 className="text-base font-bold gradient-text">Laporan Keuangan</h3>
-                <p className="text-xs text-slate-600 dark:text-slate-400">200 Tahun Panyeppen</p>
+                <p className="text-xs text-slate-600 dark:text-slate-400">2 Abad Panyeppen</p>
               </div>
             </div>
 
@@ -294,7 +294,7 @@ const Settings = () => {
               {[
                 { label: 'Versi', value: '1.0.0 — Fase 2' },
                 { label: 'Stack', value: 'Pengguna Lebih Dipermudah ' },
-                { label: 'Deployment', value: 'Milad 200 Tahun' },
+                { label: 'Deployment', value: 'Milad 2 Abad' },
                 { label: 'Database', value: 'Pondok Pesantren Panyeppen' },
                 { label: 'Auth', value: 'Semua Panitia Milad' },
                 { label: 'Storage', value: 'Pondok Pesantren Panyeppen' },

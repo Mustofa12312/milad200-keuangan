@@ -161,7 +161,7 @@ export const backupService = {
     const totalDebt = debts.reduce((s, d) => s + Number(d.original_amount || 0), 0)
 
     const summaryRows = [
-      { 'Indikator': 'Aplikasi', 'Nilai': 'Laporan Keuangan 200 Tahun Panyeppen' },
+      { 'Indikator': 'Aplikasi', 'Nilai': 'Laporan Keuangan 2 Abad Panyeppen' },
       { 'Indikator': 'Waktu Ekspor', 'Nilai': now.toLocaleString('id-ID') },
       { 'Indikator': 'Petugas Ekspor', 'Nilai': user?.email || 'Administrator' },
       { 'Indikator': '', 'Nilai': '' },
@@ -389,7 +389,7 @@ export const backupService = {
 
     // Tambahkan file README petunjuk
     const readmeContent = `ARSIP BUKTI NOTA DIGITAL
-Milad 200 Tahun Pondok Pesantren Panyeppen
+Milad 2 Abad Pondok Pesantren Panyeppen
 ===========================================
 Total File Berhasil Diunduh : ${downloadedCount} nota
 Total File Gagal / Dihapus  : ${failedCount} nota

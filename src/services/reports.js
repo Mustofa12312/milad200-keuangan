@@ -420,7 +420,7 @@ export const reportService = {
     doc.text(title.toUpperCase(), 105, 15, { align: 'center' })
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
-    doc.text('200 Tahun Panyeppen', 105, 23, { align: 'center' })
+    doc.text('2 Abad Panyeppen', 105, 23, { align: 'center' })
     doc.setFontSize(9)
     doc.text(`Periode: ${period}`, 105, 32, { align: 'center' })
 

@@ -6,7 +6,7 @@ const LoadingScreen = () => (
       </div>
       <div className="space-y-1">
         <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Laporan Keuangan</p>
-        <p className="text-xs text-slate-500">200 Tahun Panyeppen</p>
+        <p className="text-xs text-slate-500">2 Abad Panyeppen</p>
       </div>
       <div className="flex items-center justify-center gap-1">
         {[0, 1, 2].map(i => (

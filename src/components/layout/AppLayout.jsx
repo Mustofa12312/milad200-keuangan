@@ -52,7 +52,7 @@ const SidebarContent = ({ isMinimized, profile, isAdmin, filteredNav, onSignOut 
           {!isMinimized && (
             <div className="min-w-0 flex-1">
               <p className="text-xs font-bold text-slate-900 dark:text-slate-100 leading-tight truncate">Laporan Keuangan</p>
-              <p className="text-[10px] text-slate-500 leading-tight truncate">200 Tahun Panyeppen</p>
+              <p className="text-[10px] text-slate-500 leading-tight truncate">2 Abad Panyeppen</p>
             </div>
           )}
         </Link>
@@ -195,7 +195,7 @@ const AppLayout = ({ children }) => {
           </button>
 
           <div className="flex items-center gap-1.5 text-sm text-slate-500 hidden sm:flex">
-            <span className="text-[10px] text-slate-600">200 Tahun Panyeppen</span>
+            <span className="text-[10px] text-slate-600">2 Abad Panyeppen</span>
             <ChevronRight size={12} />
             <span className="font-medium text-slate-700 dark:text-slate-300 text-xs">{currentPage}</span>
           </div>

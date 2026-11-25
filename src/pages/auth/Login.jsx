@@ -73,7 +73,7 @@ const Login = () => {
           <p className="text-slate-600 dark:text-slate-400 text-sm font-medium">
             {resetMode
               ? 'Masukkan email untuk menerima link reset'
-              : 'Laporan Keuangan 200 Tahun Panyeppen'}
+              : 'Laporan Keuangan 2 Abad Panyeppen'}
           </p>
         </div>
 
