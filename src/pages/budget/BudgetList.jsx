@@ -56,10 +56,10 @@ const BudgetList = () => {
           item.status === 'OVER'
             ? 'OVER-BUDGET'
             : item.status === 'WARNING'
-            ? 'MENDEKATI BATAS (>75%)'
-            : item.status === 'SAFE'
-            ? 'AMAN'
-            : 'BELUM DIATUR',
+              ? 'MENDEKATI BATAS (>75%)'
+              : item.status === 'SAFE'
+                ? 'AMAN'
+                : 'BELUM DIATUR',
       }))
 
       // Summary row
@@ -183,21 +183,19 @@ const BudgetList = () => {
             <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400">
               Serapan Dana
             </span>
-            <span className={`text-xs font-bold ${
-              totals.totalPercent > 100 ? 'text-red-500' : totals.totalPercent >= 75 ? 'text-amber-500' : 'text-emerald-500'
-            }`}>
+            <span className={`text-xs font-bold ${totals.totalPercent > 100 ? 'text-red-500' : totals.totalPercent >= 75 ? 'text-amber-500' : 'text-emerald-500'
+              }`}>
               {totals.totalPercent.toFixed(1)}%
             </span>
           </div>
           <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
             <div
-              className={`h-full transition-all duration-500 ${
-                totals.totalPercent > 100
-                  ? 'bg-red-500'
-                  : totals.totalPercent >= 75
+              className={`h-full transition-all duration-500 ${totals.totalPercent > 100
+                ? 'bg-red-500'
+                : totals.totalPercent >= 75
                   ? 'bg-amber-500'
                   : 'bg-emerald-500'
-              }`}
+                }`}
               style={{ width: `${Math.min(totals.totalPercent, 100)}%` }}
             />
           </div>
@@ -249,11 +247,10 @@ const BudgetList = () => {
             <button
               key={key}
               onClick={() => setStatusFilter(key)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${
-                statusFilter === key
-                  ? 'bg-blue-500 text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-              }`}
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors ${statusFilter === key
+                ? 'bg-blue-500 text-white shadow-sm'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                }`}
             >
               {label}
             </button>
@@ -327,21 +324,19 @@ const BudgetList = () => {
                   <div className="space-y-1">
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-slate-500">Serapan Anggaran</span>
-                      <span className={`font-bold ${
-                        item.status === 'OVER' ? 'text-red-500' : item.status === 'WARNING' ? 'text-amber-500' : 'text-emerald-500'
-                      }`}>
+                      <span className={`font-bold ${item.status === 'OVER' ? 'text-red-500' : item.status === 'WARNING' ? 'text-amber-500' : 'text-emerald-500'
+                        }`}>
                         {item.percent.toFixed(1)}%
                       </span>
                     </div>
                     <div className="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full overflow-hidden">
                       <div
-                        className={`h-full transition-all duration-500 ${
-                          item.status === 'OVER'
-                            ? 'bg-red-500'
-                            : item.status === 'WARNING'
+                        className={`h-full transition-all duration-500 ${item.status === 'OVER'
+                          ? 'bg-red-500'
+                          : item.status === 'WARNING'
                             ? 'bg-amber-500'
                             : 'bg-emerald-500'
-                        }`}
+                          }`}
                         style={{ width: `${Math.min(item.percent, 100)}%` }}
                       />
                     </div>
@@ -376,9 +371,8 @@ const BudgetList = () => {
                   </div>
                   <div>
                     <span className="block text-[10px] text-slate-400">Sisa Anggaran</span>
-                    <span className={`font-semibold ${
-                      !hasBudget ? 'text-slate-400' : item.remaining < 0 ? 'text-red-500' : 'text-emerald-500'
-                    }`}>
+                    <span className={`font-semibold ${!hasBudget ? 'text-slate-400' : item.remaining < 0 ? 'text-red-500' : 'text-emerald-500'
+                      }`}>
                       {hasBudget ? formatCurrency(item.remaining) : '—'}
                     </span>
                   </div>
